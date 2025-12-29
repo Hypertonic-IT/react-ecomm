@@ -1,0 +1,163 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+.bg-light {
+  background-color: white !important;
+}
+
+.logo_navbar {
+  height: 50px;
+}
+
+.nav-link {
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  color: black !important;
+  text-transform: capitalize;
+
+}
+
+.nav-link:hover {
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  color: #43baff !important;
+  transition: 0.8s;
+}
+
+.dropdown-item {
+  font-size: 15px !important;
+  /* font-weight: 500 !important; */
+  color: black !important;
+}
+
+.dropdown-item:hover {
+  color: #43baff !important;
+  text-decoration: none;
+  background-color: #ececec;
+  transition: 0.8s;
+  border-left: 5px solid #43baff;
+  font-size: 15px !important;
+  /* font-weight: 500 !important; */
+}
+
+.dropdown-menu {
+  position: absolute;
+  z-index: 1000;
+  display: none;
+  min-width: 10rem;
+  padding: .5rem 0;
+  margin: 0;
+  font-size: 1rem;
+  color: #212529;
+  text-align: left;
+  list-style: none;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, .15);
+  border-radius: .25rem;
+  padding: 10px;
+}
+
+.pl-lg-4 {
+  padding-left: 14rem !important;
+
+}
+
+.px-lg-4 {
+  padding-left: 14rem !important;
+}
+
+.dropdown-toggle::after {
+  display: none;
+}
+
+.text-decoration-none {
+  text-decoration: none !important;
+}
+
+/* Font Awesome Icons have variable width. Added fixed width to fix that. */
+.icon-width {
+  width: 1.5rem;
+}
+
+@media (max-width: 1400px) {
+  .pl-lg-4 {
+    padding-left: 8rem !important;
+  }
+
+}
+
+@media (max-width: 1000px) {
+  .nav-link {
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    color: black !important;
+    /* text-transform: uppercase; */
+  }
+}
+
+
+
+@media (max-width: 1200px) {
+
+  .pl-lg-4,
+  .px-lg-4 {
+    padding-left: 8.5rem !important;
+  }
+}
+
+@media (max-width: 992px) {
+
+  .pl-lg-4,
+  .px-lg-4 {
+    padding-left: 0rem !important;
+  }
+
+  .nav-link {
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: rgb(41, 41, 41) !important;
+    /* text-transform: uppercase; */
+  }
+
+  .icon-width {
+    width: 2rem;
+  }
+
+  .hidenn {
+    padding-left: 15px;
+    padding-bottom: 15px;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    z-index: 1000;
+    display: none;
+    min-width: 10rem;
+    /* padding: .1rem 0; */
+    margin: 0;
+    font-size: 1rem;
+    color: #212529;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 0px solid rgba(0, 0, 0, .15);
+    border-radius: .25rem;
+    padding: 5px 0px 10px 18px;
+
+  }
+  .dropdown-item {
+    font-size: 15px !important;
+    /* font-weight: 500 !important; */
+    color: black !important;
+    padding-bottom: 14px;
+}
+  .shadow-sm {
+    box-shadow: 0 .125rem .25rem rgb(255 255 255 / 0%) !important;
+}
+.drpp
+{
+  margin-left:10px;
+  font-size:20px
+}
+}

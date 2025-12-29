@@ -1,0 +1,105 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.background_img {
+    background-image: url("img/../../../../../../public/img/earth.jpg");
+    height: auto;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 100%;
+    margin-top: 76px;
+    padding: 40px;
+}
+
+.term_condition {
+    font-size: 40px;
+    font-weight: 600;
+    color: #43baff;
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.top_privacy {
+    margin-top: 40px;
+}
+
+.privacy_topline {
+    font-size: 19px;
+    font-weight: 500;
+    margin-top: 15px;
+}
+
+.privacy_topline1 {
+    font-size: 17px;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+.privacy_hedaing {
+    font-size: 24px;
+    font-weight: 600;
+    margin-top: 15px;
+}
+
+.privacy_hedaing1 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 15px;
+}
+
+.hr_privacy_line {
+    height: 1px;
+    background: #43baff;
+    margin: 5px 0px 15px 0px;
+    width: 50px;
+}
+
+.ri-checkbox-blank-circle-fill {
+    font-size: 10px !important;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .privacy_topline {
+        font-size: 19px;
+        font-weight: 500;
+        margin-top: 0px;
+    }
+
+    .privacy_topline {
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 0px;
+    }
+
+    .privacy_hedaing1 {
+        font-size: 17px;
+        font-weight: 600;
+        margin-top: 15px;
+    }
+
+    .privacy_hedaing {
+        font-size: 20px;
+        font-weight: 600;
+        margin-top: 15px;
+    }
+
+    .privacy_topline1 {
+        font-size: 15px;
+        font-weight: 500;
+        margin-top: 10px;
+    }
+
+    .term_condition {
+        font-size: 30px;
+        font-weight: 600;
+        color: #43baff;
+        text-align: center;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+}

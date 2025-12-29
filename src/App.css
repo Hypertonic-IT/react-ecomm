@@ -1,0 +1,17 @@
+
+  
+.App {
+    text-align: center;
+    padding: 20px;
+}
+@font-face {
+    font-family: "Light";   /*Can be any text*/
+    src: local("taile"),
+      url("./fonts/taile.ttf") format("truetype");
+  }
+  body{
+    font-family: light;
+    margin: 0;
+    letter-spacing: 0.8px;
+  }
+  

@@ -1,0 +1,238 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+.bck-clr
+{        
+    background: black;
+    /*background-image: url("img/payalfooter.png");*/
+    height: auto;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 100%;
+    margin-top: 100px;
+    padding: 60px 80px;
+}
+a{
+    text-decoration: none !important;
+    outline: none !important;
+}
+.logo_img{
+    height:80px;
+    margin-bottom:30px;
+}
+ .ri-global-line{
+    color:#43baff;
+    font-size:30px;
+}
+.ri-map-pin-2-fill{
+    color:#43baff;
+    font-size:24px;
+}
+.ri-mail-fill{
+     color:#43baff;
+    font-size:25px;
+}
+.ri-phone-fill{
+    color:#43baff;
+    font-size:25px;
+}
+.address{
+    /* text-align:center; */
+    font-size:13px;
+    color:white;
+    font-weight: 400;
+    letter-spacing:1px;
+    text-transform: uppercase;
+
+}
+.ftr-txt-top{
+    margin-top: 15px;
+}
+.footer_tabs{
+    font-size: 12px;
+    font-weight: 400;
+    color: #fff;
+    text-transform: uppercase;
+    text-decoration:none !important;
+    outline:none !important;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    letter-spacing: 1px;
+}
+.footer_tabs:hover{
+    font-size: 12px;
+    font-weight: 400;
+    color: #43baff;
+    text-transform: uppercase;
+    text-decoration:none !important;
+    outline:none !important;
+}
+.bck-copy-right{
+    background:#020101cf; 
+    width: 100%;
+    margin-top: 0px;
+    padding: 20px;
+}
+.copy_right{
+    font-size: 16px;
+    font-weight: 500;
+    color: #ada9a9;
+    text-align:left;
+    text-transform: uppercase;
+
+}
+.padd{
+    padding:20px;
+}
+.footer-flx{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 30px;
+}
+.head-ingtop{
+    color: white;
+    letter-spacing: 1px;
+    font-size: 20px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+.fix_middle-use{
+    position: fixed;
+    top: 50%;
+    right: 0%;
+    transform: translateY(-50%);
+    z-index:900;
+}
+
+.box1 {
+    padding: 1px 11px;
+    margin: 5px 0;
+    background-color: #fdfdfd;
+    color: rgb(18, 18, 18);
+    border-radius: 0px 0px ;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+    border-left:10px solid black;
+    border-right:10px solid black;
+    border-bottom:10px solid black;
+    position: relative;
+    
+}
+.box2 {
+    padding: 1px 11px;
+    margin: 1px 0;
+    background-color: #fdfdfd;
+    color: rgb(18, 18, 18);
+    border-radius: 0px 0px ;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+    border-left:10px solid black;
+    border-right:10px solid black;
+    border-top:10px solid black;
+    /* position: relative; */
+    
+}
+.white1 {
+    height: 12px;
+    background-color: rgb(255 255 255);
+    width: 10px;
+    position: absolute;
+    right: 10px;
+    bottom: 33px;
+    border: none;
+}
+.white2 {
+    height: 12px;
+    background-color: rgb(255 255 255);
+    width: 11px;
+    position: absolute;
+    left: 10px;
+    bottom: 49px;
+    border: none;
+}
+.icon1
+{
+    font-size: 20px;
+}
+.ri-mail-send-fill:hover {
+    animation: icon 0.5s;
+    animation-iteration-count: infinite;
+  }
+  
+  @keyframes icon {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
+  }
+
+@media(max-width:921px){
+    .myf_top {
+        margin-top: 0px;
+    }
+}
+@media(max-width:768px){
+    .padd{
+    padding:0px;
+}
+.address {
+font-size: 12px;
+color: white;
+font-weight: 400;
+letter-spacing: 1px;
+word-break: break-all;
+}
+.footer_tabs {
+font-size: 11px;
+font-weight: 500;
+color: #fff;
+text-decoration: none !important;
+outline: none !important;
+margin-top: 10px;
+}
+.bck-clr {
+    background: black;
+    /* background-image: url(img/payalfooter.png); */
+    height: auto;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 100%;
+    margin-top: 100px;
+    padding: 20px 20px;
+}
+.footer-flx {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 15px;
+}
+.dis{
+    display: none;
+}
+.copy_right {
+    font-size: 12px;
+    font-weight: 500;
+    color: #ada9a9;
+    text-align: left;
+    text-transform: uppercase;
+}
+.fix_middle-use{
+    position: fixed;
+    top: 50%;
+    right: 0%;
+    transform: translateY(-50%);
+    z-index:900;
+}
+
+}

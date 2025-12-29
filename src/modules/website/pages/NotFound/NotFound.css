@@ -1,0 +1,79 @@
+/* Basic styles for the NotFound component */
+.not-found-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: white;
+    text-align: center;
+    padding: 20px;
+    color: black;
+    font-family: 'Arial', sans-serif;
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Image styling */
+.not-found-image {
+    max-width: 80%;
+    height: auto;
+    margin-bottom: 30px;
+}
+
+/* Title styling */
+.error-title {
+    font-size: 4rem;
+    font-weight: bold;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgb(4, 4, 4);
+}
+
+/* Message styling */
+.error-message {
+    font-size: 1.5rem;
+    max-width: 600px;
+    margin-top: 20px;
+    color: black;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Responsive styles for tablets and mobile */
+
+@media (max-width: 768px) {
+    .error-title {
+        font-size: 3rem; /* Smaller font for tablets */
+    }
+
+    .error-message {
+        font-size: 1.2rem; /* Adjust message font size for tablets */
+    }
+
+    .not-found-image {
+        max-width: 90%; /* Slightly larger image for tablets */
+    }
+}
+
+@media (max-width: 480px) {
+    .error-title {
+        font-size: 2.5rem; /* Smaller font size for mobile */
+    }
+
+    .error-message {
+        font-size: 1rem; /* Smaller message font size */
+    }
+
+    .not-found-image {
+        max-width: 100%; /* Full-width image on small devices */
+    }
+}
