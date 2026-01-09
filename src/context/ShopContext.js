@@ -31,18 +31,40 @@ export const ShopProvider = ({ children }) => {
 
     const addToCart = (product) => {
         setCart((prev) => {
-            const existing = prev.find((item) => item.id === product.id);
+            const existing = prev.find((item) =>
+                item.id === product.id &&
+                item.selectedColor === product.selectedColor &&
+                item.selectedSize === product.selectedSize
+            );
             if (existing) {
                 return prev.map((item) =>
-                    item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+                    (item.id === product.id &&
+                        item.selectedColor === product.selectedColor &&
+                        item.selectedSize === product.selectedSize)
+                        ? { ...item, quantity: item.quantity + 1 }
+                        : item
                 );
             }
             return [...prev, { ...product, quantity: 1 }];
         });
     };
 
-    const removeFromCart = (productId) => {
-        setCart((prev) => prev.filter((item) => item.id !== productId));
+    const removeFromCart = (id, selectedColor, selectedSize) => {
+        setCart((prev) => prev.filter((item) =>
+            !(item.id === id &&
+                item.selectedColor === selectedColor &&
+                item.selectedSize === selectedSize)
+        ));
+    };
+
+    const updateQuantity = (id, selectedColor, selectedSize, delta) => {
+        setCart((prev) => prev.map((item) => {
+            if (item.id === id && item.selectedColor === selectedColor && item.selectedSize === selectedSize) {
+                const newQuantity = Math.max(1, item.quantity + delta);
+                return { ...item, quantity: newQuantity };
+            }
+            return item;
+        }));
     };
 
     const toggleWishlist = (productId) => {
@@ -59,6 +81,7 @@ export const ShopProvider = ({ children }) => {
         cart,
         addToCart,
         removeFromCart,
+        updateQuantity,
         wishlist,
         toggleWishlist,
         user,

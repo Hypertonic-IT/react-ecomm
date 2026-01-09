@@ -180,6 +180,8 @@
 
 .add-to-cart-btn:hover {
     background-color: var(--accent);
+    opacity: 1 !important;
+    transform: translateY(0) !important;
 }
 
 .slider-arrow {
