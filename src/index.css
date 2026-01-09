@@ -1,0 +1,41 @@
+:root {
+  /* Colors */
+  --primary: #1a1a1a;
+  --secondary: #f4f4f4;
+  --accent: #d4a373; /* Gold/Bronze accent */
+  --text-dark: #333333;
+  --text-light: #666666;
+  --white: #ffffff;
+  --danger: #e74c3c;
+  
+  /* Typography */
+  --font-main: 'Helvetica Neue', sans-serif;
+  
+  /* Spacing */
+  --container-width: 1200px;
+}
+
+body {
+  font-family: var(--font-main);
+  color: var(--text-dark);
+  background-color: var(--white);
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.container {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 20px;
+}

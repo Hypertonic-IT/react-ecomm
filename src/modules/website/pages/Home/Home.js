@@ -1,36 +1,44 @@
 import React from "react";
 import { Helmet } from 'react-helmet';
-import Nav from "../../components/Nav/Nav";
-import Section from "../../components/Section/Component";
-import Section1 from "../../components/Section1/Component";
-import Section2 from "../../components/Section2/Component";
-import Section3 from "../../components/Section3/Component";
-import Section5 from "../../components/Section5/Component";
+import { useShop } from '../../../../context/ShopContext';
+import TopBar from "../../components/TopBar/TopBar";
+import Header from "../../components/Header/Header";
+import Hero from "../../components/Hero/Hero";
+import CategorySlider from "../../components/CategorySlider/CategorySlider";
+import ProductSlider from "../../components/ProductSlider/ProductSlider";
+import PromotionalBanner from "../../components/PromotionalBanner/PromotionalBanner";
+import TrustSection from "../../components/TrustSection/TrustSection";
+import Newsletter from "../../components/Newsletter/Newsletter";
 import Footer from "../../components/Footer/Footer";
 
 function Home() {
+  const { products } = useShop();
+
+  // Filter products for sections
+  // Filter products for sections and duplicate to ensure we have enough items to scroll
+  const trendingProducts = products.filter(p => p.isTrending);
+  const bestSellers = products.filter(p => p.rating > 4.5);
+
   return (
     <>
       <Helmet>
-        <title>
-          Hypertonic IT Solutions | Expert IT Services for Website & App
-          Development
-        </title>
-        <meta
-          name="description"
-          content="Expert website and app development, server management, and custom software solutions by Hypertonic IT Solutions. Helping businesses grow with tailored IT services."
-        />
-        <meta
-          name="keywords"
-          content="IT Solutions, Web Development, Mobile Apps, Custom Software Solutions, IT Services, Hypertonic IT, Server Management"
-        />
+        <title>Hypertonic | Premium Fashion Store</title>
+        <meta name="description" content="Shop the latest trends in fashion for Men, Women, and Kids." />
       </Helmet>
-      <Nav />
-      <Section />
-      <Section1 />
-      <Section2 />
-      <Section3 />
-      <Section5 />
+
+      <TopBar />
+      <Header />
+
+      <main>
+        <Hero />
+        <CategorySlider />
+        <ProductSlider title="Trending Now" products={trendingProducts} />
+        <PromotionalBanner />
+        <ProductSlider title="Best Sellers" products={bestSellers} />
+        <TrustSection />
+        <Newsletter />
+      </main>
+
       <Footer />
     </>
   );
