@@ -28,7 +28,7 @@ const Hero = () => {
     const slide = heroSlides[current];
 
     const handleImageError = (e) => {
-        e.target.src = 'https://placehold.co/1920x1080?text=Hero+Image';
+        e.target.src = 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1600&q=80';
     };
 
     return (

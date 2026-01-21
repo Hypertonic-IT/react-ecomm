@@ -2,10 +2,12 @@
 import React from 'react';
 import { FaTrash, FaHeart, FaMinus, FaPlus } from 'react-icons/fa';
 import { useShop } from '../../../../context/ShopContext';
+import { useCurrency } from '../../../../context/CurrencyContext';
 import { Link } from 'react-router-dom';
 
 const CartItem = ({ item }) => {
     const { updateQuantity, removeFromCart, toggleWishlist, wishlist } = useShop();
+    const { formatPrice } = useCurrency();
 
     const handleRemove = () => {
         removeFromCart(item.id, item.selectedColor, item.selectedSize);
@@ -16,7 +18,12 @@ const CartItem = ({ item }) => {
         <div className="cart-item-card">
             <div className="item-image-wrap">
                 <Link to={`/product/${item.id}`}>
-                    <img src={item.image} alt={item.name} className="item-image" />
+                    <img
+                        src={item.image}
+                        alt={item.name}
+                        className="item-image"
+                        onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80' }}
+                    />
                 </Link>
             </div>
 
@@ -56,12 +63,12 @@ const CartItem = ({ item }) => {
                     </div>
 
                     <div className="item-price-area">
-                        <span className="current-price">${(item.price * item.quantity).toFixed(2)}</span>
+                        <span className="current-price">{formatPrice(item.price * item.quantity)}</span>
                         {/* Mocking original price logic for demo */}
                         {item.price > 50 && (
                             <>
-                                <span className="original-price">${((item.price * 1.2) * item.quantity).toFixed(2)}</span>
-                                <span className="savings-label">You saved ${(item.price * 0.2 * item.quantity).toFixed(2)}</span>
+                                <span className="original-price">{formatPrice((item.price * 1.2) * item.quantity)}</span>
+                                <span className="savings-label">You saved {formatPrice((item.price * 0.2) * item.quantity)}</span>
                             </>
                         )}
                     </div>

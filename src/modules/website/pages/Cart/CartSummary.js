@@ -2,11 +2,17 @@
 import React, { useState } from 'react';
 import { FaCheck, FaLock, FaUndo, FaTruck } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../../../../context/AuthContext';
+import { useCurrency } from '../../../../context/CurrencyContext';
+import { useNavigate } from 'react-router-dom';
 
 const CartSummary = ({ cart }) => {
     const [couponCode, setCouponCode] = useState('');
     const [isCouponOpen, setIsCouponOpen] = useState(false);
     const [appliedCoupon, setAppliedCoupon] = useState(null);
+    const { isAuthenticated } = useAuth();
+    const { formatPrice } = useCurrency();
+    const navigate = useNavigate();
 
     const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
     const shipping = subtotal > 100 ? 0 : 15;
@@ -26,29 +32,35 @@ const CartSummary = ({ cart }) => {
 
             <div className="summary-row">
                 <span>Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>{formatPrice(subtotal)}</span>
             </div>
 
             <div className="summary-row">
                 <span>Shipping</span>
                 <span className={shipping === 0 ? "highlight-green" : ""}>
-                    {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
+                    {shipping === 0 ? "Free" : formatPrice(shipping)}
                 </span>
             </div>
 
             {appliedCoupon && (
                 <div className="summary-row highlight-green">
                     <span>Discount (10%)</span>
-                    <span>-${discount.toFixed(2)}</span>
+                    <span>-{formatPrice(discount)}</span>
                 </div>
             )}
 
             <div className="summary-row total">
                 <span>Total Payable</span>
-                <span>${total.toFixed(2)}</span>
+                <span>{formatPrice(total)}</span>
             </div>
 
-            <button className="checkout-btn">
+            <button className="checkout-btn" onClick={() => {
+                if (isAuthenticated) {
+                    navigate('/checkout/address');
+                } else {
+                    navigate('/login', { state: { from: '/checkout/address' } });
+                }
+            }}>
                 Proceed to Checkout
             </button>
 

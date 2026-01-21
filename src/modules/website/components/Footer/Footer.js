@@ -1,9 +1,12 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FaFacebook, FaInstagram, FaTwitter, FaCcVisa, FaCcMastercard, FaCcPaypal } from 'react-icons/fa';
+import { useShop } from '../../../../context/ShopContext';
 import './Footer.css';
 
 const Footer = () => {
+    const { openTrackOrder } = useShop();
     return (
         <footer className="footer">
             <div className="footer-container">
@@ -23,21 +26,28 @@ const Footer = () => {
                     <div className="footer-col">
                         <h4>Customer Care</h4>
                         <div className="footer-links">
-                            <a href="#" className="footer-link">Contact Us</a>
+                            <Link to="/contact" className="footer-link">Contact Us</Link>
                             <a href="#" className="footer-link">Shipping & Returns</a>
                             <a href="#" className="footer-link">FAQ</a>
                             <a href="#" className="footer-link">Size Guide</a>
-                            <a href="#" className="footer-link">Track Order</a>
+                            <a href="#" className="footer-link">Size Guide</a>
+                            <span
+                                className="footer-link"
+                                onClick={openTrackOrder}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                Track Order
+                            </span>
                         </div>
                     </div>
 
                     <div className="footer-col">
                         <h4>Quick Links</h4>
                         <div className="footer-links">
-                            <a href="#" className="footer-link">Our Story</a>
-                            <a href="#" className="footer-link">Careers</a>
-                            <a href="#" className="footer-link">Privacy Policy</a>
-                            <a href="#" className="footer-link">Terms & Conditions</a>
+                            <Link to="/about" className="footer-link">Our Story</Link>
+                            <Link to="/careers" className="footer-link">Careers</Link>
+                            <Link to="/privacy" className="footer-link">Privacy Policy</Link>
+                            <Link to="/terms" className="footer-link">Terms & Conditions</Link>
                             <a href="#" className="footer-link">Editorial Blog</a>
                         </div>
                     </div>

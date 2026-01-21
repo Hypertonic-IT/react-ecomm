@@ -6,10 +6,12 @@ import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 import Newsletter from '../../components/Newsletter/Newsletter';
 import { useShop } from '../../../../context/ShopContext';
+import { useCurrency } from '../../../../context/CurrencyContext';
 import { FaHeartBroken, FaTrash } from 'react-icons/fa';
 import './Wishlist.css';
 
 const WishlistCard = ({ product, onRemove, onMoveToCart }) => {
+    const { formatPrice } = useCurrency();
     const [showSizes, setShowSizes] = useState(false);
 
     return (
@@ -19,7 +21,12 @@ const WishlistCard = ({ product, onRemove, onMoveToCart }) => {
         >
             <div className="w-image-wrap">
                 <Link to={`/product/${product.id}`}>
-                    <img src={product.image} alt={product.name} className="w-image" />
+                    <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-image"
+                        onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80' }}
+                    />
                 </Link>
 
                 <button
@@ -66,7 +73,7 @@ const WishlistCard = ({ product, onRemove, onMoveToCart }) => {
 
             <div className="w-details">
                 <div className="w-name">{product.name}</div>
-                <div className="w-price">${product.price.toFixed(2)}</div>
+                <div className="w-price">{formatPrice(product.price)}</div>
             </div>
         </div>
     );

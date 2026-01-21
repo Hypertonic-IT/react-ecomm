@@ -6,7 +6,7 @@ import './PromotionalBanner.css';
 
 const PromotionalBanner = () => {
     const handleImageError = (e) => {
-        e.target.src = 'https://placehold.co/800x600?text=Promo+Banner';
+        e.target.src = 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&q=80';
     };
 
     return (

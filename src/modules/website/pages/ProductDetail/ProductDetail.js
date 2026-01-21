@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { products } from '../../../../data/fashionData';
 import { useShop } from '../../../../context/ShopContext';
+import { useCurrency } from '../../../../context/CurrencyContext';
+import { authService } from '../../../../services/authService';
 import { FaHeart, FaTruck, FaShieldAlt, FaUndo } from 'react-icons/fa';
 import TopBar from '../../components/TopBar/TopBar';
 import Header from '../../components/Header/Header';
@@ -14,6 +16,7 @@ import './ProductDetail.css';
 const ProductDetail = () => {
     const { id } = useParams();
     const { addToCart, toggleWishlist, wishlist } = useShop();
+    const { formatPrice } = useCurrency();
     const [product, setProduct] = useState(null);
     const [selectedImage, setSelectedImage] = useState('');
     const [selectedSize, setSelectedSize] = useState('M');
@@ -67,12 +70,20 @@ const ProductDetail = () => {
                                     className={`pdp-thumb ${selectedImage === img ? 'active' : ''}`}
                                     onClick={() => setSelectedImage(img)}
                                 >
-                                    <img src={img} alt="Thumbnail" />
+                                    <img
+                                        src={img}
+                                        alt="Thumbnail"
+                                        onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80' }}
+                                    />
                                 </div>
                             ))}
                         </div>
                         <div className="pdp-main-image">
-                            <img src={selectedImage} alt={product.name} />
+                            <img
+                                src={selectedImage}
+                                alt={product.name}
+                                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80' }}
+                            />
                         </div>
                     </div>
 
@@ -80,7 +91,7 @@ const ProductDetail = () => {
                     <div className="pdp-info">
                         <div className="pdp-info-header">
                             <h1 className="pdp-title">{product.name}</h1>
-                            <div className="pdp-price">${product.price.toFixed(2)}</div>
+                            <div className="pdp-price">{formatPrice(product.price)}</div>
                         </div>
 
                         <p className="pdp-description-preview">
@@ -127,7 +138,14 @@ const ProductDetail = () => {
                             <button
                                 className="pdp-wishlist-btn"
                                 style={{ color: wishlist.includes(product.id) ? 'red' : 'inherit' }}
-                                onClick={() => toggleWishlist(product.id)}
+                                onClick={async () => {
+                                    toggleWishlist(product.id);
+                                    // Also sync with backend
+                                    const res = await authService.addToWishlist(product);
+                                    if (!res.success) {
+                                        alert("Failed to save to wishlist: " + (res.message || "Unknown error"));
+                                    }
+                                }}
                             >
                                 <FaHeart />
                             </button>

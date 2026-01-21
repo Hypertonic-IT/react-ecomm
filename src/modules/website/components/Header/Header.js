@@ -1,22 +1,56 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FaSearch, FaUser, FaHeart, FaShoppingBag, FaBars, FaTimes } from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaSearch, FaUser, FaHeart, FaShoppingBag, FaBars, FaTimes, FaSignOutAlt } from 'react-icons/fa';
 import { useShop } from '../../../../context/ShopContext';
+import { useAuth } from '../../../../context/AuthContext';
 import { categories } from '../../../../data/fashionData';
 import { motion, AnimatePresence } from 'framer-motion';
 import './Header.css';
 
 const Header = () => {
     const { cart, wishlist } = useShop();
+    const { user, isAuthenticated, logout } = useAuth();
+    const navigate = useNavigate();
     const [activeMenu, setActiveMenu] = useState(null);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [userMenuOpen, setUserMenuOpen] = useState(false);
+    const searchInputRef = React.useRef(null);
 
     const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
     const toggleMobileMenu = () => {
         setMobileMenuOpen(!mobileMenuOpen);
         document.body.style.overflow = !mobileMenuOpen ? 'hidden' : 'auto';
+    };
+
+    const toggleSearch = () => {
+        if (activeMenu === 'search') {
+            setActiveMenu(null);
+        } else {
+            setActiveMenu('search');
+            setTimeout(() => {
+                searchInputRef.current?.focus();
+            }, 100);
+        }
+    };
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+            setUserMenuOpen(false);
+            navigate('/');
+        } catch (error) {
+            console.error('Logout failed:', error);
+        }
+    };
+
+    const handleProfileClick = () => {
+        if (!isAuthenticated) {
+            navigate('/login');
+        } else {
+            setUserMenuOpen(!userMenuOpen);
+        }
     };
 
     return (
@@ -45,6 +79,8 @@ const Header = () => {
                             {cat.title}
                         </Link>
                     ))}
+                    <Link to="/about" className="menu-item">About</Link>
+                    <Link to="/contact" className="menu-item">Contact</Link>
                 </nav>
 
                 {/* ICONS */}
@@ -57,8 +93,15 @@ const Header = () => {
                                 style={{ overflow: 'hidden', marginRight: activeMenu === 'search' ? '10px' : 0 }}
                             >
                                 <input
+                                    ref={searchInputRef}
                                     type="text"
                                     placeholder="Search..."
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            navigate(`/products?search=${e.target.value}`);
+                                            setActiveMenu(null);
+                                        }
+                                    }}
                                     style={{
                                         border: 'none',
                                         borderBottom: '1px solid #000',
@@ -70,7 +113,7 @@ const Header = () => {
                                 />
                             </motion.div>
                             <FaSearch
-                                onClick={() => setActiveMenu(activeMenu === 'search' ? null : 'search')}
+                                onClick={toggleSearch}
                                 className="header-icon"
                             />
                         </div>
@@ -83,8 +126,34 @@ const Header = () => {
                         <Link to="/cart" className="header-icon"><FaShoppingBag /></Link>
                         {cartCount > 0 && <span className="badge">{cartCount}</span>}
                     </div>
-                    <div className="icon-wrap">
-                        <Link to="/profile" className="header-icon"><FaUser /></Link>
+                    <div className="icon-wrap user-menu-wrapper">
+                        <div onClick={handleProfileClick} className="header-icon user-icon" style={{ cursor: 'pointer', color: 'black' }}>
+                            <FaUser />
+                        </div>
+
+                        {/* User Dropdown Menu */}
+                        {isAuthenticated && userMenuOpen && (
+                            <div className="user-dropdown">
+                                <div className="user-dropdown-header">
+                                    <div className="user-dropdown-name">{user?.name}</div>
+                                    <div className="user-dropdown-email">{user?.email}</div>
+                                </div>
+                                <div className="user-dropdown-divider"></div>
+                                <Link to="/profile" className="user-dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                                    My Account
+                                </Link>
+                                <Link to="/orders" className="user-dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                                    My Orders
+                                </Link>
+                                <Link to="/wishlist" className="user-dropdown-item" onClick={() => setUserMenuOpen(false)}>
+                                    Wishlist
+                                </Link>
+                                <div className="user-dropdown-divider"></div>
+                                <button onClick={handleLogout} className="user-dropdown-item logout-btn">
+                                    <FaSignOutAlt /> Logout
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -109,10 +178,34 @@ const Header = () => {
                                 {cat.title}
                             </Link>
                         ))}
+                        <Link to="/about" className="mobile-link" onClick={toggleMobileMenu}>
+                            About Us
+                        </Link>
+                        <Link to="/contact" className="mobile-link" onClick={toggleMobileMenu}>
+                            Contact Us
+                        </Link>
                         <div style={{ marginTop: '40px', borderTop: '1px solid #eee', paddingTop: '20px' }}>
-                            <Link to="/profile" className="mobile-link" onClick={toggleMobileMenu} style={{ fontSize: '16px' }}>
-                                My Account
-                            </Link>
+                            {isAuthenticated ? (
+                                <>
+                                    <div style={{ padding: '0 20px', marginBottom: '16px' }}>
+                                        <div style={{ fontSize: '16px', fontWeight: '600', color: 'var(--primary)' }}>{user?.name}</div>
+                                        <div style={{ fontSize: '13px', color: 'var(--text-light)', marginTop: '4px' }}>{user?.email}</div>
+                                    </div>
+                                    <Link to="/profile" className="mobile-link" onClick={toggleMobileMenu} style={{ fontSize: '16px' }}>
+                                        My Account
+                                    </Link>
+                                    <Link to="/orders" className="mobile-link" onClick={toggleMobileMenu} style={{ fontSize: '16px' }}>
+                                        My Orders
+                                    </Link>
+                                    <button onClick={handleLogout} className="mobile-link" style={{ fontSize: '16px', width: '100%', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--danger)' }}>
+                                        Logout
+                                    </button>
+                                </>
+                            ) : (
+                                <Link to="/login" className="mobile-link" onClick={toggleMobileMenu} style={{ fontSize: '16px' }}>
+                                    Login / Sign Up
+                                </Link>
+                            )}
                         </div>
                     </motion.div>
                 )}

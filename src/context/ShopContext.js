@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { products as productsData } from '../data/fashionData';
+import Toast from '../modules/website/components/Toast/Toast';
 
 const ShopContext = createContext();
 
@@ -10,6 +11,8 @@ export const ShopProvider = ({ children }) => {
     const [cart, setCart] = useState([]);
     const [wishlist, setWishlist] = useState([]);
     const [user, setUser] = useState({ loggedIn: false, name: null });
+    const [toast, setToast] = useState(null); // { message, type }
+    const [isTrackOrderOpen, setIsTrackOrderOpen] = useState(false);
 
     // Load cart from local storage on init
     useEffect(() => {
@@ -47,6 +50,7 @@ export const ShopProvider = ({ children }) => {
             }
             return [...prev, { ...product, quantity: 1 }];
         });
+        setToast({ message: 'Item added to cart!', type: 'success' });
     };
 
     const removeFromCart = (id, selectedColor, selectedSize) => {
@@ -76,6 +80,15 @@ export const ShopProvider = ({ children }) => {
         });
     };
 
+    const getCartTotal = () => {
+        return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    };
+
+    const clearCart = () => {
+        setCart([]);
+        localStorage.removeItem('cart');
+    };
+
     const value = {
         products,
         cart,
@@ -85,8 +98,26 @@ export const ShopProvider = ({ children }) => {
         wishlist,
         toggleWishlist,
         user,
-        setUser
+        setUser,
+        user,
+        setUser,
+        getCartTotal,
+        clearCart,
+        isTrackOrderOpen,
+        openTrackOrder: () => setIsTrackOrderOpen(true),
+        closeTrackOrder: () => setIsTrackOrderOpen(false)
     };
 
-    return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;
+    return (
+        <ShopContext.Provider value={value}>
+            {children}
+            {toast && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={() => setToast(null)}
+                />
+            )}
+        </ShopContext.Provider>
+    );
 };

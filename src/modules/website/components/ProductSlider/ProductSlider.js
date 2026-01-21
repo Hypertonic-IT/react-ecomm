@@ -3,11 +3,13 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaHeart, FaArrowLeft, FaArrowRight, FaEye } from 'react-icons/fa';
 import { useShop } from '../../../../context/ShopContext';
+import { useCurrency } from '../../../../context/CurrencyContext';
 import { motion } from 'framer-motion';
 import './ProductSlider.css';
 
 const ProductSlider = ({ title, products }) => {
     const { addToCart, toggleWishlist, wishlist } = useShop();
+    const { formatPrice } = useCurrency();
     const scrollRef = useRef(null);
     const [isHovered, setIsHovered] = useState(false);
     const navigate = useNavigate();
@@ -97,12 +99,12 @@ const ProductSlider = ({ title, products }) => {
                                         src={product.image}
                                         alt={product.name}
                                         className="product-image"
-                                        onError={(e) => { e.target.src = 'https://placehold.co/300x400?text=No+Image' }}
+                                        onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80' }}
                                     />
                                 </div>
                                 <div className="product-info">
                                     <div className="product-name">{product.name}</div>
-                                    <div className="product-price">${product.price ? product.price.toFixed(2) : '0.00'}</div>
+                                    <div className="product-price">{product.price ? formatPrice(product.price) : formatPrice(0)}</div>
                                     <button
                                         className="add-to-cart-btn"
                                         onClick={(e) => { e.stopPropagation(); addToCart(product); }}

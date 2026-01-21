@@ -9,6 +9,7 @@ import Newsletter from '../../components/Newsletter/Newsletter';
 import FilterSidebar from '../../components/FilterSidebar/FilterSidebar';
 import { products, categories } from '../../../../data/fashionData';
 import { useShop } from '../../../../context/ShopContext';
+import { useCurrency } from '../../../../context/CurrencyContext';
 import { FaHeart, FaEye } from 'react-icons/fa'; // Added FaEye
 import './Products.css';
 
@@ -16,6 +17,7 @@ const Products = () => {
     const location = useLocation();
     const navigate = useNavigate(); // Hook for navigation
     const { addToCart, toggleWishlist, wishlist } = useShop();
+    const { formatPrice } = useCurrency();
 
     // Initial Filters State
     const [filters, setFilters] = useState({
@@ -27,18 +29,26 @@ const Products = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 9;
 
-    // Parse query params for initial category filter
+    // Parse query params for initial category & search filter
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
         const categoryParam = searchParams.get('category');
+        const searchParam = searchParams.get('search');
 
-        if (categoryParam) {
-            setFilters(prev => ({ ...prev, categories: [categoryParam] }));
-        }
+        setFilters(prev => ({
+            ...prev,
+            categories: categoryParam ? [categoryParam] : [],
+            search: searchParam || ''
+        }));
     }, [location]);
 
     // Filtering Logic
     const filteredProducts = products.filter(product => {
+        // Search Filter
+        if (filters.search && !product.name.toLowerCase().includes(filters.search.toLowerCase())) {
+            return false;
+        }
+
         // Category Filter
         if (filters.categories.length > 0 && !filters.categories.includes(product.category)) {
             return false;
@@ -137,13 +147,13 @@ const Products = () => {
                                                 src={product.image}
                                                 alt={product.name}
                                                 className="plp-image"
-                                                onError={(e) => { e.target.src = 'https://placehold.co/300x400?text=No+Image' }}
+                                                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80' }}
                                             />
                                         </div>
                                         <div className="plp-info">
                                             <div className="plp-category">{product.category}</div>
                                             <div className="plp-name">{product.name}</div>
-                                            <div className="plp-price">${product.price.toFixed(2)}</div>
+                                            <div className="plp-price">{formatPrice(product.price)}</div>
                                             <button
                                                 style={{
                                                     marginTop: '10px', width: '100%', padding: '8px',
