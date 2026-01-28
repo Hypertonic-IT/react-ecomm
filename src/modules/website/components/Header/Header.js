@@ -1,15 +1,13 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaSearch, FaUser, FaHeart, FaShoppingBag, FaBars, FaTimes, FaSignOutAlt } from 'react-icons/fa';
+import { FiSearch, FiUser, FiHeart, FiShoppingBag, FiMenu, FiX, FiLogOut } from 'react-icons/fi';
 import { useShop } from '../../../../context/ShopContext';
 import { useAuth } from '../../../../context/AuthContext';
-import { categories } from '../../../../data/fashionData';
 import { motion, AnimatePresence } from 'framer-motion';
 import './Header.css';
 
 const Header = () => {
-    const { cart, wishlist } = useShop();
+    const { cart, wishlist, categories, products } = useShop();
     const { user, isAuthenticated, logout } = useAuth();
     const navigate = useNavigate();
     const [activeMenu, setActiveMenu] = useState(null);
@@ -53,12 +51,23 @@ const Header = () => {
         }
     };
 
+    // Helper to get sub-categories dynamically from products if not defined in category
+    // This is a bit of a hack to "generate" submenus if the category model is simple
+    const getSubCategories = (catName) => {
+        // If we have manual column data from static file, we might miss it here if we fully switched.
+        // For now, let's assume we want to show generic links or dynamic types if available.
+        // A simple fallback:
+        return [
+            { title: 'Shop All', items: ['New Arrivals', 'Best Sellers'] }
+        ];
+    };
+
     return (
         <header className="header" onMouseLeave={() => setActiveMenu(null)}>
             <div className="nav-container">
                 {/* HAMBURGER (Mobile) */}
                 <div className="hamburger" onClick={toggleMobileMenu}>
-                    {mobileMenuOpen ? <FaTimes /> : <FaBars />}
+                    {mobileMenuOpen ? <FiX /> : <FiMenu />}
                 </div>
 
                 {/* LOGO */}
@@ -70,13 +79,13 @@ const Header = () => {
                 <nav className="desktop-menu">
                     {categories.map((cat) => (
                         <Link
-                            key={cat.id}
-                            to={`/products?category=${cat.title === 'New Arrivals' || cat.title === 'Sale' ? '' : cat.title}`}
-                            className={`menu-item ${activeMenu === cat.id ? 'active' : ''}`}
-                            style={{ color: cat.isHighlight ? '#e74c3c' : undefined }}
-                            onMouseEnter={() => setActiveMenu(cat.id)}
+                            key={cat._id || cat.id}
+                            to={`/products?category=${cat.name || cat.title}`}
+                            className={`menu-item ${activeMenu === (cat._id || cat.id) ? 'active' : ''}`}
+                            style={{ color: (cat.isHighlight) ? '#e74c3c' : undefined }}
+                            onMouseEnter={() => setActiveMenu(cat._id || cat.id)}
                         >
-                            {cat.title}
+                            {cat.name || cat.title}
                         </Link>
                     ))}
                     <Link to="/about" className="menu-item">About</Link>
@@ -112,23 +121,23 @@ const Header = () => {
                                     }}
                                 />
                             </motion.div>
-                            <FaSearch
+                            <FiSearch
                                 onClick={toggleSearch}
                                 className="header-icon"
                             />
                         </div>
                     </div>
                     <div className="icon-wrap">
-                        <Link to="/wishlist" className="header-icon"><FaHeart /></Link>
+                        <Link to="/wishlist" className="header-icon"><FiHeart /></Link>
                         {wishlist.length > 0 && <span className="badge">{wishlist.length}</span>}
                     </div>
                     <div className="icon-wrap">
-                        <Link to="/cart" className="header-icon"><FaShoppingBag /></Link>
+                        <Link to="/cart" className="header-icon"><FiShoppingBag /></Link>
                         {cartCount > 0 && <span className="badge">{cartCount}</span>}
                     </div>
                     <div className="icon-wrap user-menu-wrapper">
                         <div onClick={handleProfileClick} className="header-icon user-icon" style={{ cursor: 'pointer', color: 'black' }}>
-                            <FaUser />
+                            <FiUser />
                         </div>
 
                         {/* User Dropdown Menu */}
@@ -150,7 +159,7 @@ const Header = () => {
                                 </Link>
                                 <div className="user-dropdown-divider"></div>
                                 <button onClick={handleLogout} className="user-dropdown-item logout-btn">
-                                    <FaSignOutAlt /> Logout
+                                    <FiLogOut /> Logout
                                 </button>
                             </div>
                         )}
@@ -170,12 +179,12 @@ const Header = () => {
                     >
                         {categories.map((cat) => (
                             <Link
-                                key={cat.id}
-                                to={`/products?category=${cat.title === 'New Arrivals' || cat.title === 'Sale' ? '' : cat.title}`}
+                                key={cat._id || cat.id}
+                                to={`/products?category=${cat.name || cat.title}`}
                                 className="mobile-link"
                                 onClick={toggleMobileMenu}
                             >
-                                {cat.title}
+                                {cat.name || cat.title}
                             </Link>
                         ))}
                         <Link to="/about" className="mobile-link" onClick={toggleMobileMenu}>
@@ -206,41 +215,6 @@ const Header = () => {
                                     Login / Sign Up
                                 </Link>
                             )}
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            {/* MEGA MENU (Desktop Only) */}
-            <AnimatePresence>
-                {activeMenu && activeMenu !== 'search' && categories.find(c => c.id === activeMenu)?.columns && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.2 }}
-                        className="mega-menu"
-                        onMouseEnter={() => setActiveMenu(activeMenu)}
-                        onMouseLeave={() => setActiveMenu(null)}
-                    >
-                        <div className="mega-grid">
-                            {categories.find(c => c.id === activeMenu).columns.map((col, idx) => (
-                                <div key={idx}>
-                                    <span className="column-title">{col.title}</span>
-                                    {col.items.map((item, i) => (
-                                        <Link key={i} to={`/products?search=${item}`} className="link-item">
-                                            {item}
-                                        </Link>
-                                    ))}
-                                </div>
-                            ))}
-                            <div>
-                                <img
-                                    src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&q=80"
-                                    alt="Feature"
-                                    style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-                                />
-                            </div>
                         </div>
                     </motion.div>
                 )}

@@ -29,10 +29,10 @@ const FilterSidebar = ({ filters, setFilters, categories }) => {
                             <input
                                 type="checkbox"
                                 className="filter-checkbox"
-                                checked={filters.categories.includes(cat.title)}
-                                onChange={() => handleCategoryChange(cat.title)}
+                                checked={filters.categories.includes(cat.name)}
+                                onChange={() => handleCategoryChange(cat.name)}
                             />
-                            {cat.title}
+                            {cat.name}
                         </label>
                     ))}
                 </div>

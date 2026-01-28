@@ -1,11 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { products } from '../../../../data/fashionData';
 import { useShop } from '../../../../context/ShopContext';
 import { useCurrency } from '../../../../context/CurrencyContext';
 import { authService } from '../../../../services/authService';
-import { FaHeart, FaTruck, FaShieldAlt, FaUndo } from 'react-icons/fa';
+import { FaHeart, FaTruck, FaShieldAlt, FaUndo, FaMinus, FaPlus } from 'react-icons/fa';
 import TopBar from '../../components/TopBar/TopBar';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
@@ -15,7 +14,7 @@ import './ProductDetail.css';
 
 const ProductDetail = () => {
     const { id } = useParams();
-    const { addToCart, toggleWishlist, wishlist } = useShop();
+    const { addToCart, updateQuantity, cart, toggleWishlist, wishlist, products } = useShop();
     const { formatPrice } = useCurrency();
     const [product, setProduct] = useState(null);
     const [selectedImage, setSelectedImage] = useState('');
@@ -24,14 +23,18 @@ const ProductDetail = () => {
     const [activeTab, setActiveTab] = useState('description');
 
     useEffect(() => {
-        const found = products.find(p => p.id === parseInt(id));
+        const found = products.find(p => String(p.id) === id);
         if (found) {
             setProduct(found);
             setSelectedImage(found.image);
+            // Initial selection based on available options
+            if (found.colors && found.colors.length > 0) setSelectedColor(found.colors[0]);
+            if (found.sizes && found.sizes.length > 0) setSelectedSize(found.sizes[0]);
+
             // Scroll to top when product changes
             window.scrollTo(0, 0);
         }
-    }, [id]);
+    }, [id, products]);
 
     if (!product) return <div style={{ padding: '100px', textAlign: 'center' }}>Loading...</div>;
 
@@ -102,11 +105,12 @@ const ProductDetail = () => {
                         <div className="pdp-variants">
                             <span className="pdp-section-title">Color: {selectedColor}</span>
                             <div className="color-options">
-                                {['black', 'navy', 'beige'].map(c => (
+                                {(product.colors && product.colors.length > 0 ? product.colors : ['black', 'navy', 'beige']).map(c => (
                                     <div
                                         key={c}
                                         className={`color-swatch ${selectedColor === c ? 'active' : ''}`}
-                                        style={{ backgroundColor: c === 'navy' ? '#000080' : c === 'beige' ? '#f5f5dc' : '#000' }}
+                                        style={{ backgroundColor: c }}
+                                        title={c}
                                         onClick={() => setSelectedColor(c)}
                                     />
                                 ))}
@@ -116,7 +120,7 @@ const ProductDetail = () => {
                         <div className="pdp-variants">
                             <span className="pdp-section-title">Size: {selectedSize}</span>
                             <div className="size-options">
-                                {['XS', 'S', 'M', 'L', 'XL'].map(s => (
+                                {(product.sizes && product.sizes.length > 0 ? product.sizes : ['XS', 'S', 'M', 'L', 'XL']).map(s => (
                                     <button
                                         key={s}
                                         className={`size-btn ${selectedSize === s ? 'active' : ''}`}
@@ -128,13 +132,67 @@ const ProductDetail = () => {
                             </div>
                         </div>
 
+                        <div className="pdp-stock-info" style={{ marginBottom: '15px', fontWeight: '500', color: product.countInStock > 0 ? (product.countInStock < 5 ? '#eab308' : '#10b981') : '#ef4444' }}>
+                            {product.countInStock > 0 ? (
+                                product.countInStock < 10
+                                    ? `Only ${product.countInStock} Left in Stock!`
+                                    : `In Stock (${product.countInStock} available)`
+                            ) : (
+                                "Out of Stock"
+                            )}
+                        </div>
+
                         <div className="pdp-actions">
-                            <button
-                                className="add-cart-btn"
-                                onClick={() => addToCart({ ...product, selectedColor, selectedSize })}
-                            >
-                                Add to Cart
-                            </button>
+                            {(() => {
+                                const cartItem = cart.find(item =>
+                                    item.id === product.id &&
+                                    item.selectedColor === selectedColor &&
+                                    item.selectedSize === selectedSize
+                                );
+
+                                const quantityInCart = cartItem ? cartItem.quantity : 0;
+
+                                return quantityInCart > 0 ? (
+                                    <div className="pdp-quantity-stepper" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <button
+                                            onClick={() => updateQuantity(product.id, selectedColor, selectedSize, -1)}
+                                            style={{
+                                                width: '40px', height: '40px', borderRadius: '50%', border: '1px solid #ddd',
+                                                background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                            }}
+                                        >
+                                            <FaMinus size={12} />
+                                        </button>
+                                        <span style={{ fontSize: '16px', fontWeight: '600', minWidth: '20px', textAlign: 'center' }}>
+                                            {quantityInCart}
+                                        </span>
+                                        <button
+                                            onClick={() => updateQuantity(product.id, selectedColor, selectedSize, 1)}
+                                            disabled={quantityInCart >= product.countInStock}
+                                            style={{
+                                                width: '40px', height: '40px', borderRadius: '50%', border: '1px solid #ddd',
+                                                background: '#fff', cursor: quantityInCart >= product.countInStock ? 'not-allowed' : 'pointer',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                opacity: quantityInCart >= product.countInStock ? 0.5 : 1
+                                            }}
+                                        >
+                                            <FaPlus size={12} />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button
+                                        className="add-cart-btn"
+                                        onClick={() => addToCart({ ...product, selectedColor, selectedSize })}
+                                        disabled={product.countInStock === 0}
+                                        style={{
+                                            opacity: product.countInStock === 0 ? 0.5 : 1,
+                                            cursor: product.countInStock === 0 ? 'not-allowed' : 'pointer'
+                                        }}
+                                    >
+                                        {product.countInStock === 0 ? 'Out of Stock' : 'Add to Cart'}
+                                    </button>
+                                );
+                            })()}
                             <button
                                 className="pdp-wishlist-btn"
                                 style={{ color: wishlist.includes(product.id) ? 'red' : 'inherit' }}

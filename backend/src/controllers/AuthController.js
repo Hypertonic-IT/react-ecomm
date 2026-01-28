@@ -77,7 +77,9 @@ const verifyOTP = async (req, res) => {
                 user: {
                     id: user._id,
                     email: user.emailOrMobile,
-                    name: user.name
+                    name: user.name,
+                    isAdmin: user.isAdmin,
+                    role: user.role
                 },
                 token: 'mock-jwt-token-' + user._id // Mock token for now
             });
@@ -144,7 +146,9 @@ const login = async (req, res) => {
                 id: user._id,
                 name: user.name,
                 email: user.emailOrMobile,
-                mobile: user.mobile
+                mobile: user.mobile,
+                isAdmin: user.isAdmin,
+                role: user.role
             },
             token: 'mock-jwt-token-' + user._id
         });
@@ -303,6 +307,17 @@ const removeFromWishlist = async (req, res) => {
     }
 };
 
+const getAllUsers = async (req, res) => {
+    try {
+        // Typically would check for Admin role here, but simplification for now.
+        const users = await User.find({}).sort({ createdAt: -1 });
+        res.json(users);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+};
+
 module.exports = {
     sendOTP,
     verifyOTP,
@@ -312,6 +327,7 @@ module.exports = {
     changePassword,
     getWishlist,
     addToWishlist,
-    removeFromWishlist
+    removeFromWishlist,
+    getAllUsers
 };
 

@@ -104,13 +104,15 @@ const ProductSlider = ({ title, products }) => {
                                 </div>
                                 <div className="product-info">
                                     <div className="product-name">{product.name}</div>
-                                    <div className="product-price">{product.price ? formatPrice(product.price) : formatPrice(0)}</div>
-                                    <button
-                                        className="add-to-cart-btn"
-                                        onClick={(e) => { e.stopPropagation(); addToCart(product); }}
-                                    >
-                                        Add to Cart
-                                    </button>
+                                    <div className="product-meta-row">
+                                        <div className="product-price">{product.price ? formatPrice(product.price) : formatPrice(0)}</div>
+                                        <button
+                                            className="add-to-cart-btn"
+                                            onClick={(e) => { e.stopPropagation(); addToCart(product); }}
+                                        >
+                                            Add to Cart
+                                        </button>
+                                    </div>
                                 </div>
                             </motion.div>
                         ))}
@@ -126,40 +128,7 @@ const ProductSlider = ({ title, products }) => {
                 </div>
             </div>
 
-            {/* Additional CSS for the eye icon button */}
-            <style>{`
-                .quick-view-btn {
-                    position: absolute;
-                    top: 60px; /* Below wishlist */
-                    right: 15px;
-                    background: rgba(255, 255, 255, 0.9);
-                    border: none;
-                    width: 35px;
-                    height: 35px;
-                    border-radius: 50%;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    font-size: 16px;
-                    cursor: pointer;
-                    z-index: 2;
-                    transition: all 0.3s ease;
-                    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-                    opacity: 0;
-                    transform: translateY(-10px);
-                    color: #333;
-                }
-                
-                .product-card:hover .quick-view-btn {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-                
-                .quick-view-btn:hover {
-                    background: #000;
-                    color: #fff;
-                }
-            `}</style>
+
         </section>
     );
 };

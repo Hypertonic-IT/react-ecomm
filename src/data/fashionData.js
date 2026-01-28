@@ -62,7 +62,7 @@ export const categories = [
 export const heroSlides = [
     {
         id: 1,
-        image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop",
+        image: "https://images.unsplash.com/photo-1529139574466-a302d2d3f524?q=80&w=2570&auto=format&fit=crop",
         title: "New Summer Collection",
         subtitle: "Up to 40% Off",
         cta: "Shop Now",
@@ -70,15 +70,15 @@ export const heroSlides = [
     },
     {
         id: 2,
-        image: "https://images.unsplash.com/photo-1490481651871-646860529625?q=80&w=2070&auto=format&fit=crop",
-        title: "Men's Premium Suits",
+        image: "https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?q=80&w=2070&auto=format&fit=crop",
+        title: "Men's Premium Style", // Changed Title
         subtitle: "Elevate Your Style",
         cta: "Shop Men",
         link: "/products?category=Men"
     },
     {
         id: 3,
-        image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=2070&auto=format&fit=crop",
+        image: "https://images.unsplash.com/photo-1616847231687-0e6d62d29cb5?q=80&w=1762&auto=format&fit=crop",
         title: "Women's Ethnic Wear",
         subtitle: "Elegant & Traditional",
         cta: "Shop Women",

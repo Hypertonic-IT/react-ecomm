@@ -88,10 +88,28 @@ const OrdersList = () => {
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '5px' }}>
-                        <div style={{ fontSize: '14px', color: '#555' }}>
-                            <FaClock style={{ marginRight: '5px', verticalAlign: 'middle' }} />
-                            Status: <strong>{order.isDelivered ? 'Delivered' : 'Processing'}</strong>
-                        </div>
+                        <span style={{
+                            padding: '6px 12px',
+                            borderRadius: '20px',
+                            fontSize: '12px',
+                            fontWeight: '700',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px',
+                            backgroundColor:
+                                order.isDelivered ? '#d1e7dd' :
+                                    order.status === 'Cancelled' ? '#f8d7da' :
+                                        '#fff3cd',
+                            color:
+                                order.isDelivered ? '#0f5132' :
+                                    order.status === 'Cancelled' ? '#842029' :
+                                        '#664d03',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px'
+                        }}>
+                            <FaClock />
+                            {order.status || (order.isDelivered ? 'Delivered' : 'Processing')}
+                        </span>
                         <div style={{ fontSize: '14px', color: '#555' }}>
                             <FaMoneyBillWave style={{ marginRight: '5px', verticalAlign: 'middle' }} />
                             Method: <strong>{order.paymentMethod}</strong>

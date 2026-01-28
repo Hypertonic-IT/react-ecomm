@@ -1,17 +1,12 @@
 .hero {
-    height: 85vh;
+    height: 90vh;
+    /* Full screen height as requested */
+    min-height: 500px;
     width: 100%;
     position: relative;
     overflow: hidden;
-    color: #fff;
-}
-
-.hero-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: brightness(0.75);
-    transition: transform 10s ease;
+    color: #FFFFFF;
+    background-color: var(--off-white);
 }
 
 .hero-slide {
@@ -22,75 +17,101 @@
     left: 0;
 }
 
-/* Animations */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* Gradient overlay to ensure text visibility */
+.hero-slide::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Stronger Gradient for maximum contrast */
+    background: linear-gradient(to right,
+            rgba(0, 0, 0, 0.85) 0%,
+            rgba(0, 0, 0, 0.6) 50%,
+            rgba(0, 0, 0, 0.2) 100%);
+    z-index: 1;
 }
 
+.hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 10s ease;
+}
+
+/* Content Container */
 .hero-content {
     position: absolute;
     top: 50%;
-    left: 10%;
+    left: 8%;
     transform: translateY(-50%);
     z-index: 10;
-    max-width: 600px;
+    max-width: 700px;
+    padding-right: 20px;
+    text-align: left;
+    color: #FFFFFF;
+    /* Force White */
 }
 
 .hero-subtitle {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-    font-weight: 500;
-    letter-spacing: 2px;
+    font-family: var(--font-body);
+    font-size: 16px;
+    margin-bottom: 24px;
+    font-weight: 700;
+    letter-spacing: 3px;
     text-transform: uppercase;
-    opacity: 0;
-    animation: fadeIn 0.8s ease forwards 0.3s;
+    color: #FFFFFF;
+    /* White */
+    display: inline-block;
+    opacity: 0.95;
 }
 
 .hero-title {
-    font-size: 4.5rem;
+    font-family: var(--font-heading);
+    font-size: 5rem;
     font-weight: 800;
-    margin-bottom: 1.5rem;
+    margin-bottom: 32px;
     line-height: 1.1;
-    text-transform: uppercase;
-    opacity: 0;
-    animation: fadeIn 0.8s ease forwards 0.5s;
+    color: #FFFFFF;
+    /* White */
+    text-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+    /* Heavy Shadow */
 }
 
 .hero-btn {
-    padding: 18px 45px;
-    background-color: #fff;
-    color: #000;
+    display: inline-block;
+    /* Ensure it behaves like a button */
+    padding: 18px 48px;
+    background-color: #FFFFFF;
+    /* Solid White */
+    color: #000000;
+    /* Solid Black text */
     border: none;
-    font-size: 1rem;
+    font-family: var(--font-body);
+    font-size: 16px;
     font-weight: 700;
     cursor: pointer;
     text-transform: uppercase;
     letter-spacing: 1px;
     transition: all 0.3s ease;
-    opacity: 0;
-    animation: fadeIn 0.8s ease forwards 0.7s;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
 }
 
 .hero-btn:hover {
-    background-color: var(--accent, #d4a373);
-    color: #fff;
-    transform: translateY(-2px);
+    background-color: var(--accent);
+    color: #FFFFFF;
+    transform: translateY(-4px);
 }
 
 .hero-arrows {
     position: absolute;
-    bottom: 50px;
-    right: 50px;
+    bottom: 60px;
+    right: 60px;
     display: flex;
-    gap: 15px;
+    gap: 20px;
     z-index: 20;
 }
 
@@ -99,34 +120,49 @@
     height: 60px;
     background-color: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #FFFFFF;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     font-size: 1.2rem;
+    border-radius: 50%;
     transition: all 0.3s ease;
 }
 
 .arrow-btn:hover {
-    background-color: #fff;
-    color: #000;
+    background-color: #FFFFFF;
+    color: var(--primary);
+    transform: scale(1.1);
+}
+
+@media (max-width: 1024px) {
+    .hero-title {
+        font-size: 4rem;
+    }
 }
 
 @media (max-width: 768px) {
+    .hero {
+        height: 70vh;
+        /* Slightly smaller for mobile but substantial */
+        min-height: 400px;
+    }
+
     .hero-title {
         font-size: 3rem;
     }
 
     .hero-content {
-        left: 5%;
-        right: 5%;
+        left: 20px;
+        right: 20px;
         text-align: center;
+        max-width: 100%;
     }
 
     .hero-arrows {
-        bottom: 20px;
+        bottom: 30px;
         right: 20px;
     }
 }

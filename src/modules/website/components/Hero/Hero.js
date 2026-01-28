@@ -36,10 +36,10 @@ const Hero = () => {
             <AnimatePresence mode='wait'>
                 <motion.div
                     key={current}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                    initial={{ opacity: 0, scale: 1.2 }}
+                    animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.8 }}
+                    transition={{ duration: 1.5, ease: "easeOut" }}
                     className="hero-slide"
                 >
                     <img

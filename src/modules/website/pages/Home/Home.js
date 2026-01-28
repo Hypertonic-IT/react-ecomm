@@ -15,9 +15,37 @@ function Home() {
   const { products } = useShop();
 
   // Filter products for sections
-  // Filter products for sections and duplicate to ensure we have enough items to scroll
-  const trendingProducts = products.filter(p => p.isTrending);
-  const bestSellers = products.filter(p => p.rating > 4.5);
+
+  // 1. Trending Now
+  let trendingProducts = products.filter(p => p.isTrending);
+  if (trendingProducts.length === 0 && products.length > 0) {
+    trendingProducts = products.slice(0, 10);
+  }
+
+  // 2. Best Sellers
+  let bestSellers = products.filter(p => p.isBestSeller);
+  if (bestSellers.length === 0) {
+    // Fallback to rating if no manual best sellers
+    bestSellers = products.filter(p => p.rating > 4.5);
+  }
+  if (bestSellers.length === 0 && products.length > 0) {
+    // Final fallback
+    bestSellers = [...products].sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 10);
+  }
+
+  // 3. New Arrivals
+  let newArrivals = products.filter(p => p.isNewArrival);
+  if (newArrivals.length === 0 && products.length > 0) {
+    // Fallback to latest products
+    newArrivals = [...products].reverse().slice(0, 10);
+  }
+
+  // 4. Exclusive For You
+  let exclusive = products.filter(p => p.isExclusive);
+  if (exclusive.length === 0 && products.length > 0) {
+    // Fallback to random slice
+    exclusive = products.slice(0, 10);
+  }
 
   return (
     <>
@@ -32,9 +60,16 @@ function Home() {
       <main>
         <Hero />
         <CategorySlider />
+
+        {/* Added multiple sections for a 'fuller' feel */}
         <ProductSlider title="Trending Now" products={trendingProducts} />
+        <ProductSlider title="New Arrivals" products={newArrivals} />
+
         <PromotionalBanner />
+
         <ProductSlider title="Best Sellers" products={bestSellers} />
+        <ProductSlider title="Exclusive For You" products={exclusive} />
+
         <TrustSection />
         <Newsletter />
       </main>

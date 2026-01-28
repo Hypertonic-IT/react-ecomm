@@ -1,22 +1,21 @@
 
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom'; // Added useNavigate
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import TopBar from '../../components/TopBar/TopBar';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 import Newsletter from '../../components/Newsletter/Newsletter';
 import FilterSidebar from '../../components/FilterSidebar/FilterSidebar';
-import { products, categories } from '../../../../data/fashionData';
 import { useShop } from '../../../../context/ShopContext';
 import { useCurrency } from '../../../../context/CurrencyContext';
-import { FaHeart, FaEye } from 'react-icons/fa'; // Added FaEye
+import { FaHeart, FaEye } from 'react-icons/fa';
 import './Products.css';
 
 const Products = () => {
     const location = useLocation();
-    const navigate = useNavigate(); // Hook for navigation
-    const { addToCart, toggleWishlist, wishlist } = useShop();
+    const navigate = useNavigate();
+    const { addToCart, toggleWishlist, wishlist, products, categories } = useShop();
     const { formatPrice } = useCurrency();
 
     // Initial Filters State
@@ -27,7 +26,7 @@ const Products = () => {
     });
 
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 9;
+    const itemsPerPage = 12; // Increased slightly for better grid
 
     // Parse query params for initial category & search filter
     useEffect(() => {
@@ -66,7 +65,7 @@ const Products = () => {
     const sortedProducts = [...filteredProducts].sort((a, b) => {
         if (filters.sortBy === 'price-low') return a.price - b.price;
         if (filters.sortBy === 'price-high') return b.price - a.price;
-        if (filters.sortBy === 'newest') return (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0); // Simple boolean sort
+        if (filters.sortBy === 'newest') return (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0);
         return 0;
     });
 
@@ -109,38 +108,25 @@ const Products = () => {
                                         key={product.id}
                                         className="plp-card"
                                         onClick={() => navigate(`/product/${product.id}`)}
-                                        style={{ cursor: 'pointer' }}
                                     >
                                         <div className="plp-image-wrap">
+                                            {/* Wishlist Button */}
                                             <button
-                                                className="wishlist-btn"
-                                                style={{
-                                                    position: 'absolute', top: '10px', right: '10px',
-                                                    border: 'none', background: 'white', borderRadius: '50%',
-                                                    width: '30px', height: '30px', cursor: 'pointer', zIndex: 2,
-                                                    display: 'flex', justifyContent: 'center', alignItems: 'center',
-                                                    color: wishlist.includes(product.id) ? 'red' : '#333',
-                                                    boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
-                                                }}
+                                                className="plp-action-btn wishlist-btn-plp"
                                                 onClick={(e) => { e.stopPropagation(); toggleWishlist(product.id); }}
+                                                title="Add to Wishlist"
+                                                style={{ color: wishlist.includes(product.id) ? 'red' : '#333' }}
                                             >
-                                                <FaHeart />
+                                                <FaHeart size={14} />
                                             </button>
 
-                                            {/* NEW: Quick View Eye Icon */}
+                                            {/* Quick View Button */}
                                             <button
-                                                className="quick-view-plp"
+                                                className="plp-action-btn quick-view-btn-plp"
                                                 onClick={(e) => { e.stopPropagation(); navigate(`/product/${product.id}`); }}
-                                                style={{
-                                                    position: 'absolute', top: '50px', right: '10px',
-                                                    border: 'none', background: 'white', borderRadius: '50%',
-                                                    width: '30px', height: '30px', cursor: 'pointer', zIndex: 2,
-                                                    display: 'flex', justifyContent: 'center', alignItems: 'center',
-                                                    color: '#333', boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-                                                    transition: 'all 0.3s'
-                                                }}
+                                                title="Quick View"
                                             >
-                                                <FaEye />
+                                                <FaEye size={14} />
                                             </button>
 
                                             <img
@@ -150,20 +136,20 @@ const Products = () => {
                                                 onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80' }}
                                             />
                                         </div>
+
                                         <div className="plp-info">
                                             <div className="plp-category">{product.category}</div>
                                             <div className="plp-name">{product.name}</div>
-                                            <div className="plp-price">{formatPrice(product.price)}</div>
-                                            <button
-                                                style={{
-                                                    marginTop: '10px', width: '100%', padding: '8px',
-                                                    background: '#1a1a1a', color: '#fff', border: 'none',
-                                                    cursor: 'pointer', textTransform: 'uppercase', fontSize: '12px'
-                                                }}
-                                                onClick={(e) => { e.stopPropagation(); addToCart(product); }}
-                                            >
-                                                Add to Cart
-                                            </button>
+
+                                            <div className="plp-meta-row">
+                                                <div className="plp-price">{formatPrice(product.price)}</div>
+                                                <button
+                                                    className="plp-add-cart-btn"
+                                                    onClick={(e) => { e.stopPropagation(); addToCart(product); }}
+                                                >
+                                                    Add
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
@@ -171,6 +157,15 @@ const Products = () => {
 
                             {totalPages > 1 && (
                                 <div className="pagination">
+                                    <button
+                                        onClick={() => paginate(currentPage - 1)}
+                                        disabled={currentPage === 1}
+                                        className="page-btn prev-btn"
+                                        style={{ width: 'auto', padding: '0 12px', opacity: currentPage === 1 ? 0.5 : 1 }}
+                                    >
+                                        &larr; Prev
+                                    </button>
+
                                     {Array.from({ length: totalPages }, (_, i) => (
                                         <button
                                             key={i + 1}
@@ -180,6 +175,15 @@ const Products = () => {
                                             {i + 1}
                                         </button>
                                     ))}
+
+                                    <button
+                                        onClick={() => paginate(currentPage + 1)}
+                                        disabled={currentPage === totalPages}
+                                        className="page-btn next-btn"
+                                        style={{ width: 'auto', padding: '0 12px', opacity: currentPage === totalPages ? 0.5 : 1 }}
+                                    >
+                                        Next &rarr;
+                                    </button>
                                 </div>
                             )}
                         </>
@@ -188,7 +192,16 @@ const Products = () => {
                             <h3>No products found matching your filters.</h3>
                             <button
                                 onClick={() => setFilters({ categories: [], priceRange: { min: 0, max: 1000 }, sortBy: 'newest' })}
-                                style={{ marginTop: '20px', padding: '10px 20px', background: '#000', color: '#fff', border: 'none', cursor: 'pointer' }}
+                                style={{
+                                    marginTop: '20px',
+                                    padding: '12px 24px',
+                                    background: 'var(--primary)',
+                                    color: '#fff',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    borderRadius: '4px',
+                                    fontWeight: '600'
+                                }}
                             >
                                 Clear Filters
                             </button>
@@ -199,13 +212,6 @@ const Products = () => {
 
             <Newsletter />
             <Footer />
-
-            {/* Hover effect for eye icon in PLP */}
-            <style>{`
-                .quick-view-plp { opacity: 0; transform: translateX(10px); }
-                .plp-card:hover .quick-view-plp { opacity: 1; transform: translateX(0); }
-                .quick-view-plp:hover { background: #000 !important; color: #fff !important; }
-            `}</style>
         </div>
     );
 };

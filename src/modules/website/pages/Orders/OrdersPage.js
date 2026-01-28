@@ -97,7 +97,15 @@ const OrdersPage = () => {
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '5px' }}>
                                         <div style={{ fontSize: '14px', color: '#555' }}>
                                             <FaClock style={{ marginRight: '5px', verticalAlign: 'middle' }} />
-                                            Status: <strong>{order.isDelivered ? 'Delivered' : 'Processing'}</strong>
+                                            Status:
+                                            <strong style={{
+                                                marginLeft: '8px',
+                                                color: order.status === 'Delivered' ? '#10b981' : '#f59e0b',
+                                                textTransform: 'uppercase',
+                                                fontSize: '12px'
+                                            }}>
+                                                {order.status || (order.isDelivered ? 'Delivered' : 'Pending')}
+                                            </strong>
                                         </div>
                                         <div style={{ fontSize: '14px', color: '#555' }}>
                                             <FaMoneyBillWave style={{ marginRight: '5px', verticalAlign: 'middle' }} />

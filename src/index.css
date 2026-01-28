@@ -1,38 +1,120 @@
-:root {
-  /* Colors */
-  --primary: #1a1a1a;
-  --secondary: #f4f4f4;
-  --accent: #d4a373;
-  /* Gold/Bronze accent */
-  --text-dark: #333333;
-  --text-light: #666666;
-  --white: #ffffff;
-  --danger: #e74c3c;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-  /* Typography */
-  --font-main: 'Poppins', sans-serif;
+:root {
+  /* Modern Professional Color Palette (Clean & Bright) */
+  --primary: #000000;
+  /* Pure Black for authority */
+  --secondary: #FFFFFF;
+  /* Pure White */
+  --accent: #2563EB;
+  /* Royal Blue for trust/action (Professional standard) */
+  --accent-hover: #1D4ED8;
+
+  --text-dark: #111827;
+  /* Cool gray-black */
+  --text-medium: #4B5563;
+  /* Medium cool gray */
+  --text-light: #9CA3AF;
+  /* Light cool gray */
+
+  --white: #FFFFFF;
+  --off-white: #F9FAFB;
+  /* Very subtle cool gray for backgrounds */
+  --border-color: #E5E7EB;
+  /* Subtle borders */
+
+  --danger: #EF4444;
+  --success: #10B981;
+
+  /* UI Tokens */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  /* Slightly tighter radius for professional feel */
+  --radius-full: 9999px;
+
+  /* Typography - Unified Modern Sans-Serif */
+  --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
 
   /* Spacing */
-  --container-width: 1200px;
+  --container-width: 1280px;
+  --header-height: 72px;
 }
 
 body {
-  font-family: var(--font-main);
+  font-family: var(--font-body);
   color: var(--text-dark);
   background-color: var(--white);
   margin: 0;
   padding: 0;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Crisper text on Mac */
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  color: var(--text-dark);
+  font-weight: 700;
+  /* Bolder headings */
+  margin-top: 0;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+  /* Tight tracking for modern feel */
 }
 
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+p {
+  color: var(--text-medium);
+  margin-bottom: 1.5rem;
+}
+
+/* Update global button styles for brighter look */
+.btn-primary {
+  background-color: var(--primary);
+  color: var(--white);
+  border: 1px solid var(--primary);
+}
+
+.btn-primary:hover {
+  background-color: var(--accent);
+  /* Pop of color on hover */
+  border-color: var(--accent);
+  color: var(--white);
+}
+
+.section-padding {
+  padding: 60px 0;
+  /* More expansive whitespace */
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  padding: 14px 32px;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+  background-color: var(--primary);
+  color: var(--white);
 }
 
 /* Header Utility */
@@ -42,10 +124,4 @@ ul {
 
 .header-icon:hover {
   color: var(--accent) !important;
-}
-
-.container {
-  max-width: var(--container-width);
-  margin: 0 auto;
-  padding: 0 20px;
 }

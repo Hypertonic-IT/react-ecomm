@@ -34,9 +34,10 @@ const Overview = () => {
 
     // Calculate Stats
     const totalOrders = orders.length;
-    const completedOrders = orders.filter(o => o.isDelivered).length;
-    const pendingOrders = orders.filter(o => !o.isDelivered && !o.isPaid).length; // Assuming unpaid and undelivered is pending
-    const canceledOrders = 0; // Backend doesn't support 'canceled' status explicitly yet, defaulting 0
+    const completedOrders = orders.filter(o => o.status === 'Delivered' || o.isDelivered).length;
+    const canceledOrders = orders.filter(o => o.status === 'Cancelled').length;
+    const pendingOrders = totalOrders - completedOrders - canceledOrders;
+
     // Mock reviews count for now
     const totalReviews = 0;
 
@@ -53,21 +54,22 @@ const Overview = () => {
     const recentOrders = orders.slice(0, 5);
 
     // Mock Data for Recent Reviews (Since review system doesn't exist yet)
-    const recentReviews = [
-        // Keeping it empty or static as per request "real data". If no real data, show empty/0.
-        // User said: "jo user ka nhi hai use 0 dikha do". So if no reviews, show empty.
-    ];
+    const recentReviews = [];
 
     const getStatusColor = (order) => {
-        if (order.isDelivered) return '#2ecc71';
-        if (order.isPaid) return '#3498db';
-        return '#f39c12'; // Pending
+        const s = order.status || (order.isDelivered ? 'Delivered' : 'Pending');
+        switch (s) {
+            case 'Delivered': return '#2ecc71';
+            case 'Cancelled': return '#e74c3c';
+            case 'Shipped': return '#3498db';
+            case 'Processing': return '#2980b9';
+            case 'Packed': return '#8e44ad';
+            default: return '#f39c12';
+        }
     };
 
     const getStatusText = (order) => {
-        if (order.isDelivered) return 'Delivered';
-        if (order.isPaid) return 'Paid / Processing';
-        return 'Pending';
+        return order.status || (order.isDelivered ? 'Delivered' : 'Pending');
     };
 
     return (
