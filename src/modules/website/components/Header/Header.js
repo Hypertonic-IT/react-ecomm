@@ -62,6 +62,11 @@ const Header = () => {
         ];
     };
 
+    const displayCategories = React.useMemo(() => {
+        const headerCats = categories.filter(c => c.showInHeader);
+        return headerCats.length > 0 ? headerCats : categories.slice(0, 5);
+    }, [categories]);
+
     return (
         <header className="header" onMouseLeave={() => setActiveMenu(null)}>
             <div className="nav-container">
@@ -77,7 +82,7 @@ const Header = () => {
 
                 {/* DESKTOP MENU */}
                 <nav className="desktop-menu">
-                    {categories.map((cat) => (
+                    {displayCategories.map((cat) => (
                         <Link
                             key={cat._id || cat.id}
                             to={`/products?category=${cat.name || cat.title}`}
@@ -111,20 +116,13 @@ const Header = () => {
                                             setActiveMenu(null);
                                         }
                                     }}
-                                    style={{
-                                        border: 'none',
-                                        borderBottom: '1px solid #000',
-                                        padding: '5px',
-                                        outline: 'none',
-                                        width: '100%',
-                                        fontSize: '14px'
-                                    }}
+                                    style={{ width: '100%' }}
+                                    className="search-input-header"
                                 />
                             </motion.div>
-                            <FiSearch
-                                onClick={toggleSearch}
-                                className="header-icon"
-                            />
+                            <div className="header-icon" onClick={toggleSearch}>
+                                <FiSearch />
+                            </div>
                         </div>
                     </div>
                     <div className="icon-wrap">
@@ -177,7 +175,7 @@ const Header = () => {
                         exit={{ x: '-100%' }}
                         transition={{ type: 'tween', duration: 0.3 }}
                     >
-                        {categories.map((cat) => (
+                        {displayCategories.map((cat) => (
                             <Link
                                 key={cat._id || cat.id}
                                 to={`/products?category=${cat.name || cat.title}`}

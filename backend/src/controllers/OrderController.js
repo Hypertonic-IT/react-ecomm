@@ -2,10 +2,6 @@ const Order = require('../models/Order');
 const User = require('../models/User');
 
 const addOrderItems = async (req, res) => {
-    // In production, get user from req.user
-    let userEmail = req.headers['user-id'];
-    if (userEmail) userEmail = userEmail.toLowerCase();
-
     const {
         orderItems,
         shippingAddress,
@@ -16,16 +12,7 @@ const addOrderItems = async (req, res) => {
         totalPrice
     } = req.body;
 
-    if (!userEmail) {
-        return res.status(401).json({ success: false, message: 'Unauthorized' });
-    }
-
     try {
-        const user = await User.findOne({ emailOrMobile: userEmail });
-        if (!user) {
-            return res.status(404).json({ success: false, message: 'User not found' });
-        }
-
         if (orderItems && orderItems.length === 0) {
             res.status(400);
             throw new Error('No order items');
@@ -33,7 +20,7 @@ const addOrderItems = async (req, res) => {
         } else {
             const order = new Order({
                 orderItems,
-                user: user._id,
+                user: req.user._id,
                 shippingAddress,
                 paymentMethod,
                 itemsPrice,
@@ -53,21 +40,8 @@ const addOrderItems = async (req, res) => {
 };
 
 const getMyOrders = async (req, res) => {
-    // In production, get user from req.user
-    let userEmail = req.headers['user-id'];
-    if (userEmail) userEmail = userEmail.toLowerCase();
-
-    if (!userEmail) {
-        return res.status(401).json({ success: false, message: 'Unauthorized' });
-    }
-
     try {
-        const user = await User.findOne({ emailOrMobile: userEmail });
-        if (!user) {
-            return res.status(404).json({ success: false, message: 'User not found' });
-        }
-
-        const orders = await Order.find({ user: user._id }).sort({ createdAt: -1 });
+        const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 });
 
         res.json({ success: true, orders });
     } catch (error) {

@@ -16,6 +16,7 @@ export const ShopProvider = ({ children }) => {
     const [isTrackOrderOpen, setIsTrackOrderOpen] = useState(false);
 
     const [categories, setCategories] = useState([]);
+    const [appliedCoupon, setAppliedCoupon] = useState(null);
 
     // Fetch Categories
     useEffect(() => {
@@ -67,7 +68,7 @@ export const ShopProvider = ({ children }) => {
         fetchProducts();
     }, []);
 
-    // Load cart from local storage on init
+    // Load cart and coupon from local storage on init
     useEffect(() => {
         const savedCart = localStorage.getItem('cart');
         if (savedCart) {
@@ -78,12 +79,29 @@ export const ShopProvider = ({ children }) => {
                 localStorage.removeItem('cart'); // Clear corrupted data
             }
         }
+
+        const savedCoupon = localStorage.getItem('appliedCoupon');
+        if (savedCoupon) {
+            try {
+                setAppliedCoupon(JSON.parse(savedCoupon));
+            } catch (e) {
+                localStorage.removeItem('appliedCoupon');
+            }
+        }
     }, []);
 
-    // Save cart to local storage whenever it changes
+    // Save cart and coupon to local storage whenever they change
     useEffect(() => {
         localStorage.setItem('cart', JSON.stringify(cart));
     }, [cart]);
+
+    useEffect(() => {
+        if (appliedCoupon) {
+            localStorage.setItem('appliedCoupon', JSON.stringify(appliedCoupon));
+        } else {
+            localStorage.removeItem('appliedCoupon');
+        }
+    }, [appliedCoupon]);
 
     const addToCart = (product) => {
         // Find existing quantity in cart to check total
@@ -160,9 +178,50 @@ export const ShopProvider = ({ children }) => {
         return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
     };
 
+    const applyCoupon = async (code, userId = null) => {
+        try {
+            const response = await fetch('http://localhost:5001/api/coupons/validate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code,
+                    cartTotal: getCartTotal(),
+                    cartItems: cart.map(item => ({
+                        productId: item.id, // Backend model expects 'productId'
+                        qty: item.quantity,
+                        price: item.price,
+                        category: item.category
+                    })),
+                    userId
+                })
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                setAppliedCoupon(data.data);
+                setToast({ message: 'Coupon applied successfully!', type: 'success' });
+                return { success: true };
+            } else {
+                setToast({ message: data.message || 'Invalid coupon', type: 'error' });
+                return { success: false, message: data.message };
+            }
+        } catch (error) {
+            console.error("Coupon validation error:", error);
+            setToast({ message: 'Error applying coupon', type: 'error' });
+            return { success: false, message: 'Server error' };
+        }
+    };
+
+    const removeCoupon = () => {
+        setAppliedCoupon(null);
+        setToast({ message: 'Coupon removed', type: 'info' });
+    };
+
     const clearCart = () => {
         setCart([]);
+        setAppliedCoupon(null);
         localStorage.removeItem('cart');
+        localStorage.removeItem('appliedCoupon');
     };
 
     const value = {
@@ -178,9 +237,13 @@ export const ShopProvider = ({ children }) => {
         setUser,
         getCartTotal,
         clearCart,
+        appliedCoupon,
+        applyCoupon,
+        removeCoupon,
         isTrackOrderOpen,
         openTrackOrder: () => setIsTrackOrderOpen(true),
-        closeTrackOrder: () => setIsTrackOrderOpen(false)
+        closeTrackOrder: () => setIsTrackOrderOpen(false),
+        showToast: (message, type = 'success') => setToast({ message, type })
     };
 
     return (

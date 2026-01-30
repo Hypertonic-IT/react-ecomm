@@ -46,11 +46,24 @@ const protect = async (req, res, next) => {
 };
 
 const admin = (req, res, next) => {
-    if (req.user && req.user.isAdmin) {
+    if (req.user && (req.user.isAdmin || ['super_admin', 'product_manager', 'sales_manager', 'marketing_manager'].includes(req.user.role))) {
         next();
     } else {
         res.status(401).json({ message: 'Not authorized as an admin' });
     }
 };
 
-module.exports = { protect, admin };
+const checkRole = (roles) => {
+    return (req, res, next) => {
+        if (req.user && roles.includes(req.user.role)) {
+            next();
+        } else {
+            res.status(403).json({
+                success: false,
+                message: `Forbidden: Access denied for role '${req.user ? req.user.role : 'none'}'`
+            });
+        }
+    };
+};
+
+module.exports = { protect, admin, checkRole };

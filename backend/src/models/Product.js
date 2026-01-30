@@ -80,7 +80,15 @@ const productSchema = mongoose.Schema({
     // Advanced fields
     colors: [String],
 
-    sizes: [String]
+    sizes: [String],
+
+    // Rich Data Content
+    shortDescription: { type: String },
+    specifications: [{
+        name: String,
+        value: String
+    }],
+    shippingInfo: { type: String }
 }, {
     timestamps: true
 });

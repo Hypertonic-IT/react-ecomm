@@ -20,6 +20,30 @@ exports.getAllCoupons = async (req, res) => {
 };
 
 /**
+ * Get active coupons (Public)
+ */
+exports.getActiveCoupons = async (req, res) => {
+    try {
+        const now = new Date();
+        const coupons = await Coupon.find({
+            isActive: true,
+            startDate: { $lte: now },
+            endDate: { $gte: now }
+        })
+            .select('code description discountType discountValue minOrderValue maxDiscount') // Select only safe fields
+            .sort({ endDate: 1 });
+
+        res.json({
+            success: true,
+            data: coupons
+        });
+    } catch (error) {
+        console.error('Get active coupons error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+/**
  * Get single coupon by ID (Admin)
  */
 exports.getCouponById = async (req, res) => {
@@ -297,4 +321,14 @@ exports.getCouponStats = async (req, res) => {
     }
 };
 
-module.exports = exports;
+module.exports = {
+    getAllCoupons: exports.getAllCoupons,
+    getCouponById: exports.getCouponById,
+    createCoupon: exports.createCoupon,
+    updateCoupon: exports.updateCoupon,
+    deleteCoupon: exports.deleteCoupon,
+    validateCoupon: exports.validateCoupon,
+    recordCouponUsage: exports.recordCouponUsage,
+    getCouponStats: exports.getCouponStats,
+    getActiveCoupons: exports.getActiveCoupons
+};

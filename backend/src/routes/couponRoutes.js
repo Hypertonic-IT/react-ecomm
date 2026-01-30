@@ -3,6 +3,11 @@ const router = express.Router();
 const couponController = require('../controllers/CouponController');
 
 // ============================================
+// PUBLIC ROUTES
+// ============================================
+router.get('/active', couponController.getActiveCoupons);
+
+// ============================================
 // ADMIN ROUTES
 // ============================================
 
@@ -60,6 +65,7 @@ router.delete('/:id', couponController.deleteCoupon);
  * @body    { code, cartTotal, cartItems, userId }
  */
 router.post('/validate', couponController.validateCoupon);
+
 
 /**
  * @route   POST /api/coupons/record-usage

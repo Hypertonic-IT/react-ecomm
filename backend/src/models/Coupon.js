@@ -214,9 +214,8 @@ couponSchema.methods.recordUsage = async function (userId, orderId, discountAmou
 };
 
 // Update timestamp on save
-couponSchema.pre('save', function (next) {
+couponSchema.pre('save', async function () {
     this.updatedAt = new Date();
-    next();
 });
 
 const Coupon = mongoose.model('Coupon', couponSchema);

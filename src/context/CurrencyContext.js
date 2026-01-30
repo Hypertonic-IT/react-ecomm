@@ -17,7 +17,7 @@ const symbols = {
 };
 
 export const CurrencyProvider = ({ children }) => {
-    const [selectedLocale, setSelectedLocale] = useState({ code: 'EN', currency: 'USD' });
+    const [selectedLocale, setSelectedLocale] = useState({ code: 'IN', currency: 'INR' });
 
     const formatPrice = (priceInUSD) => {
         const currency = selectedLocale.currency;

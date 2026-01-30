@@ -73,7 +73,7 @@ const AdminLayout = () => {
                         {/* Notifications */}
                         <div className="notification-wrapper">
                             <div className="notification-badge">3</div>
-                            <FaBell className="header-icon" size={20} />
+                            <FaBell className="header-icon" size={28} />
                         </div>
 
                         {/* Profile Dropdown */}

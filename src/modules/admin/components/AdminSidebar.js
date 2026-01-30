@@ -4,10 +4,14 @@ import { NavLink } from 'react-router-dom';
 import {
     FaHome, FaBoxOpen, FaShoppingBag, FaUsers, FaCog, FaSignOutAlt,
     FaList, FaClipboardList, FaTags, FaStar, FaChartLine, FaLayerGroup,
-    FaTimes
+    FaTimes, FaUserShield
 } from 'react-icons/fa';
 
+import { useAdminAuth } from '../../../context/AdminAuthContext';
+
 const AdminSidebar = ({ isOpen, onClose }) => {
+    const { user } = useAdminAuth();
+
     return (
         <aside className={`admin-sidebar ${isOpen ? 'open' : ''}`}>
             <div className="admin-sidebar-header">
@@ -43,6 +47,13 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                     <span>Customers</span>
                 </NavLink>
 
+                {user && (user.role === 'super_admin' || user.isAdmin) && (
+                    <NavLink to="/admin/staff" onClick={onClose} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
+                        <FaUserShield className="admin-nav-icon" />
+                        <span>Staff Management</span>
+                    </NavLink>
+                )}
+
                 <div className="nav-section-label">Management</div>
                 <NavLink to="/admin/inventory" onClick={onClose} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
                     <FaClipboardList className="admin-nav-icon" />
@@ -58,9 +69,9 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                 </NavLink>
 
                 <div className="nav-section-label">System</div>
-                <NavLink to="/admin/analytics" onClick={onClose} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
+                <NavLink to="/admin/reports" onClick={onClose} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
                     <FaChartLine className="admin-nav-icon" />
-                    <span>Reports</span>
+                    <span>Reports & Analytics</span>
                 </NavLink>
                 <NavLink to="/admin/content" onClick={onClose} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
                     <FaLayerGroup className="admin-nav-icon" />

@@ -96,7 +96,7 @@ const TopBar = () => {
         <div style={styles.bar}>
             <div style={styles.container}>
                 <div style={styles.link}>7 Days Easy Return</div>
-                <div style={styles.centerText}>Free Shipping on Orders Above $99</div>
+                <div style={styles.centerText}>Free Shipping on Orders Above ₹8,299</div>
 
                 <div style={styles.rightSide} ref={menuRef}>
                     <div

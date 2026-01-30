@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaPlus, FaEdit, FaTrash, FaSearch } from 'react-icons/fa';
 import { useAdminAuth } from '../../../../context/AdminAuthContext';
+import AdminSelect from '../../components/AdminSelect';
+import AdminPagination from '../../components/AdminPagination'; // Added
 import '../../admin.css';
 
 const ProductList = () => {
@@ -10,7 +12,7 @@ const ProductList = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const productsPerPage = 15;
+    const [productsPerPage, setProductsPerPage] = useState(10); // Changed to state
 
     // Fetch products from backend
     useEffect(() => {
@@ -85,19 +87,27 @@ const ProductList = () => {
     return (
         <div className="admin-page-container fade-in">
             <div className="table-container">
-                {/* Table Toolbar */}
-                <div className="table-toolbar">
+                {/* Standardized Toolbar */}
+                <div className="table-toolbar" style={{ marginBottom: '16px' }}>
                     <div className="entries-wrapper">
                         <span>Showing</span>
-                        <select className="entries-select" defaultValue="15">
-                            <option value="15">15</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                        </select>
+                        <AdminSelect
+                            options={[
+                                { value: 10, label: '10' },
+                                { value: 25, label: '25' },
+                                { value: 50, label: '50' }
+                            ]}
+                            value={productsPerPage}
+                            onChange={(val) => setProductsPerPage(val)}
+                            styles={{
+                                control: (base) => ({ ...base, minHeight: '32px', width: '70px', fontSize: '12px' })
+                            }}
+                            isSearchable={false}
+                        />
                         <span>entries</span>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                         <div className="search-container">
                             <input
                                 type="text"
@@ -113,7 +123,7 @@ const ProductList = () => {
                         </div>
 
                         <Link to="/admin/products/new" className="admin-btn-outline">
-                            <FaPlus size={12} /> Add new
+                            <FaPlus size={12} /> Add Product
                         </Link>
                     </div>
                 </div>
@@ -148,7 +158,7 @@ const ProductList = () => {
                                             <div style={{ fontWeight: 600, color: 'var(--admin-text)' }}>{product.name}</div>
                                             <div style={{ fontSize: '0.75rem', color: 'var(--admin-text-secondary)' }}>ID: {product._id.substring(0, 8)}...</div>
                                         </td>
-                                        <td style={{ fontWeight: '600' }}>${product.price}</td>
+                                        <td style={{ fontWeight: '600' }}>₹{product.price}</td>
                                         <td><span className="status-badge status-primary">{product.category}</span></td>
                                         <td>
                                             {product.countInStock > 0 ? (
@@ -188,30 +198,12 @@ const ProductList = () => {
                             </tbody>
                         </table>
 
-                        {/* Pagination Controls */}
-                        {totalPages > 1 && (
-                            <div style={{ padding: '20px', borderTop: '1px solid var(--admin-border)', display: 'flex', justifyContent: 'center', gap: '10px' }}>
-                                <button
-                                    onClick={() => paginate(currentPage - 1)}
-                                    disabled={currentPage === 1}
-                                    className="admin-btn-secondary admin-btn-sm"
-                                    style={{ opacity: currentPage === 1 ? 0.5 : 1 }}
-                                >
-                                    Previous
-                                </button>
-                                <span style={{ display: 'flex', alignItems: 'center', fontSize: '0.9rem', color: 'var(--admin-text)' }}>
-                                    Page {currentPage} of {totalPages}
-                                </span>
-                                <button
-                                    onClick={() => paginate(currentPage + 1)}
-                                    disabled={currentPage === totalPages}
-                                    className="admin-btn-secondary admin-btn-sm"
-                                    style={{ opacity: currentPage === totalPages ? 0.5 : 1 }}
-                                >
-                                    Next
-                                </button>
-                            </div>
-                        )}
+                        <AdminPagination
+                            currentPage={currentPage}
+                            totalItems={filteredProducts.length}
+                            itemsPerPage={productsPerPage}
+                            onPageChange={paginate}
+                        />
                     </>
                 )
                 }

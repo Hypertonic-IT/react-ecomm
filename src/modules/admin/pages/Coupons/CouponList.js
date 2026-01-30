@@ -6,12 +6,16 @@ import {
 } from 'react-icons/fa';
 import '../../admin.css';
 import './Coupons.css';
+import AdminSelect from '../../components/AdminSelect';
+import AdminPagination from '../../components/AdminPagination'; // Added
 
 const CouponList = () => {
     const [coupons, setCoupons] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState('All');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [entriesPerPage, setEntriesPerPage] = useState(10);
 
     useEffect(() => {
         fetchCoupons();
@@ -55,6 +59,11 @@ const CouponList = () => {
 
         return matchesSearch && matchesFilter;
     });
+
+    // Pagination
+    const indexOfLastEntry = currentPage * entriesPerPage;
+    const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+    const currentCoupons = filteredCoupons.slice(indexOfFirstEntry, indexOfLastEntry);
 
     // Calculate stats
     const stats = {
@@ -157,30 +166,53 @@ const CouponList = () => {
 
             {/* Action Bar & Table */}
             <div className="table-container" style={{ marginTop: '24px' }}>
-                <div className="table-toolbar">
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flex: 1 }}>
+                {/* Standardized Toolbar */}
+                <div className="table-toolbar" style={{ marginBottom: '16px' }}>
+                    {/* Add Entries Select */}
+                    <div className="entries-wrapper">
+                        <span>Showing</span>
+                        <AdminSelect
+                            options={[
+                                { value: 10, label: '10' },
+                                { value: 25, label: '25' },
+                                { value: 50, label: '50' }
+                            ]}
+                            value={entriesPerPage}
+                            onChange={(val) => { setEntriesPerPage(val); setCurrentPage(1); }}
+                            styles={{
+                                control: (base) => ({ ...base, minHeight: '32px', width: '70px', fontSize: '12px' })
+                            }}
+                            isSearchable={false}
+                        />
+                        <span>entries</span>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                         <div className="search-container">
                             <input
                                 type="text"
                                 placeholder="Search by coupon code or name..."
                                 className="search-input-modern"
                                 value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                             />
                             <FaSearch className="search-icon-modern" size={14} />
                         </div>
 
-                        <select
-                            value={filterStatus}
-                            onChange={(e) => setFilterStatus(e.target.value)}
-                            className="filter-select"
-                        >
-                            <option value="All">All Status</option>
-                            <option value="Active">Active</option>
-                            <option value="Upcoming">Upcoming</option>
-                            <option value="Expired">Expired</option>
-                            <option value="Inactive">Inactive</option>
-                        </select>
+                        <div style={{ width: '180px' }}>
+                            <AdminSelect
+                                options={[
+                                    { value: 'All', label: 'All Status' },
+                                    { value: 'Active', label: 'Active' },
+                                    { value: 'Upcoming', label: 'Upcoming' },
+                                    { value: 'Expired', label: 'Expired' },
+                                    { value: 'Inactive', label: 'Inactive' }
+                                ]}
+                                value={filterStatus}
+                                onChange={(val) => { setFilterStatus(val); setCurrentPage(1); }}
+                                placeholder="Filter Status"
+                            />
+                        </div>
                     </div>
 
                     <Link to="/admin/coupons/new" className="admin-btn-outline">
@@ -203,127 +235,135 @@ const CouponList = () => {
                         </Link>
                     </div>
                 ) : (
-                    <table className="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Coupon Code</th>
-                                <th>Name</th>
-                                <th>Discount</th>
-                                <th>Validity</th>
-                                <th>Usage</th>
-                                <th>Status</th>
-                                <th style={{ textAlign: 'right' }}>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredCoupons.map(coupon => {
-                                const status = getCouponStatus(coupon);
-                                const usagePercent = coupon.usageLimit > 0
-                                    ? (coupon.usedCount / coupon.usageLimit) * 100
-                                    : 0;
+                    <>
+                        <table className="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Coupon Code</th>
+                                    <th>Name</th>
+                                    <th>Discount</th>
+                                    <th>Validity</th>
+                                    <th>Usage</th>
+                                    <th>Status</th>
+                                    <th style={{ textAlign: 'right' }}>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {currentCoupons.map(coupon => {
+                                    const status = getCouponStatus(coupon);
+                                    const usagePercent = coupon.usageLimit > 0
+                                        ? (coupon.usedCount / coupon.usageLimit) * 100
+                                        : 0;
 
-                                return (
-                                    <tr key={coupon._id} className={status === 'expired' ? 'expired-row' : ''}>
-                                        <td>
-                                            <div className="coupon-code-cell">
-                                                {coupon.code}
-                                            </div>
-                                        </td>
-                                        <td style={{ fontWeight: 500 }}>{coupon.name}</td>
-                                        <td>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                                {coupon.discountType === 'percentage' ? (
-                                                    <>
-                                                        <FaPercentage size={12} color="#3b82f6" />
-                                                        <span style={{ fontWeight: 600 }}>{coupon.discountValue}%</span>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <FaDollarSign size={12} color="#10b981" />
-                                                        <span style={{ fontWeight: 600 }}>${coupon.discountValue}</span>
-                                                    </>
-                                                )}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div style={{ fontSize: '0.75rem' }}>
-                                                <div>{new Date(coupon.startDate).toLocaleDateString()}</div>
-                                                <div style={{ color: 'var(--admin-text-secondary)' }}>
-                                                    to {new Date(coupon.endDate).toLocaleDateString()}
+                                    return (
+                                        <tr key={coupon._id} className={status === 'expired' ? 'expired-row' : ''}>
+                                            <td>
+                                                <div className="coupon-code-cell">
+                                                    {coupon.code}
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div className="usage-cell">
-                                                <div className="usage-text">
-                                                    {coupon.usedCount} / {coupon.usageLimit || '∞'}
+                                            </td>
+                                            <td style={{ fontWeight: 500 }}>{coupon.name}</td>
+                                            <td>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                    {coupon.discountType === 'percentage' ? (
+                                                        <>
+                                                            <FaPercentage size={12} color="#3b82f6" />
+                                                            <span style={{ fontWeight: 600 }}>{coupon.discountValue}%</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <FaDollarSign size={12} color="#10b981" />
+                                                            <span style={{ fontWeight: 600 }}>${coupon.discountValue}</span>
+                                                        </>
+                                                    )}
                                                 </div>
-                                                {coupon.usageLimit > 0 && (
-                                                    <div className="usage-bar">
-                                                        <div
-                                                            className="usage-bar-fill"
-                                                            style={{
-                                                                width: `${Math.min(usagePercent, 100)}%`,
-                                                                backgroundColor: usagePercent > 80 ? '#ef4444' : '#3b82f6'
-                                                            }}
-                                                        ></div>
+                                            </td>
+                                            <td>
+                                                <div style={{ fontSize: '0.75rem' }}>
+                                                    <div>{new Date(coupon.startDate).toLocaleDateString()}</div>
+                                                    <div style={{ color: 'var(--admin-text-secondary)' }}>
+                                                        to {new Date(coupon.endDate).toLocaleDateString()}
                                                     </div>
-                                                )}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                                <span className={`stock-indicator stock-${status === 'active' ? 'in' :
-                                                    status === 'upcoming' ? 'low' : 'out'
-                                                    }`}></span>
-                                                <span className={`status-badge status-${status === 'active' ? 'success' :
-                                                    status === 'upcoming' ? 'primary' :
-                                                        status === 'expired' ? 'neutral' : 'danger'
-                                                    }`}>
-                                                    {status.charAt(0).toUpperCase() + status.slice(1)}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td style={{ textAlign: 'right' }}>
-                                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
-                                                <Link
-                                                    to={`/admin/coupons/${coupon._id}`}
-                                                    className="admin-btn-icon"
-                                                    title="View Details"
-                                                >
-                                                    <FaEye />
-                                                </Link>
-                                                <Link
-                                                    to={`/admin/coupons/edit/${coupon._id}`}
-                                                    className="admin-btn-icon"
-                                                    title="Edit"
-                                                >
-                                                    <FaEdit />
-                                                </Link>
-                                                <button
-                                                    onClick={() => toggleCouponStatus(coupon._id, coupon.isActive)}
-                                                    className="admin-btn-icon"
-                                                    title={coupon.isActive ? 'Deactivate' : 'Activate'}
-                                                >
-                                                    {coupon.isActive ? <FaToggleOn color="#10b981" /> : <FaToggleOff />}
-                                                </button>
-                                                <button
-                                                    onClick={() => deleteCoupon(coupon._id)}
-                                                    className="admin-btn-danger"
-                                                    title="Delete"
-                                                >
-                                                    <FaTrash />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div className="usage-cell">
+                                                    <div className="usage-text">
+                                                        {coupon.usedCount} / {coupon.usageLimit || '∞'}
+                                                    </div>
+                                                    {coupon.usageLimit > 0 && (
+                                                        <div className="usage-bar">
+                                                            <div
+                                                                className="usage-bar-fill"
+                                                                style={{
+                                                                    width: `${Math.min(usagePercent, 100)}%`,
+                                                                    backgroundColor: usagePercent > 80 ? '#ef4444' : '#3b82f6'
+                                                                }}
+                                                            ></div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                    <span className={`stock-indicator stock-${status === 'active' ? 'in' :
+                                                        status === 'upcoming' ? 'low' : 'out'
+                                                        }`}></span>
+                                                    <span className={`status-badge status-${status === 'active' ? 'success' :
+                                                        status === 'upcoming' ? 'primary' :
+                                                            status === 'expired' ? 'neutral' : 'danger'
+                                                        }`}>
+                                                        {status.charAt(0).toUpperCase() + status.slice(1)}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td style={{ textAlign: 'right' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
+                                                    <Link
+                                                        to={`/admin/coupons/${coupon._id}`}
+                                                        className="admin-btn-icon"
+                                                        title="View Details"
+                                                    >
+                                                        <FaEye />
+                                                    </Link>
+                                                    <Link
+                                                        to={`/admin/coupons/edit/${coupon._id}`}
+                                                        className="admin-btn-icon"
+                                                        title="Edit"
+                                                    >
+                                                        <FaEdit />
+                                                    </Link>
+                                                    <button
+                                                        onClick={() => toggleCouponStatus(coupon._id, coupon.isActive)}
+                                                        className="admin-btn-icon"
+                                                        title={coupon.isActive ? 'Deactivate' : 'Activate'}
+                                                    >
+                                                        {coupon.isActive ? <FaToggleOn color="#10b981" /> : <FaToggleOff />}
+                                                    </button>
+                                                    <button
+                                                        onClick={() => deleteCoupon(coupon._id)}
+                                                        className="admin-btn-danger"
+                                                        title="Delete"
+                                                    >
+                                                        <FaTrash />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                        <AdminPagination
+                            currentPage={currentPage}
+                            totalItems={filteredCoupons.length}
+                            itemsPerPage={entriesPerPage}
+                            onPageChange={setCurrentPage}
+                        />
+                    </>
                 )}
             </div>
-        </div>
+        </div >
     );
 };
 

@@ -2,23 +2,49 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FaSave, FaArrowLeft, FaImages } from 'react-icons/fa';
+import AdminSelect from '../../components/AdminSelect';
+
+import { useShop } from '../../../../context/ShopContext';
 import '../../admin.css';
 
 const CategoryAddEdit = () => {
     const { id } = useParams();
     const isEditMode = !!id;
     const navigate = useNavigate();
+    const { showToast } = useShop(); // Import showToast
+
+    // Track stats for validation
+    const [headerCategoryCount, setHeaderCategoryCount] = useState(0);
 
     const [formData, setFormData] = useState({
         name: '',
         slug: '',
         image: '',
         description: '',
-        status: 'Active'
+        status: 'Active',
+        showInHeader: false
     });
 
     const [loading, setLoading] = useState(false);
     const [previewImage, setPreviewImage] = useState(null);
+
+    // Fetch all categories to check limit
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch('http://localhost:5001/api/categories');
+                if (response.ok) {
+                    const data = await response.json();
+                    // Count how many have showInHeader=true, EXCLUDING current one if editing
+                    const count = data.filter(c => c.showInHeader && c._id !== id).length;
+                    setHeaderCategoryCount(count);
+                }
+            } catch (error) {
+                console.error("Failed to fetch categories stats:", error);
+            }
+        };
+        fetchCategories();
+    }, [id]);
 
     // Fetch category details if in edit mode
     useEffect(() => {
@@ -34,7 +60,8 @@ const CategoryAddEdit = () => {
                             slug: data.slug,
                             image: data.image || '',
                             description: data.description || '',
-                            status: data.status || 'Active'
+                            status: data.status || 'Active',
+                            showInHeader: data.showInHeader || false
                         });
                         setPreviewImage(data.image);
                     } else {
@@ -49,10 +76,18 @@ const CategoryAddEdit = () => {
     }, [id, isEditMode]);
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value, type, checked } = e.target;
+
+        if (name === 'showInHeader' && checked) {
+            if (headerCategoryCount >= 5) {
+                showToast("Cannot add more. Limit of 5 categories in header reached.", "error");
+                return; // Prevent change
+            }
+        }
+
         setFormData(prev => ({
             ...prev,
-            [name]: value
+            [name]: type === 'checkbox' ? checked : value
         }));
     };
 
@@ -198,15 +233,31 @@ const CategoryAddEdit = () => {
 
                         <div className="form-group">
                             <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Visibility</label>
-                            <select
-                                name="status"
+                            <AdminSelect
+                                options={[
+                                    { value: 'Active', label: 'Active' },
+                                    { value: 'Inactive', label: 'Inactive' }
+                                ]}
                                 value={formData.status}
-                                onChange={handleChange}
-                                style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
-                            >
-                                <option value="Active">Active</option>
-                                <option value="Inactive">Inactive</option>
-                            </select>
+                                onChange={(val) => setFormData(prev => ({ ...prev, status: val }))}
+                                placeholder="Select Status"
+                            />
+                        </div>
+
+                        <div className="form-group" style={{ marginTop: '20px' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--admin-text)', cursor: 'pointer' }}>
+                                <input
+                                    type="checkbox"
+                                    name="showInHeader"
+                                    checked={formData.showInHeader}
+                                    onChange={handleChange}
+                                    style={{ width: '20px', height: '20px', accentColor: '#10b981' }}
+                                />
+                                <span>Show in Top Header Menu</span>
+                            </label>
+                            <small style={{ color: 'var(--admin-text-secondary)', display: 'block', marginTop: '5px', marginLeft: '30px' }}>
+                                Note: Only active categories will be shown.
+                            </small>
                         </div>
                     </div>
 

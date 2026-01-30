@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -23,6 +24,12 @@ app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/inventory', require('./routes/inventoryRoutes'));
 app.use('/api/coupons', require('./routes/couponRoutes'));
+app.use('/api/reviews', require('./routes/reviewRoutes'));
+app.use('/api/reports', require('./routes/reportRoutes'));
+app.use('/api/upload', require('./routes/uploadRoutes'));
+
+// Static Uploads (Serving images)
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Health check
 app.get('/', (req, res) => {

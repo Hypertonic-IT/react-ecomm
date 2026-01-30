@@ -6,6 +6,7 @@ const categorySchema = new mongoose.Schema({
     description: { type: String },
     image: { type: String },
     status: { type: String, default: 'Active', enum: ['Active', 'Inactive'] },
+    showInHeader: { type: Boolean, default: false },
     productsCount: { type: Number, default: 0 } // Can be updated via hooks or aggregation
 }, { timestamps: true });
 

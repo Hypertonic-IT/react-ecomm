@@ -12,6 +12,9 @@ const ProductSlider = ({ title, products }) => {
     const { formatPrice } = useCurrency();
     const scrollRef = useRef(null);
     const [isHovered, setIsHovered] = useState(false);
+    const [showArrows, setShowArrows] = useState(false);
+    const [canScrollLeft, setCanScrollLeft] = useState(false);
+    const [canScrollRight, setCanScrollRight] = useState(false);
     const navigate = useNavigate();
 
     const scroll = (direction) => {
@@ -25,10 +28,28 @@ const ProductSlider = ({ title, products }) => {
         }
     };
 
+    // Check if arrows should be shown and update scroll state
+    const checkScroll = () => {
+        if (scrollRef.current) {
+            const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+            const hasOverflow = scrollWidth > clientWidth;
+            setShowArrows(hasOverflow);
+            setCanScrollLeft(scrollLeft > 0);
+            setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+        }
+    };
+
+    // Check on mount and when products change
+    useEffect(() => {
+        checkScroll();
+        window.addEventListener('resize', checkScroll);
+        return () => window.removeEventListener('resize', checkScroll);
+    }, [products]);
+
     // Auto-scroll functionality
     useEffect(() => {
         let interval;
-        if (!isHovered) {
+        if (!isHovered && showArrows) {
             interval = setInterval(() => {
                 if (scrollRef.current) {
                     const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
@@ -41,7 +62,7 @@ const ProductSlider = ({ title, products }) => {
             }, 4000);
         }
         return () => clearInterval(interval);
-    }, [isHovered]);
+    }, [isHovered, showArrows]);
 
     return (
         <section className="product-slider-section">
@@ -56,15 +77,17 @@ const ProductSlider = ({ title, products }) => {
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
                 >
-                    <button
-                        className="slider-arrow left"
-                        onClick={() => scroll('left')}
-                        aria-label="Previous Products"
-                    >
-                        <FaArrowLeft />
-                    </button>
+                    {showArrows && canScrollLeft && (
+                        <button
+                            className="slider-arrow left"
+                            onClick={() => scroll('left')}
+                            aria-label="Previous Products"
+                        >
+                            <FaArrowLeft />
+                        </button>
+                    )}
 
-                    <div className="products-track" ref={scrollRef}>
+                    <div className="products-track" ref={scrollRef} onScroll={checkScroll}>
                         {products.map((product, index) => (
                             <motion.div
                                 key={`${product.id}-${index}`}
@@ -118,13 +141,15 @@ const ProductSlider = ({ title, products }) => {
                         ))}
                     </div>
 
-                    <button
-                        className="slider-arrow right"
-                        onClick={() => scroll('right')}
-                        aria-label="Next Products"
-                    >
-                        <FaArrowRight />
-                    </button>
+                    {showArrows && canScrollRight && (
+                        <button
+                            className="slider-arrow right"
+                            onClick={() => scroll('right')}
+                            aria-label="Next Products"
+                        >
+                            <FaArrowRight />
+                        </button>
+                    )}
                 </div>
             </div>
 

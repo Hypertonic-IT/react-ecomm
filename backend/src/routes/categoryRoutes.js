@@ -30,13 +30,14 @@ router.get('/:id', async (req, res) => {
 // POST new category
 router.post('/', async (req, res) => {
     try {
-        const { name, slug, description, status, image } = req.body;
+        const { name, slug, description, status, image, showInHeader } = req.body;
         const category = new Category({
             name,
             slug: slug || name.toLowerCase().replace(/ /g, '-'),
             description,
             image,
-            status
+            status,
+            showInHeader: showInHeader || false
         });
         const savedCategory = await category.save();
         res.status(201).json(savedCategory);

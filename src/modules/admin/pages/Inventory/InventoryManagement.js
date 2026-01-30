@@ -5,6 +5,8 @@ import {
     FaTimes, FaCheck
 } from 'react-icons/fa';
 import '../../admin.css';
+import AdminSelect from '../../components/AdminSelect'; // Added
+import AdminPagination from '../../components/AdminPagination'; // Added
 import './Inventory.css';
 
 const InventoryManagement = () => {
@@ -18,6 +20,8 @@ const InventoryManagement = () => {
     const [showBulkUpload, setShowBulkUpload] = useState(false);
     const [showHistory, setShowHistory] = useState(null);
     const [stockHistory, setStockHistory] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [entriesPerPage, setEntriesPerPage] = useState(10);
 
     // Low stock threshold
     const LOW_STOCK_THRESHOLD = 10;
@@ -68,6 +72,11 @@ const InventoryManagement = () => {
 
         return matchesSearch && matchesCategory && matchesStock;
     });
+
+    // Pagination
+    const indexOfLastEntry = currentPage * entriesPerPage;
+    const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+    const currentProducts = filteredProducts.slice(indexOfFirstEntry, indexOfLastEntry);
 
     // Toggle product expansion
     const toggleExpand = (productId) => {
@@ -172,55 +181,96 @@ const InventoryManagement = () => {
                 </div>
             </div>
 
-            {/* Action Bar */}
+            {/* Filters & Actions Bar - Above Table */}
             <div className="table-container" style={{ marginTop: '24px' }}>
-                <div className="table-toolbar">
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flex: 1 }}>
-                        <div className="search-container">
+                {/* Top Toolbar - Filters and Actions */}
+                <div style={{
+                    background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '16px',
+                    padding: '20px 24px',
+                    marginBottom: '20px',
+                    boxShadow: '0 4px 12px rgba(99, 102, 241, 0.05)'
+                }}>
+                    <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+                        {/* Search */}
+                        <div className="search-container" style={{ width: '280px' }}>
                             <input
                                 type="text"
-                                placeholder="Search by product name or SKU..."
+                                placeholder="Search by name or SKU..."
                                 className="search-input-modern"
                                 value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                             />
                             <FaSearch className="search-icon-modern" size={14} />
                         </div>
 
-                        <select
-                            value={filterCategory}
-                            onChange={(e) => setFilterCategory(e.target.value)}
-                            className="filter-select"
-                        >
-                            <option value="All">All Categories</option>
-                            <option value="Men">Men</option>
-                            <option value="Women">Women</option>
-                            <option value="Kids">Kids</option>
-                        </select>
+                        {/* Category Filter */}
+                        <div style={{ width: '180px' }}>
+                            <AdminSelect
+                                options={[
+                                    { value: 'All', label: 'All Categories' },
+                                    { value: 'Men', label: 'Men' },
+                                    { value: 'Women', label: 'Women' },
+                                    { value: 'Kids', label: 'Kids' },
+                                    { value: 'Accessories', label: 'Accessories' }
+                                ]}
+                                value={filterCategory}
+                                onChange={(val) => { setFilterCategory(val); setCurrentPage(1); }}
+                                placeholder="Filter Category"
+                            />
+                        </div>
 
-                        <select
-                            value={filterStockStatus}
-                            onChange={(e) => setFilterStockStatus(e.target.value)}
-                            className="filter-select"
-                        >
-                            <option value="All">All Stock Status</option>
-                            <option value="In Stock">In Stock</option>
-                            <option value="Low Stock">Low Stock</option>
-                            <option value="Out of Stock">Out of Stock</option>
-                        </select>
-                    </div>
+                        {/* Stock Status Filter */}
+                        <div style={{ width: '180px' }}>
+                            <AdminSelect
+                                options={[
+                                    { value: 'All', label: 'All Stock Status' },
+                                    { value: 'In Stock', label: 'In Stock' },
+                                    { value: 'Low Stock', label: 'Low Stock' },
+                                    { value: 'Out of Stock', label: 'Out of Stock' }
+                                ]}
+                                value={filterStockStatus}
+                                onChange={(val) => { setFilterStockStatus(val); setCurrentPage(1); }}
+                                placeholder="Stock Status"
+                            />
+                        </div>
 
-                    <div style={{ display: 'flex', gap: '12px' }}>
+                        {/* Bulk Update Button */}
                         <button
                             className="admin-btn-secondary"
                             onClick={() => setShowBulkUpload(true)}
+                            style={{ whiteSpace: 'nowrap' }}
                         >
                             <FaUpload size={12} /> Bulk Update
                         </button>
-                        <button className="admin-btn-outline">
-                            <FaPlus size={12} /> Add Inventory
-                        </button>
                     </div>
+                </div>
+
+                {/* Bottom Toolbar - Entries Selector & Add Button */}
+                <div className="table-toolbar" style={{ marginBottom: '16px' }}>
+                    <div className="entries-wrapper">
+                        <span>Showing</span>
+                        <AdminSelect
+                            options={[
+                                { value: 10, label: '10' },
+                                { value: 25, label: '25' },
+                                { value: 50, label: '50' }
+                            ]}
+                            value={entriesPerPage}
+                            onChange={(val) => { setEntriesPerPage(val); setCurrentPage(1); }}
+                            styles={{
+                                control: (base) => ({ ...base, minHeight: '32px', width: '70px', fontSize: '12px' })
+                            }}
+                            isSearchable={false}
+                        />
+                        <span>entries</span>
+                    </div>
+
+                    {/* Add Inventory Button - Moved Here */}
+                    <button className="admin-btn-outline" style={{ whiteSpace: 'nowrap' }}>
+                        <FaPlus size={12} /> Add Inventory
+                    </button>
                 </div>
 
                 {/* Inventory Table */}
@@ -229,179 +279,193 @@ const InventoryManagement = () => {
                         Loading inventory...
                     </div>
                 ) : (
-                    <table className="admin-table inventory-table">
-                        <thead>
-                            <tr>
-                                <th style={{ width: '40px' }}></th>
-                                <th>Product</th>
-                                <th>Category</th>
-                                <th>SKU</th>
-                                <th>Stock Qty</th>
-                                <th>Status</th>
-                                <th>Last Updated</th>
-                                <th style={{ textAlign: 'right' }}>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredProducts.map(product => {
-                                const stockStatus = getStockStatus(product.countInStock);
-                                const isExpanded = expandedProducts.has(product._id);
+                    <>
+                        <table className="admin-table inventory-table">
+                            <thead>
+                                <tr>
+                                    <th style={{ width: '40px' }}></th>
+                                    <th>Product</th>
+                                    <th>Category</th>
+                                    <th>SKU</th>
+                                    <th>Stock Qty</th>
+                                    <th>Status</th>
+                                    <th>Last Updated</th>
+                                    <th style={{ textAlign: 'right' }}>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {currentProducts.map(product => {
+                                    const stockStatus = getStockStatus(product.countInStock);
+                                    const isExpanded = expandedProducts.has(product._id);
 
-                                return (
-                                    <React.Fragment key={product._id}>
-                                        <tr className={stockStatus === 'out' ? 'out-of-stock-row' : ''}>
-                                            <td>
-                                                <button
-                                                    className="expand-btn"
-                                                    onClick={() => toggleExpand(product._id)}
-                                                >
-                                                    {isExpanded ? <FaChevronDown size={12} /> : <FaChevronRight size={12} />}
-                                                </button>
-                                            </td>
-                                            <td>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                                    <img
-                                                        src={product.image}
-                                                        alt={product.name}
-                                                        style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '6px' }}
-                                                    />
-                                                    <div>
-                                                        <div style={{ fontWeight: 600, color: 'var(--admin-text)' }}>
-                                                            {product.name}
-                                                        </div>
-                                                        <div style={{ fontSize: '0.7rem', color: 'var(--admin-text-secondary)' }}>
-                                                            ID: {product._id.substring(0, 8)}
+                                    return (
+                                        <React.Fragment key={product._id}>
+                                            <tr className={stockStatus === 'out' ? 'out-of-stock-row' : ''}>
+                                                <td>
+                                                    <button
+                                                        className="expand-btn"
+                                                        onClick={() => toggleExpand(product._id)}
+                                                    >
+                                                        {isExpanded ? <FaChevronDown size={12} /> : <FaChevronRight size={12} />}
+                                                    </button>
+                                                </td>
+                                                <td>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                        <img
+                                                            src={product.image}
+                                                            alt={product.name}
+                                                            style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '6px' }}
+                                                        />
+                                                        <div>
+                                                            <div style={{ fontWeight: 600, color: 'var(--admin-text)' }}>
+                                                                {product.name}
+                                                            </div>
+                                                            <div style={{ fontSize: '0.7rem', color: 'var(--admin-text-secondary)' }}>
+                                                                ID: {product._id.substring(0, 8)}
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <span className="status-badge status-primary">
-                                                    {product.category}
-                                                </span>
-                                            </td>
-                                            <td style={{ fontFamily: 'monospace', fontSize: '0.75rem' }}>
-                                                {product.sku || product._id.substring(0, 10).toUpperCase()}
-                                            </td>
-                                            <td>
-                                                <span style={{
-                                                    fontWeight: 700,
-                                                    fontSize: '0.9rem',
-                                                    color: stockStatus === 'out' ? '#ef4444' :
-                                                        stockStatus === 'low' ? '#f59e0b' : '#10b981'
-                                                }}>
-                                                    {product.countInStock}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                                    <span className={`stock-indicator stock-${stockStatus}`}></span>
-                                                    <span className={`status-badge status-${stockStatus === 'in' ? 'success' :
-                                                            stockStatus === 'low' ? 'warning' : 'danger'
-                                                        }`}>
-                                                        {stockStatus === 'in' ? 'In Stock' :
-                                                            stockStatus === 'low' ? 'Low Stock' : 'Out of Stock'}
+                                                </td>
+                                                <td>
+                                                    <span className="status-badge status-primary">
+                                                        {product.category}
                                                     </span>
-                                                </div>
-                                            </td>
-                                            <td style={{ color: 'var(--admin-text-secondary)', fontSize: '0.75rem' }}>
-                                                {new Date(product.updatedAt || product.createdAt).toLocaleDateString()}
-                                            </td>
-                                            <td style={{ textAlign: 'right' }}>
-                                                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
-                                                    <button
-                                                        className="admin-btn-icon"
-                                                        onClick={() => setEditingStock(product)}
-                                                        title="Edit Stock"
-                                                    >
-                                                        <FaEdit />
-                                                    </button>
-                                                    <button
-                                                        className="admin-btn-icon"
-                                                        onClick={() => setShowHistory(product)}
-                                                        title="View History"
-                                                    >
-                                                        <FaHistory />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        {/* Expanded Variant View */}
-                                        {isExpanded && (
-                                            <tr className="variant-row">
-                                                <td colSpan="8">
-                                                    <div className="variant-container">
-                                                        <div className="variant-header">Product Variants</div>
-                                                        <table className="variant-table">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>Color</th>
-                                                                    <th>Size</th>
-                                                                    <th>Stock</th>
-                                                                    <th>Status</th>
-                                                                    <th>Actions</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                {/* Mock variants - in real app, fetch from product.variants */}
-                                                                <tr>
-                                                                    <td>Black</td>
-                                                                    <td>M</td>
-                                                                    <td>20</td>
-                                                                    <td><span className="status-badge status-success">In Stock</span></td>
-                                                                    <td><button className="admin-btn-icon"><FaEdit size={10} /></button></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>Black</td>
-                                                                    <td>L</td>
-                                                                    <td>5</td>
-                                                                    <td><span className="status-badge status-warning">Low</span></td>
-                                                                    <td><button className="admin-btn-icon"><FaEdit size={10} /></button></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>White</td>
-                                                                    <td>M</td>
-                                                                    <td>0</td>
-                                                                    <td><span className="status-badge status-danger">Out</span></td>
-                                                                    <td><button className="admin-btn-icon"><FaEdit size={10} /></button></td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
+                                                </td>
+                                                <td style={{ fontFamily: 'monospace', fontSize: '0.75rem' }}>
+                                                    {product.sku || product._id.substring(0, 10).toUpperCase()}
+                                                </td>
+                                                <td>
+                                                    <span style={{
+                                                        fontWeight: 700,
+                                                        fontSize: '0.9rem',
+                                                        color: stockStatus === 'out' ? '#ef4444' :
+                                                            stockStatus === 'low' ? '#f59e0b' : '#10b981'
+                                                    }}>
+                                                        {product.countInStock}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                        <span className={`stock-indicator stock-${stockStatus}`}></span>
+                                                        <span className={`status-badge status-${stockStatus === 'in' ? 'success' :
+                                                            stockStatus === 'low' ? 'warning' : 'danger'
+                                                            }`}>
+                                                            {stockStatus === 'in' ? 'In Stock' :
+                                                                stockStatus === 'low' ? 'Low Stock' : 'Out of Stock'}
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td style={{ color: 'var(--admin-text-secondary)', fontSize: '0.75rem' }}>
+                                                    {new Date(product.updatedAt || product.createdAt).toLocaleDateString()}
+                                                </td>
+                                                <td style={{ textAlign: 'right' }}>
+                                                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
+                                                        <button
+                                                            className="admin-btn-icon"
+                                                            onClick={() => setEditingStock(product)}
+                                                            title="Edit Stock"
+                                                        >
+                                                            <FaEdit />
+                                                        </button>
+                                                        <button
+                                                            className="admin-btn-icon"
+                                                            onClick={() => setShowHistory(product)}
+                                                            title="View History"
+                                                        >
+                                                            <FaHistory />
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>
-                                        )}
-                                    </React.Fragment>
-                                );
-                            })}
-                        </tbody>
-                    </table>
+
+                                            {/* Expanded Variant View */}
+                                            {isExpanded && (
+                                                <tr className="variant-row">
+                                                    <td colSpan="8">
+                                                        <div className="variant-container">
+                                                            <div className="variant-header">Product Variants</div>
+                                                            <table className="variant-table">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Color</th>
+                                                                        <th>Size</th>
+                                                                        <th>Stock</th>
+                                                                        <th>Status</th>
+                                                                        <th>Actions</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {/* Mock variants - in real app, fetch from product.variants */}
+                                                                    <tr>
+                                                                        <td>Black</td>
+                                                                        <td>M</td>
+                                                                        <td>20</td>
+                                                                        <td><span className="status-badge status-success">In Stock</span></td>
+                                                                        <td><button className="admin-btn-icon"><FaEdit size={10} /></button></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Black</td>
+                                                                        <td>L</td>
+                                                                        <td>5</td>
+                                                                        <td><span className="status-badge status-warning">Low</span></td>
+                                                                        <td><button className="admin-btn-icon"><FaEdit size={10} /></button></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>White</td>
+                                                                        <td>M</td>
+                                                                        <td>0</td>
+                                                                        <td><span className="status-badge status-danger">Out</span></td>
+                                                                        <td><button className="admin-btn-icon"><FaEdit size={10} /></button></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </React.Fragment>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                        <AdminPagination
+                            currentPage={currentPage}
+                            totalItems={filteredProducts.length}
+                            itemsPerPage={entriesPerPage}
+                            onPageChange={setCurrentPage}
+                        />
+                    </>
                 )}
             </div>
 
             {/* Edit Stock Modal */}
-            {editingStock && (
-                <EditStockModal
-                    product={editingStock}
-                    onClose={() => setEditingStock(null)}
-                    onUpdate={handleUpdateStock}
-                />
-            )}
+            {
+                editingStock && (
+                    <EditStockModal
+                        product={editingStock}
+                        onClose={() => setEditingStock(null)}
+                        onUpdate={handleUpdateStock}
+                    />
+                )
+            }
 
             {/* Bulk Upload Modal */}
-            {showBulkUpload && (
-                <BulkUploadModal onClose={() => setShowBulkUpload(false)} />
-            )}
+            {
+                showBulkUpload && (
+                    <BulkUploadModal onClose={() => setShowBulkUpload(false)} />
+                )
+            }
 
             {/* History Drawer */}
-            {showHistory && (
-                <HistoryDrawer
-                    product={showHistory}
-                    onClose={() => setShowHistory(null)}
-                />
-            )}
-        </div>
+            {
+                showHistory && (
+                    <HistoryDrawer
+                        product={showHistory}
+                        onClose={() => setShowHistory(null)}
+                    />
+                )
+            }
+        </div >
     );
 };
 
@@ -462,18 +526,18 @@ const EditStockModal = ({ product, onClose, onUpdate }) => {
                         </div>
                         <div className="form-group">
                             <label>Reason (Optional)</label>
-                            <select
+                            <AdminSelect
+                                options={[
+                                    { value: 'New shipment', label: 'New shipment' },
+                                    { value: 'Manual correction', label: 'Manual correction' },
+                                    { value: 'Return added', label: 'Return added' },
+                                    { value: 'Damaged goods', label: 'Damaged goods' },
+                                    { value: 'Inventory audit', label: 'Inventory audit' }
+                                ]}
                                 value={reason}
-                                onChange={(e) => setReason(e.target.value)}
-                                className="admin-input"
-                            >
-                                <option value="">Select reason...</option>
-                                <option value="New shipment">New shipment</option>
-                                <option value="Manual correction">Manual correction</option>
-                                <option value="Return added">Return added</option>
-                                <option value="Damaged goods">Damaged goods</option>
-                                <option value="Inventory audit">Inventory audit</option>
-                            </select>
+                                onChange={setReason}
+                                placeholder="Select reason..."
+                            />
                         </div>
                         <div className="stock-change-indicator">
                             {newStock > product.countInStock && (

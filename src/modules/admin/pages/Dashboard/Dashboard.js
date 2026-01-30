@@ -4,8 +4,10 @@ import { Link } from 'react-router-dom';
 import { FaPlus, FaBox, FaUserPlus, FaFileAlt, FaArrowRight } from 'react-icons/fa';
 import DashboardStats from '../../components/DashboardStats';
 import RecentOrders from '../../components/RecentOrders';
+import AdminSelect from '../../components/AdminSelect'; // Added
 
 const Dashboard = () => {
+    const [chartRange, setChartRange] = useState('This Week'); // Added state
     const [stats, setStats] = useState({
         totalOrders: 0,
         totalRevenue: 0,
@@ -57,19 +59,15 @@ const Dashboard = () => {
                             <h3 className="stat-label" style={{ fontSize: '1.1rem', color: 'var(--admin-text)', marginBottom: '4px' }}>Sales Analytics</h3>
                             <p style={{ fontSize: '0.9rem', color: 'var(--admin-text-muted)' }}>Revenue trends for the past 7 days</p>
                         </div>
-                        <select style={{
-                            background: 'var(--admin-bg)',
-                            border: '1px solid var(--admin-border)',
-                            color: 'var(--admin-text-secondary)',
-                            padding: '8px 16px',
-                            borderRadius: '8px',
-                            fontSize: '0.85rem',
-                            outline: 'none',
-                            fontWeight: '600'
-                        }}>
-                            <option>This Week</option>
-                            <option>This Month</option>
-                        </select>
+                        <div style={{ width: '130px' }}>
+                            <AdminSelect
+                                options={[{ value: 'This Week', label: 'This Week' }, { value: 'This Month', label: 'This Month' }]}
+                                value={chartRange}
+                                onChange={setChartRange}
+                                styles={{ control: (base) => ({ ...base, minHeight: '32px', fontSize: '13px' }) }}
+                                isSearchable={false}
+                            />
+                        </div>
                     </div>
                     {/* Clean Chart Placeholder */}
                     <div style={{ flex: 1, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', padding: '0 10px' }}>

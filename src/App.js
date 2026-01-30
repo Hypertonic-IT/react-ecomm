@@ -44,6 +44,13 @@ import UserList from "./modules/admin/pages/Users/UserList";
 import InventoryManagement from "./modules/admin/pages/Inventory/InventoryManagement";
 import CouponList from "./modules/admin/pages/Coupons/CouponList";
 import CouponAddEdit from "./modules/admin/pages/Coupons/CouponAddEdit";
+import ReviewList from "./modules/admin/pages/Reviews/ReviewList";
+import ReportsDashboard from "./modules/admin/pages/Reports/ReportsDashboard";
+import SalesReports from "./modules/admin/pages/Reports/SalesReports";
+import OrderReports from "./modules/admin/pages/Reports/OrderReports";
+import ProductReports from "./modules/admin/pages/Reports/ProductReports";
+
+import StaffList from "./modules/admin/pages/Users/StaffList";
 
 function App() {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -145,12 +152,24 @@ function App() {
                   <Route path="categories/new" element={<CategoryAddEdit />} />
                   <Route path="categories/edit/:id" element={<CategoryAddEdit />} />
                   <Route path="users" element={<UserList />} />
+                  <Route path="staff" element={
+                    <AdminRoute requiredRoles={['super_admin']}>
+                      <StaffList />
+                    </AdminRoute>
+                  } />
                   <Route path="inventory" element={<InventoryManagement />} />
                   <Route path="coupons" element={<CouponList />} />
                   <Route path="coupons/new" element={<CouponAddEdit />} />
                   <Route path="coupons/edit/:id" element={<CouponAddEdit />} />
-                  <Route path="reviews" element={<AdminPlaceholder title="Product Reviews" />} />
-                  <Route path="analytics" element={<AdminPlaceholder title="Reports & Analytics" />} />
+                  <Route path="reviews" element={<ReviewList />} />
+                  <Route path="reports" element={<ReportsDashboard />} />
+                  <Route path="reports/sales" element={<SalesReports />} />
+                  <Route path="reports/orders" element={<OrderReports />} />
+                  <Route path="reports/products" element={<ProductReports />} />
+                  <Route path="reports/customers" element={<AdminPlaceholder title="Customer Reports" />} />
+                  <Route path="reports/inventory" element={<AdminPlaceholder title="Inventory Reports" />} />
+                  <Route path="reports/coupons" element={<AdminPlaceholder title="Coupon Reports" />} />
+                  <Route path="analytics" element={<Navigate to="reports" replace />} />
                   <Route path="content" element={<AdminPlaceholder title="Content Management (CMS)" />} />
                   <Route path="settings" element={<AdminPlaceholder title="Admin Settings" />} />
                 </Route>

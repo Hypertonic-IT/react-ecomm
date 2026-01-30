@@ -94,13 +94,16 @@ export const AdminAuthProvider = ({ children }) => {
             const response = await authService.login(emailOrMobile, password, rememberMe);
 
             if (response.success) {
-                // Check if user is actually an admin
-                if (response.user.role === 'admin' || response.user.role === 'super_admin' || response.user.isAdmin) {
+                // Check if user is actually a staff member
+                const isStaff = response.user.isAdmin ||
+                    ['super_admin', 'product_manager', 'sales_manager', 'marketing_manager'].includes(response.user.role);
+
+                if (isStaff) {
                     saveSession(response.user, response.token, response.expiresAt);
                     setLoginAttempts([]);
                     return { success: true };
                 } else {
-                    return { success: false, message: 'Unauthorized access. Admin privileges required.' };
+                    return { success: false, message: 'Unauthorized access. Staff privileges required.' };
                 }
             }
         } catch (error) {

@@ -83,28 +83,28 @@ const OrderDetails = () => {
                                                 <div style={{ fontSize: '0.8rem', color: 'var(--admin-text-secondary)', marginTop: '2px' }}>ID: {item.product}</div>
                                             </div>
                                         </td>
-                                        <td style={{ fontWeight: '500' }}>${item.price.toFixed(2)}</td>
+                                        <td style={{ fontWeight: '500' }}>₹{item.price.toFixed(2)}</td>
                                         <td>{item.qty}</td>
-                                        <td style={{ textAlign: 'right', fontWeight: '600' }}>${(item.price * item.qty).toFixed(2)}</td>
+                                        <td style={{ textAlign: 'right', fontWeight: '600' }}>₹{(item.price * item.qty).toFixed(2)}</td>
                                     </tr>
                                 ))}
                             </tbody>
                             <tfoot>
                                 <tr>
                                     <td colSpan="3" style={{ textAlign: 'right', color: 'var(--admin-text-secondary)', paddingTop: '20px' }}>Subtotal:</td>
-                                    <td style={{ paddingTop: '20px', textAlign: 'right', fontWeight: '600' }}>${order.itemsPrice?.toFixed(2)}</td>
+                                    <td style={{ paddingTop: '20px', textAlign: 'right', fontWeight: '600' }}>₹{order.itemsPrice?.toFixed(2)}</td>
                                 </tr>
                                 <tr>
                                     <td colSpan="3" style={{ textAlign: 'right', color: 'var(--admin-text-secondary)' }}>Shipping:</td>
-                                    <td style={{ textAlign: 'right', fontWeight: '600' }}>${order.shippingPrice?.toFixed(2)}</td>
+                                    <td style={{ textAlign: 'right', fontWeight: '600' }}>₹{order.shippingPrice?.toFixed(2)}</td>
                                 </tr>
                                 <tr>
                                     <td colSpan="3" style={{ textAlign: 'right', color: 'var(--admin-text-secondary)' }}>Tax:</td>
-                                    <td style={{ textAlign: 'right', fontWeight: '600' }}>${order.taxPrice?.toFixed(2)}</td>
+                                    <td style={{ textAlign: 'right', fontWeight: '600' }}>₹{order.taxPrice?.toFixed(2)}</td>
                                 </tr>
                                 <tr>
                                     <td colSpan="3" style={{ textAlign: 'right', fontWeight: '700', fontSize: '1.2rem', color: 'var(--admin-text)', paddingTop: '10px' }}>Total Amount:</td>
-                                    <td style={{ textAlign: 'right', fontWeight: '700', fontSize: '1.2rem', color: 'var(--admin-primary)', paddingTop: '10px' }}>${order.totalPrice?.toFixed(2)}</td>
+                                    <td style={{ textAlign: 'right', fontWeight: '700', fontSize: '1.2rem', color: 'var(--admin-primary)', paddingTop: '10px' }}>₹{order.totalPrice?.toFixed(2)}</td>
                                 </tr>
                             </tfoot>
                         </table>

@@ -11,7 +11,7 @@ import './AddressPage.css'; // Reuse CSS
 
 const PaymentPage = () => {
     const navigate = useNavigate();
-    const { cart, getCartTotal, clearCart } = useShop();
+    const { cart, getCartTotal, clearCart, appliedCoupon } = useShop();
     const [paymentMethod, setPaymentMethod] = useState('COD');
     const [loading, setLoading] = useState(false);
 
@@ -49,6 +49,10 @@ const PaymentPage = () => {
             return;
         }
 
+        const subtotal = getCartTotal();
+        const discountAmount = appliedCoupon ? appliedCoupon.discount : 0;
+        const totalPrice = subtotal - discountAmount;
+
         const orderData = {
             orderItems: cart.map(item => ({
                 name: item.name,
@@ -59,10 +63,12 @@ const PaymentPage = () => {
             })),
             shippingAddress: shippingAddress,
             paymentMethod: paymentMethod,
-            itemsPrice: getCartTotal(),
+            itemsPrice: subtotal,
             taxPrice: 0,
             shippingPrice: 0,
-            totalPrice: getCartTotal()
+            discountPrice: discountAmount,
+            couponCode: appliedCoupon ? appliedCoupon.code : null,
+            totalPrice: totalPrice
         };
 
         try {
@@ -178,15 +184,21 @@ const PaymentPage = () => {
                             <div className="summary-totals" style={{ borderTop: '2px solid #f0f0f0', paddingTop: '15px' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
                                     <span>Subtotal</span>
-                                    <span>₹{getCartTotal()}</span>
+                                    <span>₹{getCartTotal().toLocaleString()}</span>
                                 </div>
+                                {appliedCoupon && (
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', color: '#27ae60', fontWeight: '500' }}>
+                                        <span>Discount ({appliedCoupon.code})</span>
+                                        <span>-₹{appliedCoupon.discount.toLocaleString()}</span>
+                                    </div>
+                                )}
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
                                     <span>Delivery</span>
                                     <span style={{ color: '#27ae60' }}>Free</span>
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '15px', fontSize: '18px', fontWeight: 'bold' }}>
                                     <span>Total</span>
-                                    <span>₹{getCartTotal()}</span>
+                                    <span>₹{(getCartTotal() - (appliedCoupon ? appliedCoupon.discount : 0)).toLocaleString()}</span>
                                 </div>
                             </div>
                         </div>

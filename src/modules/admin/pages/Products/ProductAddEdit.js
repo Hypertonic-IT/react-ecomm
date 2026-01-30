@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { FaSave, FaArrowLeft, FaImages } from 'react-icons/fa';
+import { FaSave, FaArrowLeft, FaImages, FaTrash, FaPlus, FaCloudUploadAlt } from 'react-icons/fa';
+import AdminSelect from '../../components/AdminSelect';
 import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import '../../admin.css';
 
@@ -25,12 +26,93 @@ const ProductAddEdit = () => {
         isTrending: false,
         isBestSeller: false,
         isExclusive: false,
-        isActive: true
+        isActive: true,
+        shortDescription: '',
+        shippingInfo: '',
+        galleryImages: '', // Comma separated URLs
+        specifications: '' // "Key: Value" per line
     });
 
     const [loading, setLoading] = useState(false);
     const [previewImage, setPreviewImage] = useState(null);
     const [categories, setCategories] = useState([]);
+    const [newGalleryUrl, setNewGalleryUrl] = useState('');
+    const [uploading, setUploading] = useState(false);
+
+    const uploadFileHandler = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const uploadData = new FormData();
+        uploadData.append('image', file);
+        setUploading(true);
+
+        try {
+            const response = await fetch('http://localhost:5001/api/upload', {
+                method: 'POST',
+                body: uploadData
+            });
+            const data = await response.json();
+
+            if (response.ok) {
+                const current = formData.galleryImages ? formData.galleryImages.split('\n') : [];
+                const updated = [...current, data.image].filter(Boolean);
+                setFormData(prev => ({ ...prev, galleryImages: updated.join('\n') }));
+            } else {
+                alert(data.message || 'Upload failed');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Error uploading file');
+        } finally {
+            setUploading(false);
+            if (e.target) e.target.value = null;
+        }
+    };
+
+    const uploadMainImageHandler = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const uploadData = new FormData();
+        uploadData.append('image', file);
+        setUploading(true);
+
+        try {
+            const response = await fetch('http://localhost:5001/api/upload', {
+                method: 'POST',
+                body: uploadData
+            });
+            const data = await response.json();
+
+            if (response.ok) {
+                setFormData(prev => ({ ...prev, image: data.image }));
+                setPreviewImage(data.image);
+            } else {
+                alert(data.message || 'Upload failed');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Error uploading file');
+        } finally {
+            setUploading(false);
+            if (e.target) e.target.value = null;
+        }
+    };
+
+    const addGalleryImage = () => {
+        if (!newGalleryUrl) return;
+        const current = formData.galleryImages ? formData.galleryImages.split('\n') : [];
+        const updated = [...current, newGalleryUrl.trim()].filter(Boolean);
+        setFormData(prev => ({ ...prev, galleryImages: updated.join('\n') }));
+        setNewGalleryUrl('');
+    };
+
+    const removeGalleryImage = (index) => {
+        const current = formData.galleryImages ? formData.galleryImages.split('\n') : [];
+        const updated = current.filter((_, i) => i !== index);
+        setFormData(prev => ({ ...prev, galleryImages: updated.join('\n') }));
+    };
 
     // Fetch categories on mount
     useEffect(() => {
@@ -69,7 +151,13 @@ const ProductAddEdit = () => {
                         isTrending: data.isTrending || false,
                         isBestSeller: data.isBestSeller || false,
                         isExclusive: data.isExclusive || false,
-                        isActive: data.isActive !== undefined ? data.isActive : true
+                        isActive: data.isActive !== undefined ? data.isActive : true,
+                        shortDescription: data.shortDescription || '',
+                        shippingInfo: data.shippingInfo || '',
+                        galleryImages: Array.isArray(data.images) ? data.images.join('\n') : '',
+                        specifications: Array.isArray(data.specifications)
+                            ? data.specifications.map(s => `${s.name}: ${s.value}`).join('\n')
+                            : ''
                     });
                     setPreviewImage(data.image);
                 } catch (error) {
@@ -99,6 +187,12 @@ const ProductAddEdit = () => {
             // Convert comma strings to arrays
             sizes: formData.sizes.split(',').map(s => s.trim()).filter(Boolean),
             colors: formData.colors.split(',').map(s => s.trim()).filter(Boolean),
+            images: formData.galleryImages.split('\n').map(s => s.trim()).filter(Boolean),
+            specifications: formData.specifications.split('\n').map(line => {
+                const [key, ...rest] = line.split(':');
+                if (key && rest.length) return { name: key.trim(), value: rest.join(':').trim() };
+                return null;
+            }).filter(Boolean)
         };
 
         try {
@@ -142,88 +236,137 @@ const ProductAddEdit = () => {
             <form onSubmit={handleSubmit} className="admin-form-grid" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
 
                 {/* Left Column: Main Info */}
-                <div className="admin-card" style={{ background: 'var(--admin-card-bg)', padding: '24px', borderRadius: '16px', border: '1px solid var(--admin-border)' }}>
-                    <div className="form-group" style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Product Name</label>
-                        <input
-                            type="text"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            required
-                            className="admin-input"
-                            style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
-                            placeholder="e.g. Premium Oversized Hoodie"
-                        />
-                    </div>
+                {/* Left Column Wrapper */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
-                    <div className="form-group" style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Description</label>
-                        <textarea
-                            name="description"
-                            value={formData.description}
-                            onChange={handleChange}
-                            required
-                            rows="6"
-                            className="admin-input"
-                            style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
-                            placeholder="Detailed product description..."
-                        ></textarea>
-                    </div>
-
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
-                        <div className="form-group">
-                            <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Price ($)</label>
+                    <div className="admin-card" style={{ background: 'var(--admin-card-bg)', padding: '24px', borderRadius: '16px', border: '1px solid var(--admin-border)' }}>
+                        <div className="form-group" style={{ marginBottom: '20px' }}>
+                            <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Product Name</label>
                             <input
-                                type="number"
-                                name="price"
-                                value={formData.price}
+                                type="text"
+                                name="name"
+                                value={formData.name}
                                 onChange={handleChange}
                                 required
-                                min="0"
-                                step="0.01"
+                                className="admin-input"
                                 style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                                placeholder="e.g. Premium Oversized Hoodie"
                             />
                         </div>
-                        <div className="form-group">
-                            <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Count In Stock</label>
-                            <input
-                                type="number"
-                                name="countInStock"
-                                value={formData.countInStock}
+
+                        <div className="form-group" style={{ marginBottom: '20px' }}>
+                            <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Description (Main Tab)</label>
+                            <textarea
+                                name="description"
+                                value={formData.description}
                                 onChange={handleChange}
                                 required
-                                min="0"
+                                rows="6"
+                                className="admin-input"
                                 style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
-                            />
+                                placeholder="Detailed product description..."
+                            ></textarea>
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+                            <div className="form-group">
+                                <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Price (₹)</label>
+                                <input
+                                    type="number"
+                                    name="price"
+                                    value={formData.price}
+                                    onChange={handleChange}
+                                    required
+                                    min="0"
+                                    step="0.01"
+                                    style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Count In Stock</label>
+                                <input
+                                    type="number"
+                                    name="countInStock"
+                                    value={formData.countInStock}
+                                    onChange={handleChange}
+                                    required
+                                    min="0"
+                                    style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="form-group" style={{ marginBottom: '20px' }}>
+                            <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Variants</label>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                                <div>
+                                    <small style={{ color: 'var(--admin-text-muted)' }}>Sizes (comma separated)</small>
+                                    <input
+                                        type="text"
+                                        name="sizes"
+                                        value={formData.sizes}
+                                        onChange={handleChange}
+                                        placeholder="S, M, L, XL"
+                                        style={{ width: '100%', marginTop: '5px', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                                    />
+                                </div>
+                                <div>
+                                    <small style={{ color: 'var(--admin-text-muted)' }}>Colors (comma separated)</small>
+                                    <input
+                                        type="text"
+                                        name="colors"
+                                        value={formData.colors}
+                                        onChange={handleChange}
+                                        placeholder="Red, Blue, Black"
+                                        style={{ width: '100%', marginTop: '5px', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div className="form-group" style={{ marginBottom: '20px' }}>
-                        <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Variants</label>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                            <div>
-                                <small style={{ color: 'var(--admin-text-muted)' }}>Sizes (comma separated)</small>
-                                <input
-                                    type="text"
-                                    name="sizes"
-                                    value={formData.sizes}
-                                    onChange={handleChange}
-                                    placeholder="S, M, L, XL"
-                                    style={{ width: '100%', marginTop: '5px', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
-                                />
-                            </div>
-                            <div>
-                                <small style={{ color: 'var(--admin-text-muted)' }}>Colors (comma separated)</small>
-                                <input
-                                    type="text"
-                                    name="colors"
-                                    value={formData.colors}
-                                    onChange={handleChange}
-                                    placeholder="Red, Blue, Black"
-                                    style={{ width: '100%', marginTop: '5px', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
-                                />
-                            </div>
+                    {/* Rich Details Card */}
+                    <div className="admin-card" style={{ background: 'var(--admin-card-bg)', padding: '24px', borderRadius: '16px', border: '1px solid var(--admin-border)' }}>
+                        <h3 style={{ fontSize: '1rem', color: 'var(--admin-text)', marginBottom: '15px' }}>Rich Details (Product Page)</h3>
+
+                        <div className="form-group" style={{ marginBottom: '20px' }}>
+                            <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Short Description (Preview)</label>
+                            <textarea
+                                name="shortDescription"
+                                value={formData.shortDescription}
+                                onChange={handleChange}
+                                rows="2"
+                                className="admin-input"
+                                style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                                placeholder="Brief summary shown below title..."
+                            ></textarea>
+                        </div>
+
+                        <div className="form-group" style={{ marginBottom: '20px' }}>
+                            <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Specifications (Details Tab)</label>
+                            <textarea
+                                name="specifications"
+                                value={formData.specifications}
+                                onChange={handleChange}
+                                rows="5"
+                                className="admin-input"
+                                style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px', fontFamily: 'monospace' }}
+                                placeholder={`Material: 100% Cotton\nFit: Regular\nCare: Machine Wash`}
+                            ></textarea>
+                            <small style={{ color: 'var(--admin-text-muted)' }}>Format: "Label: Value" (one per line)</small>
+                        </div>
+
+                        <div className="form-group">
+                            <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Shipping Info (Delivery Tab)</label>
+                            <textarea
+                                name="shippingInfo"
+                                value={formData.shippingInfo}
+                                onChange={handleChange}
+                                rows="3"
+                                className="admin-input"
+                                style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                                placeholder="Free shipping over ₹8,350..."
+                            ></textarea>
                         </div>
                     </div>
                 </div>
@@ -237,6 +380,25 @@ const ProductAddEdit = () => {
 
                         <div className="form-group">
                             <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Image URL</label>
+
+                            {/* Upload Button Main */}
+                            <div style={{ marginBottom: '10px' }}>
+                                <label
+                                    htmlFor="main-image-upload"
+                                    className="admin-btn-secondary"
+                                    style={{ width: '100%', justifyContent: 'center', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', padding: '10px' }}
+                                >
+                                    <FaCloudUploadAlt /> {uploading ? 'Uploading...' : 'Upload Main Image'}
+                                </label>
+                                <input
+                                    id="main-image-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={uploadMainImageHandler}
+                                    style={{ display: 'none' }}
+                                />
+                            </div>
+
                             <input
                                 type="text"
                                 name="image"
@@ -270,6 +432,76 @@ const ProductAddEdit = () => {
                                 </div>
                             )}
                         </div>
+
+                        <div className="form-group" style={{ marginTop: '20px' }}>
+                            <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Gallery Images</label>
+
+                            {/* Upload Button */}
+                            <div style={{ marginBottom: '15px' }}>
+                                <label
+                                    htmlFor="gallery-upload"
+                                    className="admin-btn-secondary"
+                                    style={{ width: '100%', justifyContent: 'center', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', padding: '10px' }}
+                                >
+                                    <FaCloudUploadAlt /> {uploading ? 'Uploading...' : 'Upload from Device'}
+                                </label>
+                                <input
+                                    id="gallery-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={uploadFileHandler}
+                                    style={{ display: 'none' }}
+                                />
+                            </div>
+
+                            {/* Add New Input */}
+                            <div style={{ display: 'flex', gap: '8px', marginBottom: '15px' }}>
+                                <input
+                                    type="text"
+                                    value={newGalleryUrl}
+                                    onChange={(e) => setNewGalleryUrl(e.target.value)}
+                                    placeholder="Add Image URL..."
+                                    className="admin-input"
+                                    style={{ flex: 1, padding: '10px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addGalleryImage(); } }}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={addGalleryImage}
+                                    className="admin-btn-secondary"
+                                    style={{ padding: '0 15px' }}
+                                >
+                                    <FaPlus />
+                                </button>
+                            </div>
+
+                            {/* Grid */}
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: '10px' }}>
+                                {formData.galleryImages && formData.galleryImages.split('\n').map((url, index) => url.trim() && (
+                                    <div key={index} style={{ position: 'relative', paddingTop: '100%', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--admin-border)' }}>
+                                        <img src={url} alt={`Gallery ${index}`} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        <button
+                                            type="button"
+                                            onClick={() => removeGalleryImage(index)}
+                                            style={{
+                                                position: 'absolute', top: '4px', right: '4px',
+                                                background: 'rgba(0,0,0,0.6)', color: '#fff',
+                                                border: 'none', borderRadius: '4px',
+                                                width: '24px', height: '24px',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                cursor: 'pointer'
+                                            }}
+                                            title="Remove Image"
+                                        >
+                                            <FaTrash size={12} />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                            <small style={{ color: 'var(--admin-text-muted)', display: 'block', marginTop: '5px' }}>
+                                {(!formData.galleryImages || !formData.galleryImages.trim()) && "No gallery images added yet."}
+                            </small>
+                        </div>
                     </div>
 
                     {/* Category Card */}
@@ -278,18 +510,12 @@ const ProductAddEdit = () => {
 
                         <div className="form-group">
                             <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Category</label>
-                            <select
-                                name="category"
+                            <AdminSelect
+                                options={categories.map(cat => ({ value: cat.name, label: cat.name }))}
                                 value={formData.category}
-                                onChange={handleChange}
-                                required
-                                className="admin-input admin-select"
-                            >
-                                <option value="">Select Category</option>
-                                {categories.map(cat => (
-                                    <option key={cat._id} value={cat.name}>{cat.name}</option>
-                                ))}
-                            </select>
+                                onChange={(val) => setFormData(prev => ({ ...prev, category: val }))}
+                                placeholder="Select Category"
+                            />
                         </div>
 
                         <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>

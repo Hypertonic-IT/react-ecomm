@@ -90,6 +90,22 @@
     align-items: center;
 }
 
+.search-input-header {
+    border: none;
+    border-bottom: 1px solid var(--text-dark);
+    padding: 6px 4px;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+    font-family: var(--font-body);
+    background: transparent;
+    color: var(--text-dark);
+}
+
+.search-input-header::placeholder {
+    color: var(--text-light);
+}
+
 /* Updated Icon Styling */
 .header-icon {
     color: var(--text-dark);

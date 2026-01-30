@@ -9,21 +9,19 @@ import { useNavigate } from 'react-router-dom';
 const CartSummary = ({ cart }) => {
     const [couponCode, setCouponCode] = useState('');
     const [isCouponOpen, setIsCouponOpen] = useState(false);
-    const [appliedCoupon, setAppliedCoupon] = useState(null);
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, user } = useAuth();
     const { formatPrice } = useCurrency();
+    const { getCartTotal, appliedCoupon, applyCoupon, removeCoupon } = useShop();
     const navigate = useNavigate();
 
-    const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    const subtotal = getCartTotal();
     const shipping = subtotal > 100 ? 0 : 15;
-    const discount = appliedCoupon ? subtotal * 0.1 : 0; // 10% off dummy logic
+    const discount = appliedCoupon ? appliedCoupon.discount : 0;
     const total = subtotal + shipping - discount;
 
-    const handleApplyCoupon = () => {
-        if (couponCode.toLowerCase() === 'save10') {
-            setAppliedCoupon('SAVE10');
-            // Show success animation/toast here ideally
-        }
+    const handleApplyCoupon = async () => {
+        if (!couponCode) return;
+        await applyCoupon(couponCode, user?.id);
     };
 
     return (
@@ -44,8 +42,8 @@ const CartSummary = ({ cart }) => {
 
             {appliedCoupon && (
                 <div className="summary-row highlight-green">
-                    <span>Discount (10%)</span>
-                    <span>-{formatPrice(discount)}</span>
+                    <span>Discount ({appliedCoupon.discountType === 'percentage' ? `${appliedCoupon.discountValue}%` : 'Flat'})</span>
+                    <span>-{formatPrice(appliedCoupon.discount)}</span>
                 </div>
             )}
 
@@ -65,25 +63,39 @@ const CartSummary = ({ cart }) => {
             </button>
 
             <div className="coupon-section">
-                {!isCouponOpen ? (
+                {!isCouponOpen && !appliedCoupon ? (
                     <div className="coupon-toggle" onClick={() => setIsCouponOpen(true)}>
                         Have a coupon?
+                    </div>
+                ) : appliedCoupon ? (
+                    <div className="applied-coupon-box" style={{ padding: '10px', background: '#f0fff4', border: '1px solid #c6f6d5', borderRadius: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ color: '#276749', fontSize: '14px', fontWeight: 'bold' }}>
+                            <FaCheck /> {appliedCoupon.code}
+                        </div>
+                        <button
+                            onClick={removeCoupon}
+                            style={{ background: 'transparent', border: 'none', color: '#c53030', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}
+                        >
+                            Remove
+                        </button>
                     </div>
                 ) : (
                     <div className="coupon-form">
                         <input
                             type="text"
                             className="coupon-input"
-                            placeholder="Enter code (Try SAVE10)"
+                            placeholder="Enter code"
                             value={couponCode}
                             onChange={(e) => setCouponCode(e.target.value)}
                         />
                         <button className="coupon-apply" onClick={handleApplyCoupon}>Apply</button>
-                    </div>
-                )}
-                {appliedCoupon && (
-                    <div style={{ marginTop: '10px', fontSize: '12px', color: '#27ae60', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                        <FaCheck /> Coupon applied successfully!
+                        <button
+                            className="coupon-cancel"
+                            onClick={() => setIsCouponOpen(false)}
+                            style={{ background: 'transparent', border: 'none', color: '#666', fontSize: '10px', marginLeft: '5px' }}
+                        >
+                            Cancel
+                        </button>
                     </div>
                 )}
             </div>

@@ -309,9 +309,58 @@ const removeFromWishlist = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
     try {
-        // Typically would check for Admin role here, but simplification for now.
         const users = await User.find({}).sort({ createdAt: -1 });
         res.json(users);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+};
+
+const deleteUser = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (user) {
+            // Don't allow deleting self? (Optional check)
+            await user.deleteOne();
+            res.json({ success: true, message: 'User removed' });
+        } else {
+            res.status(404).json({ success: false, message: 'User not found' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+};
+
+const createStaff = async (req, res) => {
+    let { name, email, password, role, isAdmin } = req.body;
+    if (email) email = email.toLowerCase();
+
+    try {
+        const existingUser = await User.findOne({ emailOrMobile: email });
+        if (existingUser) {
+            return res.status(400).json({ success: false, message: 'User already exists' });
+        }
+
+        const newUser = await User.create({
+            name,
+            emailOrMobile: email,
+            password,
+            role: role || 'product_manager', // Default to a manager role if not specified
+            isAdmin: isAdmin !== undefined ? isAdmin : true
+        });
+
+        res.status(201).json({
+            success: true,
+            user: {
+                id: newUser._id,
+                name: newUser.name,
+                email: newUser.emailOrMobile,
+                role: newUser.role,
+                isAdmin: newUser.isAdmin
+            }
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: 'Server Error' });
@@ -328,6 +377,8 @@ module.exports = {
     getWishlist,
     addToWishlist,
     removeFromWishlist,
-    getAllUsers
+    getAllUsers,
+    deleteUser,
+    createStaff
 };
 

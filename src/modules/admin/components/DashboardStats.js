@@ -48,7 +48,7 @@ const DashboardStats = ({ stats }) => {
         <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px', marginBottom: '30px' }}>
             <StatCard
                 title="Total Revenue"
-                value={`$${data.totalRevenue?.toFixed(2) || '0.00'}`}
+                value={`₹${data.totalRevenue?.toFixed(2) || '0.00'}`}
                 change="12.5"
                 isPositive={true}
                 icon={FaDollarSign}
