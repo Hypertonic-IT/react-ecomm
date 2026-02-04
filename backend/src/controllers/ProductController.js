@@ -67,7 +67,10 @@ const createProduct = async (req, res) => {
         // We now expect the full payload from the frontend
         const {
             name, price, description, image, category, countInStock,
-            sizes, colors, isNewArrival, isTrending, isSale, isBestSeller, isExclusive, isActive
+            sizes, colors, isNewArrival, isTrending, isSale, isBestSeller, isExclusive, isActive,
+            images, shortDescription, specifications, shippingInfo,
+            categories, // New field
+            discount, salePrice // Discount fields
         } = req.body;
 
         const product = new Product({
@@ -75,7 +78,8 @@ const createProduct = async (req, res) => {
             price,
             user: req.user ? req.user._id : null,
             image,
-            category,
+            category: category || (categories && categories.length > 0 ? categories[0] : 'Uncategorized'),
+            categories: categories || (category ? [category] : []),
             countInStock,
             description,
             sizes,
@@ -87,7 +91,14 @@ const createProduct = async (req, res) => {
             isExclusive: isExclusive || false,
             isActive: isActive !== undefined ? isActive : true,
             rating: 0,
-            numReviews: 0
+            numReviews: 0,
+            // New fields
+            images: images || [],
+            shortDescription: shortDescription || '',
+            specifications: specifications || [],
+            shippingInfo: shippingInfo || '',
+            discount: discount || 0,
+            salePrice: salePrice || 0
         });
 
         const createdProduct = await product.save();
@@ -104,7 +115,10 @@ const createProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
     const {
         name, price, description, image, category, countInStock,
-        sizes, colors, isNewArrival, isTrending, isSale, isBestSeller, isExclusive, isActive
+        sizes, colors, isNewArrival, isTrending, isSale, isBestSeller, isExclusive, isActive,
+        images, shortDescription, specifications, shippingInfo,
+        categories, // New field
+        discount, salePrice // Discount fields
     } = req.body;
 
     try {
@@ -115,7 +129,20 @@ const updateProduct = async (req, res) => {
             product.price = price;
             product.description = description;
             product.image = image;
-            product.category = category;
+            // Update category and categories
+            if (categories) {
+                product.categories = categories;
+                product.category = categories.length > 0 ? categories[0] : (category || product.category);
+            } else if (category) {
+                product.category = category;
+                // If categories not provided, maybe sync it? Or leave as is?
+                // Better to just push if not exists or replace? 
+                // Let's assume if category changes, we make sure it's in categories
+                if (!product.categories.includes(category)) {
+                    product.categories.push(category);
+                }
+            }
+
             product.countInStock = countInStock;
             product.sizes = sizes;
             product.colors = colors;
@@ -126,6 +153,16 @@ const updateProduct = async (req, res) => {
             if (isBestSeller !== undefined) product.isBestSeller = isBestSeller;
             if (isExclusive !== undefined) product.isExclusive = isExclusive;
             if (isActive !== undefined) product.isActive = isActive;
+
+            // Update rich fields
+            if (images !== undefined) product.images = images;
+            if (shortDescription !== undefined) product.shortDescription = shortDescription;
+            if (specifications !== undefined) product.specifications = specifications;
+            if (shippingInfo !== undefined) product.shippingInfo = shippingInfo;
+
+            // Update discount fields
+            if (discount !== undefined) product.discount = discount;
+            if (salePrice !== undefined) product.salePrice = salePrice;
 
             const updatedProduct = await product.save();
             res.json(updatedProduct);

@@ -4,7 +4,9 @@ import { FaCheck, FaLock, FaUndo, FaTruck } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../../../context/AuthContext';
 import { useCurrency } from '../../../../context/CurrencyContext';
+import { useShop } from '../../../../context/ShopContext';
 import { useNavigate } from 'react-router-dom';
+import AvailableCoupons from '../../components/Coupon/AvailableCoupons';
 
 const CartSummary = ({ cart }) => {
     const [couponCode, setCouponCode] = useState('');
@@ -17,7 +19,7 @@ const CartSummary = ({ cart }) => {
     const subtotal = getCartTotal();
     const shipping = subtotal > 100 ? 0 : 15;
     const discount = appliedCoupon ? appliedCoupon.discount : 0;
-    const total = subtotal + shipping - discount;
+    const total = Math.max(0, subtotal + shipping - discount);
 
     const handleApplyCoupon = async () => {
         if (!couponCode) return;
@@ -62,42 +64,36 @@ const CartSummary = ({ cart }) => {
                 Proceed to Checkout
             </button>
 
-            <div className="coupon-section">
-                {!isCouponOpen && !appliedCoupon ? (
-                    <div className="coupon-toggle" onClick={() => setIsCouponOpen(true)}>
-                        Have a coupon?
-                    </div>
-                ) : appliedCoupon ? (
-                    <div className="applied-coupon-box" style={{ padding: '10px', background: '#f0fff4', border: '1px solid #c6f6d5', borderRadius: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ color: '#276749', fontSize: '14px', fontWeight: 'bold' }}>
-                            <FaCheck /> {appliedCoupon.code}
+            <div className="coupon-section-modern">
+                <h4 className="coupon-header-title">Offers & Benefits</h4>
+
+                {appliedCoupon ? (
+                    <div className="applied-coupon-success">
+                        <div className="applied-left">
+                            <span className="coupon-tag-applied"><FaCheck size={10} /> {appliedCoupon.code}</span>
+                            <span className="saved-amount">Saved {formatPrice(appliedCoupon.discount)}</span>
                         </div>
-                        <button
-                            onClick={removeCoupon}
-                            style={{ background: 'transparent', border: 'none', color: '#c53030', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}
-                        >
-                            Remove
+                        <button className="remove-coupon-btn" onClick={removeCoupon}>
+                            <FaUndo size={12} style={{ marginRight: '2px' }} /> Remove
                         </button>
                     </div>
                 ) : (
-                    <div className="coupon-form">
+                    <div className="coupon-input-wrapper">
+                        <div className="input-icon"><FaCheck size={10} color="#000" /></div>
                         <input
                             type="text"
-                            className="coupon-input"
-                            placeholder="Enter code"
+                            placeholder="Enter Coupon Code"
                             value={couponCode}
                             onChange={(e) => setCouponCode(e.target.value)}
                         />
-                        <button className="coupon-apply" onClick={handleApplyCoupon}>Apply</button>
-                        <button
-                            className="coupon-cancel"
-                            onClick={() => setIsCouponOpen(false)}
-                            style={{ background: 'transparent', border: 'none', color: '#666', fontSize: '10px', marginLeft: '5px' }}
-                        >
-                            Cancel
-                        </button>
+                        {couponCode && (
+                            <button className="apply-text-btn" onClick={handleApplyCoupon}>APPLY</button>
+                        )}
                     </div>
                 )}
+
+                {/* Available Offers List */}
+                <AvailableCoupons onApply={(code) => applyCoupon(code, user?.id)} />
             </div>
 
             <div className="trust-signals">

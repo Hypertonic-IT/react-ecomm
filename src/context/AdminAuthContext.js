@@ -33,7 +33,16 @@ export const AdminAuthProvider = ({ children }) => {
 
                         if (isValid.valid) {
                             setToken(savedToken);
-                            setUser(JSON.parse(savedUser));
+                            const parsedUser = JSON.parse(savedUser);
+                            const isStaff = parsedUser.isAdmin ||
+                                ['super_admin', 'product_manager', 'sales_manager', 'marketing_manager'].includes(parsedUser.role);
+
+                            if (isStaff) {
+                                setToken(savedToken);
+                                setUser(parsedUser);
+                            } else {
+                                clearSession();
+                            }
                         } else {
                             clearSession();
                         }

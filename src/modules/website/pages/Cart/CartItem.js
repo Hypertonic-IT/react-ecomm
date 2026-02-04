@@ -63,13 +63,14 @@ const CartItem = ({ item }) => {
                     </div>
 
                     <div className="item-price-area">
-                        <span className="current-price">{formatPrice(item.price * item.quantity)}</span>
-                        {/* Mocking original price logic for demo */}
-                        {item.price > 50 && (
+                        {item.salePrice ? (
                             <>
-                                <span className="original-price">{formatPrice((item.price * 1.2) * item.quantity)}</span>
-                                <span className="savings-label">You saved {formatPrice((item.price * 0.2) * item.quantity)}</span>
+                                <span className="current-price">{formatPrice(item.salePrice * item.quantity)}</span>
+                                <span className="original-price">{formatPrice(item.price * item.quantity)}</span>
+                                <span className="savings-label">You saved {formatPrice((item.price - item.salePrice) * item.quantity)}</span>
                             </>
+                        ) : (
+                            <span className="current-price">{formatPrice(item.price * item.quantity)}</span>
                         )}
                     </div>
                 </div>

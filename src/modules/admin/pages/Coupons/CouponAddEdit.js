@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { FaSave, FaArrowLeft, FaPercentage, FaDollarSign } from 'react-icons/fa';
+import { FaSave, FaArrowLeft, FaPercentage, FaRupeeSign } from 'react-icons/fa';
 import '../../admin.css';
 import './Coupons.css';
 
@@ -238,7 +238,7 @@ const CouponAddEdit = () => {
                             className={`discount-type-option ${formData.discountType === 'flat' ? 'selected' : ''}`}
                             onClick={() => setFormData(prev => ({ ...prev, discountType: 'flat' }))}
                         >
-                            <div className="discount-type-icon"><FaDollarSign /></div>
+                            <div className="discount-type-icon"><FaRupeeSign /></div>
                             <div className="discount-type-label">Flat Amount</div>
                         </div>
                     </div>

@@ -10,7 +10,7 @@ import {
 import { useAdminAuth } from '../../../context/AdminAuthContext';
 
 const AdminSidebar = ({ isOpen, onClose }) => {
-    const { user } = useAdminAuth();
+    const { user, logout } = useAdminAuth();
 
     return (
         <aside className={`admin-sidebar ${isOpen ? 'open' : ''}`}>
@@ -47,12 +47,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                     <span>Customers</span>
                 </NavLink>
 
-                {user && (user.role === 'super_admin' || user.isAdmin) && (
-                    <NavLink to="/admin/staff" onClick={onClose} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
-                        <FaUserShield className="admin-nav-icon" />
-                        <span>Staff Management</span>
-                    </NavLink>
-                )}
+
 
                 <div className="nav-section-label">Management</div>
                 <NavLink to="/admin/inventory" onClick={onClose} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
@@ -73,10 +68,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                     <FaChartLine className="admin-nav-icon" />
                     <span>Reports & Analytics</span>
                 </NavLink>
-                <NavLink to="/admin/content" onClick={onClose} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
-                    <FaLayerGroup className="admin-nav-icon" />
-                    <span>Content (CMS)</span>
-                </NavLink>
+
                 <NavLink to="/admin/settings" onClick={onClose} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
                     <FaCog className="admin-nav-icon" />
                     <span>Settings</span>
@@ -84,10 +76,17 @@ const AdminSidebar = ({ isOpen, onClose }) => {
             </nav>
 
             <div className="admin-sidebar-footer">
-                <a href="/" className="admin-nav-item logout-item">
+                <button
+                    onClick={() => {
+                        logout();
+                        window.location.href = '/admin/login';
+                    }}
+                    className="admin-nav-item logout-item"
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left', font: 'inherit' }}
+                >
                     <FaSignOutAlt className="admin-nav-icon" />
-                    <span>Exit Admin</span>
-                </a>
+                    <span>Logout</span>
+                </button>
             </div>
         </aside>
     );

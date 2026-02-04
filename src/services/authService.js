@@ -102,32 +102,70 @@ export const authService = {
         return authService.sendOTP(emailOrMobile, 'password_reset');
     },
 
-    // Reset password (mock placeholder logic for now, or implement backend route)
+    // Reset password (Real Backend Implementation)
     resetPassword: async (emailOrMobile, otp, newPassword) => {
-        // Verify OTP first
-        const verifyRes = await authService.verifyOTP(emailOrMobile, otp);
-        if (verifyRes.success) {
-            // In a real app, you would call a /reset-password endpoint here
-            return { success: true, message: 'Password updated (Mock)' };
+        try {
+            const response = await fetch(`${AUTH_API_URL}/reset-password`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: emailOrMobile, otp, newPassword })
+            });
+
+            const data = await response.json();
+            if (!data.success) throw new Error(data.message || 'Password reset failed');
+
+            return data;
+        } catch (error) {
+            console.error('Reset password error:', error);
+            throw error;
         }
-        throw new Error('Invalid OTP');
     },
 
-    // Social login (Google) - Mock
-    loginWithGoogle: async () => {
-        const mockGoogleUser = {
-            id: 'google_user_1',
-            name: 'Google User',
-            email: 'googleuser@gmail.com',
-            mobile: ''
-        };
-        const token = `mock_token_google_${Date.now()}`;
-        return {
-            success: true,
-            user: mockGoogleUser,
-            token,
-            expiresAt: Date.now() + (30 * 24 * 60 * 60 * 1000)
-        };
+    // Social login (Google) - Real Implementation
+    loginWithGoogle: async (tokenResponse) => {
+        try {
+            if (!tokenResponse || !tokenResponse.access_token) {
+                throw new Error("No access token received from Google");
+            }
+
+            // 1. Get User Profile from Google directly (Frontend verification)
+            // This ensures we have the real email/name before hitting our backend
+            const googleProfileRes = await fetch(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenResponse.access_token}`, {
+                headers: {
+                    Authorization: `Bearer ${tokenResponse.access_token}`,
+                    Accept: 'application/json'
+                }
+            });
+
+            if (!googleProfileRes.ok) throw new Error("Failed to fetch Google Profile");
+
+            const googleProfile = await googleProfileRes.json();
+
+            // 2. Send Profile to Backend to Login/Create Account
+            const response = await fetch(`${AUTH_API_URL}/google-login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: googleProfile.email,
+                    name: googleProfile.name,
+                    googleId: googleProfile.id,
+                    picture: googleProfile.picture
+                })
+            });
+
+            const data = await response.json();
+            if (!data.success) throw new Error(data.message || 'Google login failed on server');
+
+            return {
+                success: true,
+                user: data.user,
+                token: data.token,
+                expiresAt: Date.now() + (30 * 24 * 60 * 60 * 1000)
+            };
+        } catch (error) {
+            console.error('Google login error:', error);
+            throw error;
+        }
     },
 
     // Social login (Apple) - Mock

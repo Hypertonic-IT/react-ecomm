@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { FaDollarSign, FaShoppingBag, FaUsers, FaChartLine, FaArrowUp, FaArrowDown } from 'react-icons/fa';
+import { FaRupeeSign, FaShoppingBag, FaUsers, FaChartLine, FaArrowUp, FaArrowDown } from 'react-icons/fa';
 
 /**
  * Updated for Light Theme Compatibility
@@ -51,7 +51,7 @@ const DashboardStats = ({ stats }) => {
                 value={`₹${data.totalRevenue?.toFixed(2) || '0.00'}`}
                 change="12.5"
                 isPositive={true}
-                icon={FaDollarSign}
+                icon={FaRupeeSign}
                 color="#10b981"
             />
             <StatCard

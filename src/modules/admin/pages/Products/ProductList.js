@@ -37,6 +37,7 @@ const ProductList = () => {
                 await fetch(`http://localhost:5001/api/products/${id}`, {
                     method: 'DELETE',
                     headers: {
+                        'Authorization': `Bearer ${user ? localStorage.getItem('adminAuthToken') : ''}`,
                         'user-id': user?.email
                     }
                 });
@@ -55,6 +56,7 @@ const ProductList = () => {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user ? localStorage.getItem('adminAuthToken') : ''}`,
                     'user-id': user?.email
                 },
                 body: JSON.stringify({ ...product, isActive: updatedStatus })
@@ -141,7 +143,7 @@ const ProductList = () => {
                                     <th>Category</th>
                                     <th>Stock</th>
                                     <th>Status</th>
-                                    <th style={{ textAlign: 'right' }}>Actions</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -179,8 +181,8 @@ const ProductList = () => {
                                                 </button>
                                             </div>
                                         </td>
-                                        <td style={{ textAlign: 'right' }}>
-                                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+                                        <td>
+                                            <div style={{ display: 'flex', justifyContent: 'flex-start', gap: '8px' }}>
                                                 <Link to={`/admin/products/edit/${product._id}`} className="admin-btn-icon" title="Edit">
                                                     <FaEdit />
                                                 </Link>

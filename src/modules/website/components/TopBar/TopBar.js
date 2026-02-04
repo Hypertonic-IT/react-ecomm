@@ -1,31 +1,46 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FaGlobe, FaChevronDown } from 'react-icons/fa';
-import { useCurrency } from '../../../../context/CurrencyContext';
+import GoogleTranslate from '../GoogleTranslate/GoogleTranslate';
 
 const TopBar = () => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const { selectedLocale, setLocale } = useCurrency();
-    const menuRef = useRef(null);
+    const [isLangOpen, setIsLangOpen] = useState(false);
+    const [currentLang, setCurrentLang] = useState('English');
+    const dropdownRef = useRef(null);
 
-    const locales = [
-        { code: 'EN', currency: 'USD', label: 'English / USD' },
-        { code: 'IN', currency: 'INR', label: 'Hindi / INR' },
-        { code: 'FR', currency: 'EUR', label: 'French / EUR' }
+    const languages = [
+        { code: 'en', name: 'English' },
+        { code: 'hi', name: 'Hindi' },
+        { code: 'es', name: 'Spanish' },
+        { code: 'fr', name: 'French' },
+        { code: 'de', name: 'German' },
+        { code: 'pt', name: 'Portuguese' },
+        { code: 'it', name: 'Italian' },
+        { code: 'ja', name: 'Japanese' },
     ];
 
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (menuRef.current && !menuRef.current.contains(event.target)) {
-                setIsMenuOpen(false);
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsLangOpen(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const handleLocaleSelect = (locale) => {
-        setLocale(locale);
-        setIsMenuOpen(false);
+    const handleLanguageChange = (lang) => {
+        setCurrentLang(lang.name);
+        setIsLangOpen(false);
+
+        // Programmatically trigger Google Translate
+        const googleCombo = document.querySelector('.goog-te-combo');
+        if (googleCombo) {
+            googleCombo.value = lang.code;
+            googleCombo.dispatchEvent(new Event('change'));
+        } else {
+            // Fallback for cookie-based if combo not found immediately
+            document.cookie = `googtrans=/en/${lang.code}; path=/; domain=${window.location.hostname}`;
+            window.location.reload();
+        }
     };
 
     const styles = {
@@ -33,12 +48,13 @@ const TopBar = () => {
             backgroundColor: '#000',
             color: '#fff',
             fontSize: '11px',
-            padding: '10px 0',
+            padding: '8px 0',
             textAlign: 'center',
             position: 'relative',
             textTransform: 'uppercase',
             letterSpacing: '1px',
-            zIndex: 1001 // Ensure it sits above other headers
+            zIndex: 1001,
+            borderBottom: '1px solid rgba(255,255,255,0.1)'
         },
         container: {
             display: 'flex',
@@ -56,76 +72,87 @@ const TopBar = () => {
         rightSide: {
             display: 'flex',
             alignItems: 'center',
-            gap: '15px',
-            position: 'relative' // For dropdown positioning
-        },
-        link: {
-            cursor: 'pointer',
-            opacity: 0.8,
-            transition: 'opacity 0.2s',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '5px'
+            gap: '20px',
         },
         dropdown: {
+            position: 'relative',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '4px 8px',
+            borderRadius: '4px',
+            transition: 'background 0.2s',
+            userSelect: 'none'
+        },
+        menu: {
             position: 'absolute',
-            top: '100%',
+            top: 'calc(100% + 8px)',
             right: 0,
             backgroundColor: '#fff',
             color: '#000',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-            borderRadius: '4px',
-            padding: '5px 0',
-            minWidth: '120px',
+            borderRadius: '8px',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+            width: '140px',
+            padding: '8px 0',
+            display: isLangOpen ? 'block' : 'none',
             zIndex: 1002,
-            marginTop: '5px'
+            border: '1px solid #eee'
         },
-        dropdownItem: {
-            padding: '10px 15px',
-            cursor: 'pointer',
+        menuItem: {
+            padding: '10px 16px',
+            fontSize: '12px',
             textAlign: 'left',
-            fontSize: '11px',
-            fontWeight: '500',
+            cursor: 'pointer',
             transition: 'background 0.2s',
+            fontWeight: '500',
+            textTransform: 'none',
+            letterSpacing: 'normal'
+        },
+        leftSide: {
             display: 'flex',
-            justifyContent: 'space-between'
+            gap: '20px'
         }
     };
 
     return (
         <div style={styles.bar}>
             <div style={styles.container}>
-                <div style={styles.link}>7 Days Easy Return</div>
+                <div style={styles.leftSide}>
+                    <div style={{ opacity: 0.8 }}>7 Days Easy Return</div>
+                    <div style={{ opacity: 0.8 }}>Quality Guarantee</div>
+                </div>
+
                 <div style={styles.centerText}>Free Shipping on Orders Above ₹8,299</div>
 
-                <div style={styles.rightSide} ref={menuRef}>
-                    <div
-                        style={styles.link}
-                        onClick={() => setIsMenuOpen(!isMenuOpen)}
-                    >
-                        <FaGlobe /> {selectedLocale.code} / {selectedLocale.currency} <FaChevronDown size={8} />
-                    </div>
+                <div style={styles.rightSide}>
+                    {/* Hidden Google Component */}
+                    <GoogleTranslate />
 
-                    {isMenuOpen && (
-                        <div style={styles.dropdown}>
-                            {locales.map((locale) => (
+                    {/* Attractive Custom Selector */}
+                    <div style={styles.dropdown} ref={dropdownRef} onClick={() => setIsLangOpen(!isLangOpen)}>
+                        <span>{currentLang}</span>
+                        <svg width="10" height="6" viewBox="0 0 10 6" fill="none" style={{ transform: isLangOpen ? 'rotate(180deg)' : 'none', transition: '0.2s' }}>
+                            <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+
+                        <div style={styles.menu}>
+                            {languages.map((lang) => (
                                 <div
-                                    key={locale.code}
-                                    style={{
-                                        ...styles.dropdownItem,
-                                        backgroundColor: selectedLocale.code === locale.code ? '#f5f5f5' : '#fff'
+                                    key={lang.code}
+                                    style={styles.menuItem}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleLanguageChange(lang);
                                     }}
-                                    onClick={() => handleLocaleSelect(locale)}
-                                    onMouseEnter={(e) => e.target.style.backgroundColor = '#f5f5f5'}
-                                    onMouseLeave={(e) => {
-                                        if (selectedLocale.code !== locale.code) e.target.style.backgroundColor = '#fff'
-                                    }}
+                                    onMouseOver={(e) => e.target.style.backgroundColor = '#f5f5f5'}
+                                    onMouseOut={(e) => e.target.style.backgroundColor = 'transparent'}
                                 >
-                                    {locale.label}
+                                    {lang.name}
                                 </div>
                             ))}
                         </div>
-                    )}
+                    </div>
                 </div>
             </div>
         </div>
@@ -133,3 +160,4 @@ const TopBar = () => {
 };
 
 export default TopBar;
+

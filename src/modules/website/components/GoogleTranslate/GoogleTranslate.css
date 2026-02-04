@@ -1,0 +1,51 @@
+/* Completely hide the Google Translate Top Bar Banner */
+.goog-te-banner-frame {
+    display: none !important;
+}
+
+body {
+    top: 0px !important;
+    position: static !important;
+}
+
+/* Hide the Google tooltips/balloons */
+.goog-te-balloon-frame,
+.goog-te-balloon-frame.skiptranslate,
+.goog-tooltip,
+.goog-tooltip:hover {
+    display: none !important;
+}
+
+/* Hide Google's own highlight */
+.goog-text-highlight {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Hide the powered by Google footer in the gadget if it shows up */
+.goog-te-gadget span {
+    display: none !important;
+}
+
+.goog-te-gadget {
+    color: transparent !important;
+}
+
+/* Hide Google branding icons */
+.goog-te-gadget-icon {
+    display: none !important;
+}
+
+/* Disable the 'Translated to' strip effectively */
+iframe.goog-te-banner-frame {
+    display: none !important;
+}
+
+.goog-te-banner {
+    display: none !important;
+}
+
+.VIpgJd-ZVi9od-ORHb-OEVmcd {
+    z-index: 8 !important;
+}

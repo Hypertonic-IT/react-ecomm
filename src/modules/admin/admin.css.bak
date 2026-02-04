@@ -283,7 +283,7 @@ body {
 }
 
 .header-icon {
-    font-size: 1.2rem;
+    font-size: 1.01rem;
     color: var(--admin-text-secondary);
 }
 

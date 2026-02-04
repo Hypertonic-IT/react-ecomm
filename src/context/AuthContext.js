@@ -33,7 +33,17 @@ export const AuthProvider = ({ children }) => {
 
                         if (isValid.valid) {
                             setToken(savedToken);
-                            setUser(JSON.parse(savedUser));
+                            const parsedUser = JSON.parse(savedUser);
+                            const isStaff = parsedUser.isAdmin ||
+                                ['super_admin', 'product_manager', 'sales_manager', 'marketing_manager'].includes(parsedUser.role);
+
+                            if (isStaff) {
+                                // Prevent staff from accessing as regular user
+                                clearSession();
+                            } else {
+                                setToken(savedToken);
+                                setUser(parsedUser);
+                            }
                         } else {
                             // Token invalid, clear session
                             clearSession();
@@ -99,6 +109,17 @@ export const AuthProvider = ({ children }) => {
             const response = await authService.login(emailOrMobile, password, rememberMe);
 
             if (response.success) {
+                // RESTRICTION: Prevent Admin/Staff from logging into Storefront
+                const isStaff = response.user.isAdmin ||
+                    ['super_admin', 'product_manager', 'sales_manager', 'marketing_manager'].includes(response.user.role);
+
+                if (isStaff) {
+                    return {
+                        success: false,
+                        message: 'Staff account detected. Please login via the Admin Panel.'
+                    };
+                }
+
                 saveSession(response.user, response.token, response.expiresAt);
                 // Clear login attempts on success
                 setLoginAttempts([]);

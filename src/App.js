@@ -19,6 +19,9 @@ import ContactUs from "./modules/website/pages/Contact/ContactUs";
 import Careers from "./modules/website/pages/Static/Careers";
 import PrivacyPolicy from "./modules/website/pages/Static/PrivacyPolicy";
 import TermsConditions from "./modules/website/pages/Static/TermsConditions";
+import ShippingReturns from "./modules/website/pages/ShippingReturns/ShippingReturns";
+import BlogList from "./modules/website/pages/Blog/BlogList";
+import BlogPost from "./modules/website/pages/Blog/BlogPost";
 
 import { ShopProvider } from "./context/ShopContext";
 import { AuthProvider } from "./context/AuthContext";
@@ -51,6 +54,8 @@ import OrderReports from "./modules/admin/pages/Reports/OrderReports";
 import ProductReports from "./modules/admin/pages/Reports/ProductReports";
 
 import StaffList from "./modules/admin/pages/Users/StaffList";
+import Settings from "./modules/admin/pages/Settings/Settings";
+
 
 function App() {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -93,6 +98,9 @@ function App() {
                 <Route path="/careers" element={<Careers />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/terms" element={<TermsConditions />} />
+                <Route path="/shipping-returns" element={<ShippingReturns />} />
+                <Route path="/blog" element={<BlogList />} />
+                <Route path="/blog/:id" element={<BlogPost />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/product/:id" element={<ProductDetail />} />
                 <Route path="/cart" element={<Cart />} />
@@ -170,8 +178,8 @@ function App() {
                   <Route path="reports/inventory" element={<AdminPlaceholder title="Inventory Reports" />} />
                   <Route path="reports/coupons" element={<AdminPlaceholder title="Coupon Reports" />} />
                   <Route path="analytics" element={<Navigate to="reports" replace />} />
-                  <Route path="content" element={<AdminPlaceholder title="Content Management (CMS)" />} />
-                  <Route path="settings" element={<AdminPlaceholder title="Admin Settings" />} />
+
+                  <Route path="settings" element={<Settings />} />
                 </Route>
               </Routes>
               <TrackOrderDrawer />

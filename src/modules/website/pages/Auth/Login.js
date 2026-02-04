@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../../context/AuthContext';
+import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import AuthLayout from '../../components/Auth/AuthLayout';
 import AuthInput from '../../components/Auth/AuthInput';
 import AuthButton from '../../components/Auth/AuthButton';
@@ -12,6 +13,7 @@ const Login = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { login, loginWithGoogle, loginWithApple, isAuthenticated } = useAuth();
+    const { logout: adminLogout } = useAdminAuth(); // Get admin logout function
 
     const [formData, setFormData] = useState({
         emailOrMobile: '',
@@ -81,6 +83,9 @@ const Login = () => {
         setLoading(true);
 
         try {
+            // Ensure no admin session exists when logging in as user
+            await adminLogout();
+
             await login(formData.emailOrMobile, formData.password, formData.rememberMe);
             setSuccess(true);
 
@@ -95,12 +100,16 @@ const Login = () => {
         }
     };
 
-    const handleSocialLogin = async (provider) => {
+    const handleSocialLogin = async (provider, data) => {
         setSocialLoading(provider);
 
         try {
+            // Ensure no admin session exists when logging in as user
+            await adminLogout();
+
             if (provider === 'google') {
-                await loginWithGoogle();
+                // 'data' is the tokenResponse from Google
+                await loginWithGoogle(data);
             } else if (provider === 'apple') {
                 await loginWithApple();
             }
@@ -178,7 +187,7 @@ const Login = () => {
                 </AuthButton>
 
                 <SocialLogin
-                    onGoogleLogin={() => handleSocialLogin('google')}
+                    onGoogleLogin={(tokenResponse) => handleSocialLogin('google', tokenResponse)}
                     onAppleLogin={() => handleSocialLogin('apple')}
                     loading={socialLoading}
                 />

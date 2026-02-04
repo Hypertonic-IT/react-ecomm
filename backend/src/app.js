@@ -27,6 +27,7 @@ app.use('/api/coupons', require('./routes/couponRoutes'));
 app.use('/api/reviews', require('./routes/reviewRoutes'));
 app.use('/api/reports', require('./routes/reportRoutes'));
 app.use('/api/upload', require('./routes/uploadRoutes'));
+app.use('/api/settings', require('./routes/siteConfigRoutes'));
 
 // Static Uploads (Serving images)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));

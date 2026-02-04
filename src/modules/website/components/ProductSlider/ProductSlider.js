@@ -109,6 +109,13 @@ const ProductSlider = ({ title, products }) => {
                                         <FaHeart />
                                     </button>
 
+                                    {/* Discount Badge */}
+                                    {product.discount > 0 && (
+                                        <div className="slider-discount-badge">
+                                            {product.discount}% OFF
+                                        </div>
+                                    )}
+
                                     {/* NEW: Quick View / Details Eye Icon */}
                                     <button
                                         className="quick-view-btn"
@@ -128,7 +135,20 @@ const ProductSlider = ({ title, products }) => {
                                 <div className="product-info">
                                     <div className="product-name">{product.name}</div>
                                     <div className="product-meta-row">
-                                        <div className="product-price">{product.price ? formatPrice(product.price) : formatPrice(0)}</div>
+                                        <div className="product-price">
+                                            {product.discount > 0 ? (
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                                    <span style={{ fontWeight: '700', color: '#ef4444', fontSize: '14px' }}>
+                                                        {formatPrice(product.salePrice)}
+                                                    </span>
+                                                    <span style={{ textDecoration: 'line-through', color: '#94a3b8', fontSize: '11px' }}>
+                                                        {formatPrice(product.price)}
+                                                    </span>
+                                                </div>
+                                            ) : (
+                                                <span style={{ fontSize: '14px' }}>{formatPrice(product.price)}</span>
+                                            )}
+                                        </div>
                                         <button
                                             className="add-to-cart-btn"
                                             onClick={(e) => { e.stopPropagation(); addToCart(product); }}

@@ -1,42 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { FaLock } from 'react-icons/fa';
 import './AuthLayout.css';
 
-const brandImages = [
-    'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800&q=80',
-    'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&q=80',
-    'https://images.unsplash.com/photo-1490481651871-646860529625?w=800&q=80'
-];
-
 const AuthLayout = ({ children, title, subtitle }) => {
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-    useEffect(() => {
-        // Rotate images every 5 seconds
-        const interval = setInterval(() => {
-            setCurrentImageIndex((prev) => (prev + 1) % brandImages.length);
-        }, 5000);
-
-        return () => clearInterval(interval);
-    }, []);
-
     return (
         <div className="auth-layout">
             {/* Left Side - Brand Image */}
             <div className="auth-brand-side">
                 <div className="brand-image-container">
-                    {brandImages.map((image, index) => (
-                        <img
-                            key={index}
-                            src={image}
-                            alt="Fashion Brand"
-                            className={`brand-image ${index === currentImageIndex ? 'active' : ''}`}
-                        />
-                    ))}
+                    <img
+                        src="https://images.pexels.com/photos/3489129/pexels-photo-3489129.jpeg"
+                        alt="Fashion Brand"
+                        className="brand-image"
+                        style={{ opacity: 1 }}
+                    />
                 </div>
                 <div className="brand-overlay">
-                    <h1 className="brand-title">HYPERTONIC</h1>
-                    <p className="brand-tagline">Elevate Your Style</p>
+                    <h1 className="brand-title" style={{ textShadow: '2px 2px 10px rgba(0,0,0,0.7)', fontWeight: '800', color: '#ffffff' }}>HYPERTONIC</h1>
+                    <p className="brand-tagline" style={{ textShadow: '1px 1px 6px rgba(0,0,0,0.6)', color: '#ffffff' }}>Elevate Your Style</p>
                 </div>
             </div>
 

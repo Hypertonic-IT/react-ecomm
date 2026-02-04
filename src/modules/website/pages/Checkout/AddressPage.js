@@ -55,6 +55,56 @@ const AddressPage = () => {
         setLoading(false);
     };
 
+    const [availableCities, setAvailableCities] = useState([]);
+
+    // Indian States and Cities Data
+    const indianStatesAndCities = {
+        "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore", "Kurnool", "Rajahmundry", "Tirupati"],
+        "Arunachal Pradesh": ["Itanagar", "Naharlagun", "Pasighat"],
+        "Assam": ["Guwahati", "Silchar", "Dibrugarh", "Jorhat", "Nagaon", "Tinsukia"],
+        "Bihar": ["Patna", "Gaya", "Bhagalpur", "Muzaffarpur", "Purnia", "Darbhanga"],
+        "Chhattisgarh": ["Raipur", "Bhilai", "Bilaspur", "Korba", "Rajnandgaon", "Raigarh"],
+        "Goa": ["Panaji", "Margao", "Vasco da Gama", "Mapusa", "Ponda"],
+        "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar", "Jamnagar", "Gandhinagar"],
+        "Haryana": ["Faridabad", "Gurugram", "Panipat", "Ambala", "Yamunanagar", "Rohtak"],
+        "Himachal Pradesh": ["Shimla", "Dharamshala", "Mandi", "Solan", "Baddi"],
+        "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro", "Deoghar", "Hazaribagh"],
+        "Karnataka": ["Bengaluru", "Mysuru", "Hubballi", "Mangaluru", "Belagavi", "Davangere", "Ballari"],
+        "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Thrissur", "Kollam", "Alappuzha"],
+        "Madhya Pradesh": ["Bhopal", "Indore", "Jabalpur", "Gwalior", "Ujjain", "Sagar"],
+        "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Thane", "Nashik", "Aurangabad", "Solapur"],
+        "Manipur": ["Imphal", "Thoubal", "Kakching"],
+        "Meghalaya": ["Shillong", "Tura", "Jowai"],
+        "Mizoram": ["Aizawl", "Lunglei", "Champhai"],
+        "Nagaland": ["Kohima", "Dimapur", "Mokokchung"],
+        "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Berhampur", "Sambalpur", "Puri"],
+        "Punjab": ["Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Bathinda", "Mohali"],
+        "Rajasthan": ["Jaipur", "Jodhpur", "Kota", "Bikaner", "Ajmer", "Udaipur"],
+        "Sikkim": ["Gangtok", "Namchi", "Geyzing"],
+        "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem", "Tirunelveli"],
+        "Telangana": ["Hyderabad", "Warangal", "Nizamabad", "Karimnagar", "Khammam", "Ramagundam"],
+        "Tripura": ["Agartala", "Udaipur", "Dharmanagar"],
+        "Uttar Pradesh": ["Lucknow", "Kanpur", "Ghaziabad", "Agra", "Meerut", "Varanasi", "Prayagraj"],
+        "Uttarakhand": ["Dehradun", "Haridwar", "Roorkee", "Haldwani", "Rudrapur"],
+        "West Bengal": ["Kolkata", "Howrah", "Durgapur", "Asansol", "Siliguri", "Bardhaman"],
+        "Andaman and Nicobar Islands": ["Port Blair"],
+        "Chandigarh": ["Chandigarh"],
+        "Dadra and Nagar Haveli and Daman and Diu": ["Daman", "Diu", "Silvassa"],
+        "Delhi": ["New Delhi", "North Delhi", "South Delhi", "East Delhi", "West Delhi"],
+        "Jammu and Kashmir": ["Srinagar", "Jammu", "Anantnag"],
+        "Ladakh": ["Leh", "Kargil"],
+        "Lakshadweep": ["Kavaratti"],
+        "Puducherry": ["Puducherry", "Karaikal", "Mahe", "Yanam"]
+    };
+
+    const indianStates = Object.keys(indianStatesAndCities).sort();
+
+    const handleStateChange = (e) => {
+        const newState = e.target.value;
+        setFormData({ ...formData, state: newState, city: '' });
+        setAvailableCities(newState ? indianStatesAndCities[newState].sort() : []);
+    };
+
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -88,6 +138,11 @@ const AddressPage = () => {
 
     const handleEdit = (addr) => {
         setFormData(addr);
+        if (addr.state && indianStatesAndCities[addr.state]) {
+            setAvailableCities(indianStatesAndCities[addr.state].sort());
+        } else {
+            setAvailableCities([]);
+        }
         setEditingId(addr.id);
         setViewMode('form');
     };
@@ -206,8 +261,19 @@ const AddressPage = () => {
                 <input name="mobile" placeholder="Mobile Number" value={formData.mobile} onChange={handleInputChange} required />
                 <input name="street" placeholder="Street / House No." value={formData.street} onChange={handleInputChange} required />
                 <div className="form-row">
-                    <input name="city" placeholder="City" value={formData.city} onChange={handleInputChange} required />
-                    <input name="state" placeholder="State" value={formData.state} onChange={handleInputChange} required />
+                    <select name="state" value={formData.state} onChange={handleStateChange} required className="full-width-select">
+                        <option value="">Select State</option>
+                        {indianStates.map(state => (
+                            <option key={state} value={state}>{state}</option>
+                        ))}
+                    </select>
+
+                    <select name="city" value={formData.city} onChange={handleInputChange} required className="full-width-select" disabled={!formData.state}>
+                        <option value="">Select City</option>
+                        {availableCities.map(city => (
+                            <option key={city} value={city}>{city}</option>
+                        ))}
+                    </select>
                 </div>
                 <div className="form-row">
                     <input name="zip" placeholder="Zip Code" value={formData.zip} onChange={handleInputChange} required />

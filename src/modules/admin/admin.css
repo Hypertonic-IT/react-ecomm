@@ -284,7 +284,7 @@ body {
 }
 
 .header-icon {
-    font-size: 1.5rem;
+    font-size: 1.01rem;
     /* Fallback */
     color: var(--admin-text-secondary);
     transition: color 0.2s;

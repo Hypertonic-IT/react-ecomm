@@ -2,161 +2,426 @@ import React from 'react';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 import TopBar from '../../components/TopBar/TopBar';
-import { FaLinkedin, FaTwitter, FaInstagram, FaQuoteLeft } from 'react-icons/fa';
+import { FaUndo, FaShippingFast, FaHeadset, FaGift, FaLinkedin, FaTwitter, FaInstagram, FaStar } from 'react-icons/fa';
 
 const AboutUs = () => {
+    const features = [
+        {
+            icon: <FaUndo />,
+            title: '14-Day Returns',
+            description: 'Risk-free shopping with easy returns'
+        },
+        {
+            icon: <FaShippingFast />,
+            title: 'Free Shipping',
+            description: 'No worries, just hit the road'
+        },
+        {
+            icon: <FaHeadset />,
+            title: '24/7 Support',
+            description: '24/7 support, always here just for you'
+        },
+        {
+            icon: <FaGift />,
+            title: 'Member Discounts',
+            description: 'Special offers for our loyal customers'
+        }
+    ];
+
+    const team = [
+        {
+            name: 'Annette Black',
+            role: 'Founder & CEO',
+            image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80'
+        },
+        {
+            name: 'Jane Cooper',
+            role: 'Head Designer',
+            image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80'
+        },
+        {
+            name: 'Brooklyn Simmons',
+            role: 'Marketing Director',
+            image: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400&q=80'
+        },
+        {
+            name: 'Theresa Webb',
+            role: 'Product Manager',
+            image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80'
+        }
+    ];
+
+    const brands = [
+        { name: 'Vanfaba', style: { fontFamily: 'serif', fontWeight: '700' } },
+        { name: 'Anvouge', style: { fontFamily: 'sans-serif', fontWeight: '600' } },
+        { name: 'Carolin', style: { fontFamily: 'cursive', fontWeight: '400' } },
+        { name: 'Shangui', style: { fontFamily: 'sans-serif', fontWeight: '700' } },
+        { name: 'Ecomtle', style: { fontFamily: 'serif', fontWeight: '500' } },
+        { name: 'Cheryl', style: { fontFamily: 'cursive', fontWeight: '400' } }
+    ];
+
+    const reviews = [
+        {
+            name: 'Sarah M.',
+            rating: 5,
+            title: 'Great Quality!',
+            text: 'I am extremely satisfied with my purchase. The quality is top-notch and the customer service is wonderful. I highly recommend this store!'
+        },
+        {
+            name: 'James Wilson',
+            rating: 5,
+            title: 'Quality of Clothing',
+            text: 'I love shopping at this store. The products are high-quality and the customer service is excellent. I always have a wonderful experience!'
+        },
+        {
+            name: 'Emily R.',
+            rating: 5,
+            title: 'Excellent Service!',
+            text: 'Outstanding quality and fast delivery! I am so happy with my purchase and will definitely order again. They have great taste!'
+        }
+    ];
+
     return (
         <div style={{ backgroundColor: 'var(--white)', color: 'var(--text-dark)' }}>
             <TopBar />
             <Header />
 
+            {/* Breadcrumb */}
+            <div className="container" style={{ padding: '20px 0', fontSize: '0.9rem', color: 'var(--text-light)' }}>
+                Homepage &gt; Pages &gt; <span style={{ color: 'var(--text-dark)' }}>About Our Store</span>
+            </div>
+
             {/* Hero Section */}
-            <div style={{
-                position: 'relative',
-                height: '50vh',
-                minHeight: '400px',
-                backgroundImage: 'url("https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1600&q=80")',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--white)',
-                textAlign: 'center'
-            }}>
+            <div className="container" style={{ padding: '40px 0 80px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '60px', alignItems: 'center' }}>
+                    {/* Left Image */}
+                    <div style={{ position: 'relative' }}>
+                        <img
+                            src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&q=80"
+                            alt="Fashion Model"
+                            style={{
+                                width: '100%',
+                                height: '500px',
+                                objectFit: 'cover',
+                                borderRadius: '8px',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                            }}
+                        />
+                    </div>
+
+                    {/* Right Content */}
+                    <div>
+                        <h1 style={{
+                            fontSize: '2.5rem',
+                            marginBottom: '30px',
+                            fontFamily: 'var(--font-heading)',
+                            color: 'var(--primary)',
+                            fontWeight: '700'
+                        }}>
+                            Hypertonic – Offering rare and beautiful items worldwide
+                        </h1>
+
+                        {/* Tabs */}
+                        <div style={{
+                            display: 'flex',
+                            gap: '30px',
+                            marginBottom: '30px',
+                            borderBottom: '2px solid var(--border-color)',
+                            paddingBottom: '10px'
+                        }}>
+                            <span style={{
+                                fontWeight: '700',
+                                color: 'var(--primary)',
+                                borderBottom: '3px solid var(--primary)',
+                                paddingBottom: '10px',
+                                marginBottom: '-12px',
+                                cursor: 'pointer'
+                            }}>Introduction</span>
+                            <span style={{ color: 'var(--text-light)', cursor: 'pointer' }}>Our Vision</span>
+                            <span style={{ color: 'var(--text-light)', cursor: 'pointer' }}>What Sets Us Apart</span>
+                            <span style={{ color: 'var(--text-light)', cursor: 'pointer' }}>Our Commitment</span>
+                        </div>
+
+                        <p style={{
+                            color: 'var(--text-medium)',
+                            lineHeight: '1.8',
+                            marginBottom: '20px',
+                            fontSize: '1rem'
+                        }}>
+                            Welcome to our store! We are dedicated to offering the finest selection of rare and beautiful items from around the world. Our mission is to bring you the elegance and sophistication you deserve. From timeless classics to modern elegance, discover the perfect addition to your wardrobe at Hypertonic Store.
+                        </p>
+
+                        <button style={{
+                            padding: '14px 32px',
+                            background: 'var(--primary)',
+                            color: 'var(--white)',
+                            border: 'none',
+                            borderRadius: '6px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            fontSize: '0.95rem',
+                            transition: 'all 0.3s ease'
+                        }}
+                            onMouseEnter={(e) => e.currentTarget.style.background = 'var(--accent)'}
+                            onMouseLeave={(e) => e.currentTarget.style.background = 'var(--primary)'}>
+                            Read More
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Features Section */}
+            <div style={{ background: 'var(--off-white)', padding: '60px 0' }}>
+                <div className="container">
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                        gap: '40px'
+                    }}>
+                        {features.map((feature, idx) => (
+                            <div key={idx} style={{ textAlign: 'center' }}>
+                                <div style={{
+                                    fontSize: '2.5rem',
+                                    color: 'var(--primary)',
+                                    marginBottom: '16px',
+                                    display: 'flex',
+                                    justifyContent: 'center'
+                                }}>
+                                    {feature.icon}
+                                </div>
+                                <h4 style={{
+                                    fontSize: '1.1rem',
+                                    marginBottom: '8px',
+                                    color: 'var(--primary)',
+                                    fontWeight: '700'
+                                }}>
+                                    {feature.title}
+                                </h4>
+                                <p style={{
+                                    color: 'var(--text-medium)',
+                                    fontSize: '0.9rem',
+                                    lineHeight: '1.5'
+                                }}>
+                                    {feature.description}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Meet Our Teams */}
+            <div className="container" style={{ padding: '80px 0' }}>
+                <h2 style={{
+                    fontSize: '2rem',
+                    textAlign: 'center',
+                    marginBottom: '16px',
+                    color: 'var(--primary)',
+                    fontWeight: '700'
+                }}>
+                    Meet Our Teams
+                </h2>
+                <p style={{
+                    textAlign: 'center',
+                    color: 'var(--text-medium)',
+                    marginBottom: '50px',
+                    fontSize: '1rem'
+                }}>
+                    Discover exceptional experiences with passionate, dedicated, and talented team members
+                </p>
+
                 <div style={{
-                    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-                    background: 'linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.7))'
-                }} />
-                <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-                    <h1 style={{ 
-                        fontFamily: 'var(--font-heading)', 
-                        fontSize: '3.5rem', 
-                        marginBottom: '1rem', 
-                        color: 'var(--white)' 
-                    }}>
-                        Redefining Fashion
-                    </h1>
-                    <p style={{ 
-                        fontSize: '1.2rem', 
-                        maxWidth: '700px', 
-                        margin: '0 auto', 
-                        color: 'rgba(255,255,255,0.9)' 
-                    }}>
-                        Where timeless style meets modern elegance. Be bold, be you.
-                    </p>
-                </div>
-            </div>
-
-            {/* Mission & Vision */}
-            <div className="container section-padding" style={{
-                display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '60px',
-                alignItems: 'center'
-            }}>
-                <div>
-                    <h4 style={{ 
-                        color: 'var(--accent)', 
-                        fontWeight: '600', 
-                        letterSpacing: '2px', 
-                        marginBottom: '10px',
-                        textTransform: 'uppercase',
-                        fontSize: '14px'
-                    }}>Our Philosophy</h4>
-                    <h2 style={{ fontSize: '2.5rem', marginBottom: '24px' }}>Crafting Confidence Through Style</h2>
-                    <p style={{ marginBottom: '20px', color: 'var(--text-medium)' }}>
-                        At Hypertonic, we believe that fashion is more than just clothing—it's a form of self-expression.
-                        Our journey began with a simple mission: to create high-quality, sustainable pieces that empower individuals to look and feel their best.
-                    </p>
-                    <p style={{ color: 'var(--text-medium)' }}>
-                        We are committed to ethical sourcing, premium fabrics, and designs that transcend seasons.
-                        Every stitch tells a story of dedication and artistry.
-                    </p>
-                </div>
-                <div>
-                    <img
-                        src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=800&q=80"
-                        alt="Design Process"
-                        style={{ width: '100%', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-lg)' }}
-                    />
-                </div>
-            </div>
-
-            {/* Stats Section */}
-            <div style={{ backgroundColor: 'var(--primary)', color: 'var(--white)', padding: '80px 0' }}>
-                <div className="container" style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap', gap: '40px', textAlign: 'center' }}>
-                    <div style={{ flex: '1 1 200px' }}>
-                        <h3 style={{ fontSize: '3rem', color: 'var(--accent)', marginBottom: '8px' }}>10k+</h3>
-                        <p style={{ fontSize: '14px', letterSpacing: '1px', textTransform: 'uppercase', opacity: 0.8 }}>Happy Customers</p>
-                    </div>
-                    <div style={{ flex: '1 1 200px' }}>
-                        <h3 style={{ fontSize: '3rem', color: 'var(--accent)', marginBottom: '8px' }}>500+</h3>
-                        <p style={{ fontSize: '14px', letterSpacing: '1px', textTransform: 'uppercase', opacity: 0.8 }}>Unique Designs</p>
-                    </div>
-                    <div style={{ flex: '1 1 200px' }}>
-                        <h3 style={{ fontSize: '3rem', color: 'var(--accent)', marginBottom: '8px' }}>15+</h3>
-                        <p style={{ fontSize: '14px', letterSpacing: '1px', textTransform: 'uppercase', opacity: 0.8 }}>Global Awards</p>
-                    </div>
-                    <div style={{ flex: '1 1 200px' }}>
-                        <h3 style={{ fontSize: '3rem', color: 'var(--accent)', marginBottom: '8px' }}>100%</h3>
-                        <p style={{ fontSize: '14px', letterSpacing: '1px', textTransform: 'uppercase', opacity: 0.8 }}>Sustainability</p>
-                    </div>
-                </div>
-            </div>
-
-            {/* Team Section */}
-            <div className="container section-padding text-center">
-                <h2 style={{ fontSize: '2.5rem', marginBottom: '16px' }}>Meet The Minds</h2>
-                <p style={{ color: 'var(--text-medium)', marginBottom: '60px' }}>The creative force behind the brand.</p>
-
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '30px' }}>
-                    {[
-                        { name: 'Alex Johnson', role: 'Founder & CEO', img: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80' },
-                        { name: 'Sarah Lee', role: 'Head of Design', img: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80' },
-                        { name: 'Michael Chen', role: 'Marketing Director', img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80' },
-                        { name: 'Emily Davis', role: 'Lead Stylist', img: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80' }
-                    ].map((member, idx) => (
-                        <div key={idx} style={{ padding: '20px', transition: 'transform 0.3s' }}>
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '30px'
+                }}>
+                    {team.map((member, idx) => (
+                        <div key={idx} style={{
+                            background: 'var(--white)',
+                            borderRadius: '8px',
+                            overflow: 'hidden',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                            transition: 'all 0.3s ease'
+                        }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.transform = 'translateY(-8px)';
+                                e.currentTarget.style.boxShadow = '0 8px 20px rgba(0,0,0,0.12)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.transform = 'translateY(0)';
+                                e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+                            }}>
                             <img
-                                src={member.img}
+                                src={member.image}
                                 alt={member.name}
-                                style={{ 
-                                    width: '180px', 
-                                    height: '180px', 
-                                    borderRadius: '50%', 
-                                    objectFit: 'cover', 
-                                    marginBottom: '24px', 
-                                    boxShadow: 'var(--shadow-md)',
-                                    border: '4px solid var(--white)'
+                                style={{
+                                    width: '100%',
+                                    height: '300px',
+                                    objectFit: 'cover'
                                 }}
                             />
-                            <h4 style={{ fontSize: '1.25rem', marginBottom: '8px', color: 'var(--primary)' }}>{member.name}</h4>
-                            <p style={{ color: 'var(--accent)', fontSize: '14px', marginBottom: '16px', fontWeight: '600', textTransform: 'uppercase' }}>{member.role}</p>
-                            <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', color: 'var(--text-light)' }}>
-                                <FaLinkedin className="header-icon" style={{ cursor: 'pointer', fontSize: '20px' }} />
-                                <FaTwitter className="header-icon" style={{ cursor: 'pointer', fontSize: '20px' }} />
-                                <FaInstagram className="header-icon" style={{ cursor: 'pointer', fontSize: '20px' }} />
+                            <div style={{ padding: '20px' }}>
+                                <h4 style={{
+                                    fontSize: '1.1rem',
+                                    marginBottom: '6px',
+                                    color: 'var(--primary)',
+                                    fontWeight: '700'
+                                }}>
+                                    {member.name}
+                                </h4>
+                                <p style={{
+                                    color: 'var(--text-light)',
+                                    fontSize: '0.9rem',
+                                    marginBottom: '12px'
+                                }}>
+                                    {member.role}
+                                </p>
+                                <div style={{
+                                    display: 'flex',
+                                    gap: '12px',
+                                    color: 'var(--text-light)'
+                                }}>
+                                    <FaLinkedin style={{ cursor: 'pointer', fontSize: '18px' }} />
+                                    <FaTwitter style={{ cursor: 'pointer', fontSize: '18px' }} />
+                                    <FaInstagram style={{ cursor: 'pointer', fontSize: '18px' }} />
+                                </div>
                             </div>
                         </div>
                     ))}
                 </div>
             </div>
 
-            {/* Testimonials */}
-            <div style={{ backgroundColor: 'var(--off-white)', padding: '100px 0', textAlign: 'center' }}>
-                <div className="container" style={{ maxWidth: '800px' }}>
-                    <FaQuoteLeft style={{ fontSize: '48px', color: 'var(--accent)', marginBottom: '40px', opacity: 0.5 }} />
-                    <p style={{ 
-                        fontFamily: 'var(--font-heading)',
-                        fontSize: '2rem', 
-                        lineHeight: '1.4', 
-                        fontStyle: 'italic', 
-                        color: 'var(--primary)', 
-                        marginBottom: '40px' 
+            {/* Brand Logos */}
+            <div style={{ background: 'var(--off-white)', padding: '50px 0' }}>
+                <div className="container">
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-around',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        gap: '30px'
                     }}>
-                        "Hypertonic has completely transformed my wardrobe. The quality is unmatched, and every piece feels like it was made just for me. Absolutely love it!"
-                    </p>
-                    <h5 style={{ fontWeight: '700', fontSize: '18px', color: 'var(--primary)' }}>Jessica Parker</h5>
-                    <p style={{ color: 'var(--text-light)', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1px' }}>Loyal Customer</p>
+                        {brands.map((brand, idx) => (
+                            <div key={idx} style={{
+                                fontSize: '1.5rem',
+                                color: 'var(--text-dark)',
+                                opacity: 0.7,
+                                transition: 'opacity 0.3s',
+                                cursor: 'pointer',
+                                ...brand.style
+                            }}
+                                onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+                                onMouseLeave={(e) => e.currentTarget.style.opacity = '0.7'}>
+                                {brand.name}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Customer Reviews */}
+            <div className="container" style={{ padding: '80px 0' }}>
+                <h2 style={{
+                    fontSize: '2rem',
+                    textAlign: 'center',
+                    marginBottom: '50px',
+                    color: 'var(--primary)',
+                    fontWeight: '700'
+                }}>
+                    Customer Review
+                </h2>
+
+                <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                    gap: '30px'
+                }}>
+                    {reviews.map((review, idx) => (
+                        <div key={idx} style={{
+                            background: 'var(--white)',
+                            padding: '30px',
+                            borderRadius: '8px',
+                            border: '1px solid var(--border-color)',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+                        }}>
+                            <div style={{
+                                width: '40px',
+                                height: '40px',
+                                borderRadius: '50%',
+                                background: 'var(--primary)',
+                                color: 'var(--white)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '1.2rem',
+                                fontWeight: '700',
+                                marginBottom: '16px'
+                            }}>
+                                {review.name.charAt(0)}
+                            </div>
+                            <h5 style={{
+                                fontSize: '1rem',
+                                marginBottom: '8px',
+                                color: 'var(--primary)',
+                                fontWeight: '700'
+                            }}>
+                                {review.title}
+                            </h5>
+                            <p style={{
+                                color: 'var(--text-medium)',
+                                lineHeight: '1.6',
+                                marginBottom: '16px',
+                                fontSize: '0.9rem'
+                            }}>
+                                {review.text}
+                            </p>
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center'
+                            }}>
+                                <span style={{
+                                    fontWeight: '600',
+                                    color: 'var(--primary)',
+                                    fontSize: '0.9rem'
+                                }}>
+                                    {review.name}
+                                </span>
+                                <div style={{ display: 'flex', gap: '4px', color: '#fbbf24' }}>
+                                    {[...Array(review.rating)].map((_, i) => (
+                                        <FaStar key={i} style={{ fontSize: '14px' }} />
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Pagination Dots */}
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    marginTop: '40px'
+                }}>
+                    <div style={{
+                        width: '10px',
+                        height: '10px',
+                        borderRadius: '50%',
+                        background: 'var(--primary)'
+                    }} />
+                    <div style={{
+                        width: '10px',
+                        height: '10px',
+                        borderRadius: '50%',
+                        background: 'var(--border-color)'
+                    }} />
+                    <div style={{
+                        width: '10px',
+                        height: '10px',
+                        borderRadius: '50%',
+                        background: 'var(--border-color)'
+                    }} />
                 </div>
             </div>
 

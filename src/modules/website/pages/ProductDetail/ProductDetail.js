@@ -12,6 +12,7 @@ import ProductSlider from '../../components/ProductSlider/ProductSlider';
 import Newsletter from '../../components/Newsletter/Newsletter';
 import './ProductDetail.css';
 import './Reviews.css';
+import AvailableCoupons from '../../components/Coupon/AvailableCoupons';
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -77,11 +78,7 @@ const ProductDetail = () => {
     // Use product images for gallery if available, otherwise mock
     const galleryImages = (product.images && product.images.length > 0)
         ? [product.image, ...product.images]
-        : [
-            product.image,
-            'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80',
-            'https://images.unsplash.com/photo-1550614000-4b9519e0921f?w=500&q=80'
-        ];
+        : [product.image];
 
     const relatedProducts = products
         .filter(p => p.category === product.category && p.id !== product.id)
@@ -131,7 +128,26 @@ const ProductDetail = () => {
                     <div className="pdp-info">
                         <div className="pdp-info-header">
                             <h1 className="pdp-title">{product.name}</h1>
-                            <div className="pdp-price">{formatPrice(product.price)}</div>
+                            <div className="pdp-price">
+                                {product.discount > 0 ? (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <span style={{ color: '#ef4444', fontWeight: '700', fontSize: '1.5rem' }}>
+                                            {formatPrice(product.salePrice)}
+                                        </span>
+                                        <span style={{ textDecoration: 'line-through', color: '#94a3b8', fontSize: '1rem', fontWeight: '400' }}>
+                                            {formatPrice(product.price)}
+                                        </span>
+                                        <span style={{
+                                            background: '#fee2e2', color: '#ef4444', fontSize: '0.8rem',
+                                            padding: '2px 6px', borderRadius: '4px', fontWeight: '700'
+                                        }}>
+                                            {product.discount}% OFF
+                                        </span>
+                                    </div>
+                                ) : (
+                                    formatPrice(product.price)
+                                )}
+                            </div>
                         </div>
 
                         <p className="pdp-description-preview">
@@ -180,6 +196,7 @@ const ProductDetail = () => {
                         </div>
 
                         {/* Attractive Coupon Card */}
+                        {/* Attractive Coupon Card */}
                         <div className="pdp-coupon-card" style={{
                             margin: '20px 0',
                             padding: '16px',
@@ -188,75 +205,104 @@ const ProductDetail = () => {
                             borderRadius: '12px',
                             transition: 'all 0.3s ease'
                         }}>
-                            {!isCouponOpen && !appliedCoupon ? (
-                                <div
-                                    onClick={() => setIsCouponOpen(true)}
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '12px',
-                                        cursor: 'pointer'
-                                    }}
-                                >
-                                    <div style={{
-                                        width: '36px',
-                                        height: '36px',
-                                        background: '#eff6ff',
-                                        borderRadius: '10px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        color: '#3b82f6'
-                                    }}>
-                                        <FaPercentage size={16} />
+                            {!appliedCoupon ? (
+                                <>
+                                    <div className="pdp-coupon-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: isCouponOpen ? '15px' : '0' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <div style={{
+                                                width: '32px', height: '32px',
+                                                background: '#eff6ff', borderRadius: '8px',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3b82f6'
+                                            }}>
+                                                <FaPercentage size={14} />
+                                            </div>
+                                            <div>
+                                                <div style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b' }}>Offers & Coupons</div>
+                                                {!isCouponOpen && <div style={{ fontSize: '11px', color: '#64748b' }}>Save up to ₹500 on this item</div>}
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => setIsCouponOpen(!isCouponOpen)}
+                                            style={{
+                                                background: 'transparent',
+                                                border: 'none',
+                                                color: '#3b82f6',
+                                                fontWeight: '600',
+                                                fontSize: '12px',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            {isCouponOpen ? 'Close' : 'View All Offers >'}
+                                        </button>
                                     </div>
-                                    <div>
-                                        <div style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b' }}>Have a Promo Code?</div>
-                                        <div style={{ fontSize: '11px', color: '#64748b' }}>Unlock extra savings on this item</div>
-                                    </div>
-                                </div>
-                            ) : appliedCoupon ? (
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+
+                                    {isCouponOpen && (
+                                        <div className="pdp-coupon-content animate-fade-in" style={{ borderTop: '1px solid #e2e8f0', paddingTop: '15px', marginTop: '10px' }}>
+                                            <div style={{ marginBottom: '15px' }}>
+                                                <div style={{ display: 'flex', gap: '8px' }}>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Enter promo code"
+                                                        value={couponCode}
+                                                        onChange={(e) => setCouponCode(e.target.value)}
+                                                        style={{ flex: 1, padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '13px', outline: 'none' }}
+                                                    />
+                                                    <button onClick={handleApplyCoupon} style={{ background: '#0f172a', color: '#fff', border: 'none', padding: '0 16px', borderRadius: '6px', fontWeight: '600', fontSize: '12px', cursor: 'pointer' }}>
+                                                        APPLY
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            {/* Use reusable component */}
+                                            <AvailableCoupons
+                                                coupons={availableCoupons}
+                                                onApply={(code) => applyCoupon(code, user?.id)}
+                                            />
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    background: '#dcfce7',
+                                    border: '1px solid #166534',
+                                    borderRadius: '8px',
+                                    padding: '12px'
+                                }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                        <div style={{ width: '36px', height: '36px', background: '#dcfce7', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#166534' }}>
+                                        <div style={{
+                                            width: '36px', height: '36px',
+                                            background: '#166534', borderRadius: '50%',
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                            color: '#fff'
+                                        }}>
                                             <FaCheck size={16} />
                                         </div>
                                         <div>
-                                            <div style={{ fontSize: '13px', fontWeight: '700', color: '#166534' }}>{appliedCoupon.code} Applied!</div>
-                                            <div style={{ fontSize: '11px', color: '#15803d' }}>Discount will be visible at checkout</div>
+                                            <div style={{ fontSize: '14px', fontWeight: '800', color: '#166534' }}>
+                                                '{appliedCoupon.code}' APPLIED!
+                                            </div>
+                                            <div style={{ fontSize: '12px', color: '#15803d', fontWeight: '500' }}>
+                                                Savings of {formatPrice(appliedCoupon.discount)} applied.
+                                            </div>
                                         </div>
                                     </div>
                                     <button
                                         onClick={removeCoupon}
-                                        style={{ background: 'rgba(239, 68, 68, 0.1)', border: 'none', color: '#ef4444', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', fontWeight: '700', cursor: 'pointer' }}
+                                        style={{
+                                            background: '#fff',
+                                            border: '1px solid #ef4444',
+                                            color: '#ef4444',
+                                            padding: '6px 12px',
+                                            borderRadius: '6px',
+                                            fontSize: '11px',
+                                            fontWeight: '700',
+                                            cursor: 'pointer'
+                                        }}
                                     >
-                                        Remove
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className="pdp-coupon-form-grid" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                    <div style={{ fontSize: '13px', fontWeight: '700', color: '#334155' }}>Apply Coupon</div>
-                                    <div style={{ display: 'flex', gap: '8px' }}>
-                                        <input
-                                            type="text"
-                                            placeholder="Enter promo code"
-                                            value={couponCode}
-                                            onChange={(e) => setCouponCode(e.target.value)}
-                                            style={{ flex: 1, padding: '10px 14px', border: '1.5px solid #e2e8f0', borderRadius: '8px', fontSize: '14px', outline: 'none' }}
-                                            onKeyDown={(e) => e.key === 'Enter' && handleApplyCoupon()}
-                                        />
-                                        <button
-                                            onClick={handleApplyCoupon}
-                                            style={{ background: '#1e293b', color: '#fff', border: 'none', padding: '0 20px', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}
-                                        >
-                                            Apply
-                                        </button>
-                                    </div>
-                                    <button
-                                        onClick={() => setIsCouponOpen(false)}
-                                        style={{ background: 'transparent', border: 'none', color: '#94a3b8', fontSize: '11px', alignSelf: 'flex-start', cursor: 'pointer', fontWeight: '500' }}
-                                    >
-                                        Cancel
+                                        REMOVE
                                     </button>
                                 </div>
                             )}
@@ -416,7 +462,7 @@ const ProductDetail = () => {
 
 // Reviews Section Component
 const ReviewsSection = ({ productId, productName }) => {
-    const { user, token } = useAuth();
+    const { user, token, isAuthenticated } = useAuth();
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showReviewForm, setShowReviewForm] = useState(false);
@@ -462,18 +508,30 @@ const ReviewsSection = ({ productId, productName }) => {
             const authToken = token || localStorage.getItem('authToken');
             if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
 
+            if (!user) {
+                alert("You must be logged in to submit a review.");
+                return;
+            }
+
             // Backend middleware expects 'user-id' header with user email currently
             if (user?.email) {
                 headers['user-id'] = user.email;
+            } else if (user?.emailOrMobile) {
+                headers['user-id'] = user.emailOrMobile;
             } else {
-                // Try from localStorage if user object missing but authUser exists
                 const savedUser = localStorage.getItem('authUser');
                 if (savedUser) {
                     try {
                         const parsedUser = JSON.parse(savedUser);
                         if (parsedUser.email) headers['user-id'] = parsedUser.email;
+                        else if (parsedUser.emailOrMobile) headers['user-id'] = parsedUser.emailOrMobile;
                     } catch (e) { console.error(e); }
                 }
+            }
+
+            if (!headers['user-id']) {
+                alert("Session invalid. Please log in again.");
+                return;
             }
 
             const response = await fetch('http://localhost:5001/api/reviews', {
@@ -539,8 +597,14 @@ const ReviewsSection = ({ productId, productName }) => {
                     </div>
                 </div>
                 <button
-                    className="write-review-btn"
-                    onClick={() => setShowReviewForm(!showReviewForm)}
+                    className={`write-review-btn ${showReviewForm ? 'cancel-btn-mode' : ''}`}
+                    onClick={() => {
+                        if (!isAuthenticated) {
+                            alert("Please log in to write a review.");
+                            return;
+                        }
+                        setShowReviewForm(!showReviewForm);
+                    }}
                 >
                     {showReviewForm ? 'Cancel' : 'Write a Review'}
                 </button>

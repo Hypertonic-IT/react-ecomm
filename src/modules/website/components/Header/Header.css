@@ -78,7 +78,7 @@
 /* Icons */
 .nav-icons {
     display: flex;
-    gap: 24px;
+    gap: 0px;
     font-size: 20px;
     align-items: center;
 }

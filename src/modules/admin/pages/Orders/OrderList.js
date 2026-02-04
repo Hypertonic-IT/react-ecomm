@@ -19,7 +19,8 @@ const OrderList = () => {
         try {
             const response = await fetch('http://localhost:5001/api/orders', {
                 headers: {
-                    'user-id': user?.email || ''
+                    'Authorization': `Bearer ${user ? localStorage.getItem('adminAuthToken') : ''}`,
+                    'user-id': user?.email || (localStorage.getItem('adminAuthUser') ? JSON.parse(localStorage.getItem('adminAuthUser')).email : '')
                 }
             });
             if (response.ok) {
@@ -46,7 +47,9 @@ const OrderList = () => {
             const res = await fetch(`http://localhost:5001/api/orders/${id}/status`, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user ? localStorage.getItem('adminAuthToken') : ''}`,
+                    'user-id': user?.email || (localStorage.getItem('adminAuthUser') ? JSON.parse(localStorage.getItem('adminAuthUser')).email : '')
                 },
                 body: JSON.stringify({ status: newStatus })
             });
@@ -158,7 +161,7 @@ const OrderList = () => {
                                     <th>Total</th>
                                     <th>Payment</th>
                                     <th>Status</th>
-                                    <th style={{ textAlign: 'right' }}>Actions</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -177,7 +180,7 @@ const OrderList = () => {
                                             {new Date(order.createdAt).toLocaleDateString()}
                                         </td>
                                         <td style={{ fontWeight: '700', color: 'var(--admin-text)' }}>
-                                            ${order.totalPrice?.toFixed(2)}
+                                            ₹{order.totalPrice?.toFixed(2)}
                                         </td>
                                         <td>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -201,8 +204,8 @@ const OrderList = () => {
                                                 </span>
                                             </div>
                                         </td>
-                                        <td style={{ textAlign: 'right' }}>
-                                            <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '8px' }}>
+                                        <td>
+                                            <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: '8px' }}>
                                                 <Link
                                                     to={`/admin/orders/${order._id}`}
                                                     className="admin-btn-icon"

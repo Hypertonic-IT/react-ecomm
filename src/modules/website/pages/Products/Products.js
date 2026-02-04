@@ -129,6 +129,13 @@ const Products = () => {
                                                 <FaEye size={14} />
                                             </button>
 
+                                            {/* Discount Badge */}
+                                            {product.discount > 0 && (
+                                                <div className="plp-discount-badge">
+                                                    -{product.discount}%
+                                                </div>
+                                            )}
+
                                             <img
                                                 src={product.image}
                                                 alt={product.name}
@@ -142,7 +149,20 @@ const Products = () => {
                                             <div className="plp-name">{product.name}</div>
 
                                             <div className="plp-meta-row">
-                                                <div className="plp-price">{formatPrice(product.price)}</div>
+                                                <div className="plp-price">
+                                                    {product.discount > 0 ? (
+                                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', lineHeight: '1.2' }}>
+                                                            <span style={{ fontWeight: '700', color: '#ef4444', fontSize: '14px' }}>
+                                                                {formatPrice(product.salePrice)}
+                                                            </span>
+                                                            <span style={{ textDecoration: 'line-through', color: '#94a3b8', fontSize: '11px' }}>
+                                                                {formatPrice(product.price)}
+                                                            </span>
+                                                        </div>
+                                                    ) : (
+                                                        <span style={{ fontSize: '14px' }}>{formatPrice(product.price)}</span>
+                                                    )}
+                                                </div>
                                                 <button
                                                     className="plp-add-cart-btn"
                                                     onClick={(e) => { e.stopPropagation(); addToCart(product); }}

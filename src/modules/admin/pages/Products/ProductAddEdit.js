@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { FaSave, FaArrowLeft, FaImages, FaTrash, FaPlus, FaCloudUploadAlt } from 'react-icons/fa';
+import { FaSave, FaArrowLeft, FaImages, FaTrash, FaPlus, FaCloudUploadAlt, FaTimes } from 'react-icons/fa';
 import AdminSelect from '../../components/AdminSelect';
 import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import '../../admin.css';
@@ -30,7 +30,10 @@ const ProductAddEdit = () => {
         shortDescription: '',
         shippingInfo: '',
         galleryImages: '', // Comma separated URLs
-        specifications: '' // "Key: Value" per line
+        specifications: '', // "Key: Value" per line
+        categories: [], // Array of selected categories
+        discount: 0,
+        salePrice: 0
     });
 
     const [loading, setLoading] = useState(false);
@@ -40,30 +43,44 @@ const ProductAddEdit = () => {
     const [uploading, setUploading] = useState(false);
 
     const uploadFileHandler = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
 
-        const uploadData = new FormData();
-        uploadData.append('image', file);
+        const currentImages = formData.galleryImages ? formData.galleryImages.split('\n').filter(Boolean) : [];
+        if (currentImages.length + files.length > 5) {
+            alert(`You can only upload a maximum of 5 images. You currently have ${currentImages.length} images.`);
+            if (e.target) e.target.value = null;
+            return;
+        }
+
         setUploading(true);
+        const newUrls = [];
 
         try {
-            const response = await fetch('http://localhost:5001/api/upload', {
-                method: 'POST',
-                body: uploadData
-            });
-            const data = await response.json();
+            for (const file of files) {
+                const uploadData = new FormData();
+                uploadData.append('image', file);
 
-            if (response.ok) {
-                const current = formData.galleryImages ? formData.galleryImages.split('\n') : [];
-                const updated = [...current, data.image].filter(Boolean);
+                const response = await fetch('http://localhost:5001/api/upload', {
+                    method: 'POST',
+                    body: uploadData
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    newUrls.push(data.image);
+                } else {
+                    console.error('Failed to upload:', file.name);
+                }
+            }
+
+            if (newUrls.length > 0) {
+                const updated = [...currentImages, ...newUrls];
                 setFormData(prev => ({ ...prev, galleryImages: updated.join('\n') }));
-            } else {
-                alert(data.message || 'Upload failed');
             }
         } catch (error) {
             console.error(error);
-            alert('Error uploading file');
+            alert('Error uploading files');
         } finally {
             setUploading(false);
             if (e.target) e.target.value = null;
@@ -102,8 +119,14 @@ const ProductAddEdit = () => {
 
     const addGalleryImage = () => {
         if (!newGalleryUrl) return;
-        const current = formData.galleryImages ? formData.galleryImages.split('\n') : [];
-        const updated = [...current, newGalleryUrl.trim()].filter(Boolean);
+        const current = formData.galleryImages ? formData.galleryImages.split('\n').filter(Boolean) : [];
+
+        if (current.length >= 5) {
+            alert("You can only have a maximum of 5 gallery images.");
+            return;
+        }
+
+        const updated = [...current, newGalleryUrl.trim()];
         setFormData(prev => ({ ...prev, galleryImages: updated.join('\n') }));
         setNewGalleryUrl('');
     };
@@ -143,6 +166,7 @@ const ProductAddEdit = () => {
                         price: data.price,
                         image: data.image,
                         category: data.category,
+                        categories: data.categories || (data.category ? [data.category] : []),
                         description: data.description,
                         countInStock: data.countInStock,
                         sizes: Array.isArray(data.sizes) ? data.sizes.join(',') : data.sizes || '',
@@ -154,10 +178,11 @@ const ProductAddEdit = () => {
                         isActive: data.isActive !== undefined ? data.isActive : true,
                         shortDescription: data.shortDescription || '',
                         shippingInfo: data.shippingInfo || '',
-                        galleryImages: Array.isArray(data.images) ? data.images.join('\n') : '',
                         specifications: Array.isArray(data.specifications)
                             ? data.specifications.map(s => `${s.name}: ${s.value}`).join('\n')
-                            : ''
+                            : '',
+                        discount: data.discount || 0,
+                        salePrice: data.salePrice || data.price
                     });
                     setPreviewImage(data.image);
                 } catch (error) {
@@ -176,6 +201,36 @@ const ProductAddEdit = () => {
         }));
     };
 
+    const handlePriceChange = (e) => {
+        const price = Number(e.target.value);
+        setFormData(prev => {
+            const discount = Number(prev.discount) || 0;
+            const salePrice = price - (price * (discount / 100));
+            return { ...prev, price: e.target.value, salePrice: parseFloat(salePrice.toFixed(2)) };
+        });
+    };
+
+    const handleDiscountChange = (e) => {
+        const discount = Number(e.target.value);
+        setFormData(prev => {
+            const price = Number(prev.price) || 0;
+            const salePrice = price - (price * (discount / 100));
+            return { ...prev, discount: e.target.value, salePrice: parseFloat(salePrice.toFixed(2)) };
+        });
+    };
+
+    const handleSalePriceChange = (e) => {
+        const salePrice = Number(e.target.value);
+        setFormData(prev => {
+            const price = Number(prev.price) || 0;
+            let discount = 0;
+            if (price > 0) {
+                discount = ((price - salePrice) / price) * 100;
+            }
+            return { ...prev, salePrice: e.target.value, discount: parseFloat(discount.toFixed(2)) };
+        });
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -192,7 +247,9 @@ const ProductAddEdit = () => {
                 const [key, ...rest] = line.split(':');
                 if (key && rest.length) return { name: key.trim(), value: rest.join(':').trim() };
                 return null;
-            }).filter(Boolean)
+            }).filter(Boolean),
+            discount: Number(formData.discount),
+            salePrice: Number(formData.salePrice)
         };
 
         try {
@@ -268,20 +325,51 @@ const ProductAddEdit = () => {
                             ></textarea>
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginBottom: '20px' }}>
                             <div className="form-group">
                                 <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Price (₹)</label>
                                 <input
                                     type="number"
                                     name="price"
                                     value={formData.price}
-                                    onChange={handleChange}
+                                    onChange={handlePriceChange}
                                     required
                                     min="0"
                                     step="0.01"
+                                    className="admin-input"
                                     style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                                    placeholder="0.00"
                                 />
                             </div>
+                            <div className="form-group">
+                                <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Discount (%)</label>
+                                <input
+                                    type="number"
+                                    name="discount"
+                                    value={formData.discount}
+                                    onChange={handleDiscountChange}
+                                    className="admin-input"
+                                    style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                                    placeholder="0"
+                                    min="0"
+                                    max="100"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Sale Price (₹)</label>
+                                <input
+                                    type="number"
+                                    name="salePrice"
+                                    value={formData.salePrice}
+                                    onChange={handleSalePriceChange}
+                                    className="admin-input"
+                                    style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                                    placeholder="Calculated..."
+                                />
+                            </div>
+                        </div>
+
+                        <div style={{ margin: '0 0 20px 0' }}>
                             <div className="form-group">
                                 <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Count In Stock</label>
                                 <input
@@ -290,35 +378,216 @@ const ProductAddEdit = () => {
                                     value={formData.countInStock}
                                     onChange={handleChange}
                                     required
-                                    min="0"
+                                    className="admin-input"
                                     style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                                    placeholder="e.g. 100"
                                 />
                             </div>
                         </div>
-
                         <div className="form-group" style={{ marginBottom: '20px' }}>
                             <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Variants</label>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                                <div>
-                                    <small style={{ color: 'var(--admin-text-muted)' }}>Sizes (comma separated)</small>
+
+                            {/* Sizes Section */}
+                            <div style={{ marginBottom: '20px' }}>
+                                <small style={{ color: 'var(--admin-text-muted)', display: 'block', marginBottom: '8px' }}>Sizes (Select or Type & Enter)</small>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
+                                    {['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'].map(size => (
+                                        <button
+                                            key={size}
+                                            type="button"
+                                            onClick={() => {
+                                                const currentSizes = formData.sizes ? formData.sizes.split(',').map(s => s.trim()).filter(Boolean) : [];
+                                                if (!currentSizes.includes(size)) {
+                                                    const updated = [...currentSizes, size];
+                                                    setFormData(prev => ({ ...prev, sizes: updated.join(',') }));
+                                                }
+                                            }}
+                                            style={{
+                                                padding: '6px 12px',
+                                                border: '1px solid var(--admin-border)',
+                                                borderRadius: '20px',
+                                                background: (formData.sizes?.split(',').map(s => s.trim()).includes(size)) ? 'var(--primary)' : 'var(--admin-bg)',
+                                                color: (formData.sizes?.split(',').map(s => s.trim()).includes(size)) ? '#fff' : 'var(--admin-text)',
+                                                fontSize: '0.85rem',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            {size}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {/* Active Tags Area */}
+                                <div style={{
+                                    border: '1px solid var(--admin-border)',
+                                    borderRadius: '8px',
+                                    padding: '8px',
+                                    background: 'var(--admin-bg)',
+                                    display: 'flex',
+                                    flexWrap: 'wrap',
+                                    gap: '6px',
+                                    minHeight: '42px'
+                                }}>
+                                    {formData.sizes && formData.sizes.split(',').map((size, idx) => size.trim() && (
+                                        <div key={idx} style={{
+                                            background: 'var(--admin-bg-light)',
+                                            padding: '4px 10px',
+                                            borderRadius: '4px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '6px',
+                                            fontSize: '0.9rem',
+                                            border: '1px solid var(--admin-border)'
+                                        }}>
+                                            {size}
+                                            <FaTimes
+                                                size={10}
+                                                style={{ cursor: 'pointer', color: 'var(--danger)' }}
+                                                onClick={() => {
+                                                    const current = formData.sizes.split(',').map(s => s.trim());
+                                                    const updated = current.filter((_, i) => i !== idx);
+                                                    setFormData(prev => ({ ...prev, sizes: updated.join(',') }));
+                                                }}
+                                            />
+                                        </div>
+                                    ))}
                                     <input
                                         type="text"
-                                        name="sizes"
-                                        value={formData.sizes}
-                                        onChange={handleChange}
-                                        placeholder="S, M, L, XL"
-                                        style={{ width: '100%', marginTop: '5px', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                                        placeholder="Add custom size..."
+                                        style={{
+                                            border: 'none',
+                                            outline: 'none',
+                                            background: 'transparent',
+                                            color: 'var(--admin-text)',
+                                            fontSize: '0.9rem',
+                                            minWidth: '120px',
+                                            flex: 1
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                e.preventDefault();
+                                                const val = e.target.value.trim().toUpperCase();
+                                                if (val) {
+                                                    const current = formData.sizes ? formData.sizes.split(',').map(s => s.trim()).filter(Boolean) : [];
+                                                    if (!current.includes(val)) {
+                                                        const updated = [...current, val];
+                                                        setFormData(prev => ({ ...prev, sizes: updated.join(',') }));
+                                                    }
+                                                    e.target.value = '';
+                                                }
+                                            }
+                                        }}
                                     />
                                 </div>
-                                <div>
-                                    <small style={{ color: 'var(--admin-text-muted)' }}>Colors (comma separated)</small>
+                            </div>
+
+                            {/* Colors Section */}
+                            <div>
+                                <small style={{ color: 'var(--admin-text-muted)', display: 'block', marginBottom: '8px' }}>Colors (Optional - Select or Type & Enter)</small>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '10px' }}>
+                                    {[
+                                        { name: 'Black', hex: '#000000' },
+                                        { name: 'White', hex: '#FFFFFF' },
+                                        { name: 'Red', hex: '#EF4444' },
+                                        { name: 'Blue', hex: '#3B82F6' },
+                                        { name: 'Green', hex: '#10B981' },
+                                        { name: 'Navy', hex: '#1E3A8A' },
+                                        { name: 'Beige', hex: '#F5F5DC' }
+                                    ].map(color => (
+                                        <button
+                                            key={color.name}
+                                            type="button"
+                                            onClick={() => {
+                                                const current = formData.colors ? formData.colors.split(',').map(s => s.trim()).filter(Boolean) : [];
+                                                // Check case-insensitive
+                                                if (!current.some(c => c.toLowerCase() === color.name.toLowerCase())) {
+                                                    const updated = [...current, color.name];
+                                                    setFormData(prev => ({ ...prev, colors: updated.join(',') }));
+                                                }
+                                            }}
+                                            style={{
+                                                padding: '6px 12px',
+                                                border: '1px solid var(--admin-border)',
+                                                borderRadius: '20px',
+                                                background: 'var(--admin-bg)',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '6px',
+                                                cursor: 'pointer',
+                                                fontSize: '0.85rem'
+                                            }}
+                                        >
+                                            <span style={{
+                                                width: '12px',
+                                                height: '12px',
+                                                borderRadius: '50%',
+                                                background: color.hex,
+                                                border: color.name === 'White' ? '1px solid #ddd' : 'none'
+                                            }}></span>
+                                            {color.name}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <div style={{
+                                    border: '1px solid var(--admin-border)',
+                                    borderRadius: '8px',
+                                    padding: '8px',
+                                    background: 'var(--admin-bg)',
+                                    display: 'flex',
+                                    flexWrap: 'wrap',
+                                    gap: '6px',
+                                    minHeight: '42px'
+                                }}>
+                                    {formData.colors && formData.colors.split(',').map((color, idx) => color.trim() && (
+                                        <div key={idx} style={{
+                                            background: 'var(--admin-bg-light)',
+                                            padding: '4px 10px',
+                                            borderRadius: '4px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '6px',
+                                            fontSize: '0.9rem',
+                                            border: '1px solid var(--admin-border)'
+                                        }}>
+                                            {color}
+                                            <FaTimes
+                                                size={10}
+                                                style={{ cursor: 'pointer', color: 'var(--danger)' }}
+                                                onClick={() => {
+                                                    const current = formData.colors.split(',').map(s => s.trim());
+                                                    const updated = current.filter((_, i) => i !== idx);
+                                                    setFormData(prev => ({ ...prev, colors: updated.join(',') }));
+                                                }}
+                                            />
+                                        </div>
+                                    ))}
                                     <input
                                         type="text"
-                                        name="colors"
-                                        value={formData.colors}
-                                        onChange={handleChange}
-                                        placeholder="Red, Blue, Black"
-                                        style={{ width: '100%', marginTop: '5px', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                                        placeholder="Add custom color..."
+                                        style={{
+                                            border: 'none',
+                                            outline: 'none',
+                                            background: 'transparent',
+                                            color: 'var(--admin-text)',
+                                            fontSize: '0.9rem',
+                                            minWidth: '120px',
+                                            flex: 1
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                e.preventDefault();
+                                                const val = e.target.value.trim();
+                                                if (val) {
+                                                    const current = formData.colors ? formData.colors.split(',').map(s => s.trim()).filter(Boolean) : [];
+                                                    if (!current.some(c => c.toLowerCase() === val.toLowerCase())) {
+                                                        const updated = [...current, val];
+                                                        setFormData(prev => ({ ...prev, colors: updated.join(',') }));
+                                                    }
+                                                    e.target.value = '';
+                                                }
+                                            }
+                                        }}
                                     />
                                 </div>
                             </div>
@@ -448,6 +717,7 @@ const ProductAddEdit = () => {
                                 <input
                                     id="gallery-upload"
                                     type="file"
+                                    multiple
                                     accept="image/*"
                                     onChange={uploadFileHandler}
                                     style={{ display: 'none' }}
@@ -512,9 +782,15 @@ const ProductAddEdit = () => {
                             <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Category</label>
                             <AdminSelect
                                 options={categories.map(cat => ({ value: cat.name, label: cat.name }))}
-                                value={formData.category}
-                                onChange={(val) => setFormData(prev => ({ ...prev, category: val }))}
-                                placeholder="Select Category"
+                                value={formData.categories && formData.categories.length > 0 ? formData.categories : (formData.category ? [formData.category] : [])}
+                                onChange={(val) => setFormData(prev => ({
+                                    ...prev,
+                                    categories: val,
+                                    category: val.length > 0 ? val[0] : '' // Sync primary category
+                                }))}
+                                placeholder="Select Categories"
+                                isMulti={true}
+                                isSearchable={true}
                             />
                         </div>
 

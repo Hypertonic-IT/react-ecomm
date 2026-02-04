@@ -9,7 +9,7 @@ import './Auth.css';
 
 const ForgotPassword = () => {
     const navigate = useNavigate();
-    const { requestPasswordReset, resetPassword } = useAuth();
+    const { requestPasswordReset, verifyOTP, resetPassword } = useAuth();
 
     const [step, setStep] = useState(1); // 1: Request Reset, 2: Verify OTP, 3: New Password, 4: Success
     const [emailOrMobile, setEmailOrMobile] = useState('');
@@ -18,6 +18,7 @@ const ForgotPassword = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
 
     const [errors, setErrors] = useState({});
+    const [successMessage, setSuccessMessage] = useState('');
     const [loading, setLoading] = useState(false);
     const [canResend, setCanResend] = useState(true);
     const [resendTimer, setResendTimer] = useState(0);
@@ -32,9 +33,16 @@ const ForgotPassword = () => {
         }
 
         setLoading(true);
+        setSuccessMessage(''); // Clear previous messages
 
         try {
-            await requestPasswordReset(emailOrMobile);
+            const response = await requestPasswordReset(emailOrMobile);
+
+            // DEV HELP: Show OTP in alert if getting it back from backend (Mock Mode)
+            if (response && response.debugOtp) {
+                alert(`[DEV MODE] Your OTP is: ${response.debugOtp}`);
+            }
+
             setStep(2);
             setErrors({});
             startResendTimer();
@@ -54,8 +62,21 @@ const ForgotPassword = () => {
             return;
         }
 
-        setStep(3);
-        setErrors({});
+        setLoading(true);
+
+        try {
+            await verifyOTP(emailOrMobile, otp);
+
+            // Replaced alert with inline success message
+            setSuccessMessage("OTP Verified Successfully");
+
+            setStep(3);
+            setErrors({});
+        } catch (error) {
+            setErrors({ otp: error.message || 'Invalid OTP' });
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleResetPassword = async (e) => {
@@ -78,6 +99,7 @@ const ForgotPassword = () => {
             await resetPassword(emailOrMobile, otp, newPassword);
             setStep(4);
             setErrors({});
+            setSuccessMessage(''); // Clear message on final success
         } catch (error) {
             setErrors({ submit: error.message });
         } finally {
@@ -91,6 +113,7 @@ const ForgotPassword = () => {
         try {
             await requestPasswordReset(emailOrMobile);
             setErrors({});
+            setSuccessMessage('A new verification code has been sent.');
             startResendTimer();
         } catch (error) {
             setErrors({ submit: error.message });
@@ -99,7 +122,7 @@ const ForgotPassword = () => {
 
     const startResendTimer = () => {
         setCanResend(false);
-        setResendTimer(60);
+        setResendTimer(300); // Increased to 5 minutes as requested
 
         const interval = setInterval(() => {
             setResendTimer(prev => {
@@ -131,6 +154,12 @@ const ForgotPassword = () => {
             {errors.submit && (
                 <div className="auth-error-banner" role="alert">
                     {errors.submit}
+                </div>
+            )}
+
+            {successMessage && (
+                <div className="auth-success-banner" role="alert">
+                    {successMessage}
                 </div>
             )}
 

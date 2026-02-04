@@ -2,18 +2,27 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaEye, FaPen, FaEllipsisH } from 'react-icons/fa';
+import { useAdminAuth } from '../../../context/AdminAuthContext';
 
 const RecentOrders = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    const { user } = useAdminAuth();
+
     useEffect(() => {
         fetchRecentOrders();
-    }, []);
+    }, [user]);
 
     const fetchRecentOrders = async () => {
         try {
-            const response = await fetch('http://localhost:5001/api/orders');
+            const token = localStorage.getItem('adminAuthToken');
+            const response = await fetch('http://localhost:5001/api/orders', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'user-id': user?.email || (localStorage.getItem('adminAuthUser') ? JSON.parse(localStorage.getItem('adminAuthUser')).email : '')
+                }
+            });
             if (response.ok) {
                 const data = await response.json();
                 // Get the 5 most recent orders
@@ -126,7 +135,7 @@ const RecentOrders = () => {
                                             {getFirstProductName(order.orderItems)}
                                         </td>
                                         <td style={{ fontWeight: '600', color: 'var(--admin-text)' }}>
-                                            ${order.totalPrice?.toFixed(2) || '0.00'}
+                                            ₹{order.totalPrice?.toFixed(2) || '0.00'}
                                         </td>
                                         <td>
                                             <span style={{

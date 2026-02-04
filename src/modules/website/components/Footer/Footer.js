@@ -27,9 +27,8 @@ const Footer = () => {
                         <h4>Customer Care</h4>
                         <div className="footer-links">
                             <Link to="/contact" className="footer-link">Contact Us</Link>
-                            <a href="#" className="footer-link">Shipping & Returns</a>
-                            <a href="#" className="footer-link">FAQ</a>
-                            <a href="#" className="footer-link">Size Guide</a>
+                            <Link to="/shipping-returns" className="footer-link">Shipping & Returns</Link>
+                            <Link to="/about#faq" className="footer-link">FAQ</Link>
                             <a href="#" className="footer-link">Size Guide</a>
                             <span
                                 className="footer-link"
@@ -48,7 +47,7 @@ const Footer = () => {
                             <Link to="/careers" className="footer-link">Careers</Link>
                             <Link to="/privacy" className="footer-link">Privacy Policy</Link>
                             <Link to="/terms" className="footer-link">Terms & Conditions</Link>
-                            <a href="#" className="footer-link">Editorial Blog</a>
+                            <Link to="/blog" className="footer-link">Editorial Blog</Link>
                         </div>
                     </div>
 

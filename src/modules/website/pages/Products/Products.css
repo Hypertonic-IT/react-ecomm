@@ -134,6 +134,21 @@
     transform: translateX(0);
 }
 
+/* Discount Badge on Image */
+.plp-discount-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #ef4444;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 5;
+}
+
 .plp-action-btn:hover {
     background: var(--primary);
     color: #FFFFFF !important;

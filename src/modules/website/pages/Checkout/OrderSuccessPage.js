@@ -27,11 +27,11 @@ const OrderSuccessPage = () => {
                         <strong>Order ID:</strong> <span style={{ fontFamily: 'monospace' }}>{id}</span>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '15px', justifyContent: 'center' }}>
-                        <button onClick={() => navigate('/orders')} className="proceed-btn" style={{ width: 'auto', padding: '0 30px' }}>
+                    <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                        <button onClick={() => navigate('/orders')} className="proceed-btn" style={{ width: 'auto', padding: '18px 40px', fontSize: '16px', fontWeight: '600' }}>
                             <FaShoppingBag style={{ marginRight: '8px' }} /> View Orders
                         </button>
-                        <button onClick={() => navigate('/')} className="proceed-btn" style={{ width: 'auto', padding: '0 30px', background: '#333' }}>
+                        <button onClick={() => navigate('/')} className="proceed-btn" style={{ width: 'auto', padding: '18px 40px', fontSize: '16px', fontWeight: '600', background: 'transparent', border: '2px solid #333', color: '#333' }}>
                             <FaHome style={{ marginRight: '8px' }} /> Return Home
                         </button>
                     </div>

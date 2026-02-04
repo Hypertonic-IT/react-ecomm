@@ -27,14 +27,21 @@ const productSchema = mongoose.Schema({
     },
     category: {
         type: String,
-        required: true // 'Men', 'Women', 'Accessories', etc.
+        required: true // Primary category
     },
+    categories: [{
+        type: String
+    }],
     price: {
         type: Number,
         required: true,
         default: 0
     },
     salePrice: {
+        type: Number,
+        default: 0
+    },
+    discount: {
         type: Number,
         default: 0
     },

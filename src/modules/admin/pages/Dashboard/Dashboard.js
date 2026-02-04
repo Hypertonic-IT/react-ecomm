@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import { FaPlus, FaBox, FaUserPlus, FaFileAlt, FaArrowRight } from 'react-icons/fa';
 import DashboardStats from '../../components/DashboardStats';
 import RecentOrders from '../../components/RecentOrders';
-import AdminSelect from '../../components/AdminSelect'; // Added
+import AdminSelect from '../../components/AdminSelect';
+import { useAdminAuth } from '../../../../context/AdminAuthContext';
 
 const Dashboard = () => {
     const [chartRange, setChartRange] = useState('This Week'); // Added state
@@ -22,10 +23,18 @@ const Dashboard = () => {
         }
     });
 
+    const { user } = useAdminAuth();
+
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const response = await fetch('http://localhost:5001/api/admin/stats');
+                const token = localStorage.getItem('adminAuthToken');
+                const response = await fetch('http://localhost:5001/api/admin/stats', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'user-id': user?.email || (localStorage.getItem('adminAuthUser') ? JSON.parse(localStorage.getItem('adminAuthUser')).email : '')
+                    }
+                });
                 const data = await response.json();
                 if (data.success) {
                     setStats(data);
@@ -36,7 +45,7 @@ const Dashboard = () => {
         };
 
         fetchStats();
-    }, []);
+    }, [user]);
 
     return (
         <div className="admin-dashboard animate-fade-in">

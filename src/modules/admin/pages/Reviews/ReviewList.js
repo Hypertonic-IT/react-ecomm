@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { FaStar, FaEye, FaCheck, FaTimes, FaSearch, FaFilter } from 'react-icons/fa';
+import { FaStar, FaEye, FaCheck, FaTimes, FaSearch, FaFilter, FaChevronDown, FaChevronRight, FaTrash } from 'react-icons/fa';
 import AdminSelect from '../../components/AdminSelect';
 import AdminPagination from '../../components/AdminPagination';
 import '../../admin.css';
+import '../Inventory/Inventory.css'; // Import Inventory styles for table consistency
 import './Reviews.css';
 
 const ReviewList = () => {
+    // ... rest of the code ...
+
     const [reviews, setReviews] = useState([]);
     const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0, rejected: 0 });
     const [loading, setLoading] = useState(true);
@@ -14,8 +17,7 @@ const ReviewList = () => {
     const [filterRating, setFilterRating] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
     const [entriesPerPage, setEntriesPerPage] = useState(10);
-    const [selectedReview, setSelectedReview] = useState(null);
-    const [showDetailModal, setShowDetailModal] = useState(false);
+    const [expandedReviews, setExpandedReviews] = useState(new Set());
 
     useEffect(() => {
         fetchReviews();
@@ -24,6 +26,8 @@ const ReviewList = () => {
     const fetchReviews = async () => {
         try {
             const token = localStorage.getItem('adminAuthToken');
+            const adminUser = localStorage.getItem('adminAuthUser') ? JSON.parse(localStorage.getItem('adminAuthUser')) : null;
+
             const params = new URLSearchParams({
                 status: filterStatus,
                 page: currentPage,
@@ -40,7 +44,8 @@ const ReviewList = () => {
 
             const response = await fetch(`http://localhost:5001/api/reviews/admin?${params}`, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'user-id': adminUser?.email || ''
                 }
             });
 
@@ -57,30 +62,33 @@ const ReviewList = () => {
     };
 
     const handleStatusUpdate = async (reviewId, newStatus) => {
-        const confirmMessage = newStatus === 'approved'
-            ? 'Are you sure you want to approve this review?'
-            : 'Are you sure you want to reject this review?';
-
-        if (!window.confirm(confirmMessage)) return;
-
         try {
             const token = localStorage.getItem('adminAuthToken');
+            const adminUser = localStorage.getItem('adminAuthUser') ? JSON.parse(localStorage.getItem('adminAuthUser')) : null;
+
             const response = await fetch(`http://localhost:5001/api/reviews/${reviewId}/status`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'user-id': adminUser?.email || ''
                 },
                 body: JSON.stringify({ status: newStatus })
             });
 
             const data = await response.json();
             if (data.success) {
+                // Optimistic update or refetch
+                setReviews(reviews.map(r => r._id === reviewId ? { ...r, status: newStatus } : r));
+                // Update stats locally or refetch
                 fetchReviews();
-                setShowDetailModal(false);
+            } else {
+                console.error("Failed to update status:", data.message);
+                alert("Failed to update status: " + (data.message || "Unknown error"));
             }
         } catch (error) {
             console.error('Error updating review status:', error);
+            alert("Error updating status");
         }
     };
 
@@ -91,21 +99,37 @@ const ReviewList = () => {
 
         try {
             const token = localStorage.getItem('adminAuthToken');
+            const adminUser = localStorage.getItem('adminAuthUser') ? JSON.parse(localStorage.getItem('adminAuthUser')) : null;
+
             const response = await fetch(`http://localhost:5001/api/reviews/${reviewId}`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'user-id': adminUser?.email || ''
                 }
             });
 
             const data = await response.json();
             if (data.success) {
-                fetchReviews();
-                setShowDetailModal(false);
+                setReviews(reviews.filter(r => r._id !== reviewId));
+                fetchReviews(); // To update stats
+            } else {
+                alert("Failed to delete review: " + (data.message || "Unknown error"));
             }
         } catch (error) {
             console.error('Error deleting review:', error);
+            alert("Error deleting review");
         }
+    };
+
+    const toggleExpand = (reviewId) => {
+        const newExpanded = new Set(expandedReviews);
+        if (newExpanded.has(reviewId)) {
+            newExpanded.delete(reviewId);
+        } else {
+            newExpanded.add(reviewId);
+        }
+        setExpandedReviews(newExpanded);
     };
 
     const renderStars = (rating) => {
@@ -122,26 +146,8 @@ const ReviewList = () => {
         );
     };
 
-    const getStatusBadgeClass = (status) => {
-        switch (status) {
-            case 'approved': return 'status-badge status-success';
-            case 'rejected': return 'status-badge status-danger';
-            case 'pending': return 'status-badge status-warning';
-            default: return 'status-badge status-neutral';
-        }
-    };
-
-    // Filter reviews based on search
-    const filteredReviews = reviews.filter(review => {
-        if (!searchTerm) return true;
-        const searchLower = searchTerm.toLowerCase();
-        return (
-            review.comment?.toLowerCase().includes(searchLower) ||
-            review.title?.toLowerCase().includes(searchLower) ||
-            review.user?.name?.toLowerCase().includes(searchLower) ||
-            review.product?.name?.toLowerCase().includes(searchLower)
-        );
-    });
+    // Filter reviews based on search (already handled by backend mostly, but keeping client side filter if needed for small lists)
+    // The backend search is superior so relying on that via fetchReviews
 
     return (
         <div className="admin-page-container fade-in">
@@ -198,30 +204,20 @@ const ReviewList = () => {
                 </div>
             </div>
 
-            {/* Filters & Table */}
+            {/* Filters & Actions Bar - Above Table */}
             <div className="table-container" style={{ marginTop: '24px' }}>
-                <div className="table-toolbar">
-                    {/* Entries Select */}
-                    <div className="entries-wrapper">
-                        <span>Showing</span>
-                        <AdminSelect
-                            options={[
-                                { value: 10, label: '10' },
-                                { value: 25, label: '25' },
-                                { value: 50, label: '50' }
-                            ]}
-                            value={entriesPerPage}
-                            onChange={(val) => { setEntriesPerPage(val); setCurrentPage(1); }}
-                            styles={{
-                                control: (base) => ({ ...base, minHeight: '32px', width: '70px', fontSize: '12px' })
-                            }}
-                            isSearchable={false}
-                        />
-                        <span>entries</span>
-                    </div>
-
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flex: 1 }}>
-                        <div className="search-container">
+                {/* Top Toolbar - Filters and Actions */}
+                <div style={{
+                    background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+                    border: '2px solid #e2e8f0',
+                    borderRadius: '16px',
+                    padding: '20px 24px',
+                    marginBottom: '20px',
+                    boxShadow: '0 4px 12px rgba(99, 102, 241, 0.05)'
+                }}>
+                    <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+                        {/* Search */}
+                        <div className="search-container" style={{ width: '280px' }}>
                             <input
                                 type="text"
                                 placeholder="Search reviews..."
@@ -232,7 +228,8 @@ const ReviewList = () => {
                             <FaSearch className="search-icon-modern" size={14} />
                         </div>
 
-                        <div style={{ width: '150px' }}>
+                        {/* Status Filter */}
+                        <div style={{ width: '180px' }}>
                             <AdminSelect
                                 options={[
                                     { value: 'all', label: 'All Status' },
@@ -246,7 +243,8 @@ const ReviewList = () => {
                             />
                         </div>
 
-                        <div style={{ width: '130px' }}>
+                        {/* Rating Filter */}
+                        <div style={{ width: '180px' }}>
                             <AdminSelect
                                 options={[
                                     { value: 'all', label: 'All Ratings' },
@@ -264,12 +262,33 @@ const ReviewList = () => {
                     </div>
                 </div>
 
+                {/* Bottom Toolbar - Entries Selector */}
+                <div className="table-toolbar" style={{ marginBottom: '16px' }}>
+                    <div className="entries-wrapper">
+                        <span>Showing</span>
+                        <AdminSelect
+                            options={[
+                                { value: 10, label: '10' },
+                                { value: 25, label: '25' },
+                                { value: 50, label: '50' }
+                            ]}
+                            value={entriesPerPage}
+                            onChange={(val) => { setEntriesPerPage(val); setCurrentPage(1); }}
+                            styles={{
+                                control: (base) => ({ ...base, minHeight: '32px', width: '70px', fontSize: '12px' })
+                            }}
+                            isSearchable={false}
+                        />
+                        <span>entries</span>
+                    </div>
+                </div>
+
                 {/* Reviews Table */}
                 {loading ? (
                     <div style={{ padding: '40px', textAlign: 'center', color: '#94a3b8' }}>
                         Loading reviews...
                     </div>
-                ) : filteredReviews.length === 0 ? (
+                ) : reviews.length === 0 ? (
                     <div className="empty-state">
                         <div className="empty-icon">⭐</div>
                         <h3>No Reviews Found</h3>
@@ -277,115 +296,156 @@ const ReviewList = () => {
                     </div>
                 ) : (
                     <>
-                        <table className="admin-table">
+                        <table className="admin-table inventory-table">
                             <thead>
                                 <tr>
+                                    <th style={{ width: '40px' }}></th>
                                     <th>Product</th>
                                     <th>User</th>
                                     <th>Rating</th>
-                                    <th>Review</th>
+                                    <th>Summary</th>
                                     <th>Status</th>
                                     <th>Date</th>
                                     <th style={{ textAlign: 'right' }}>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredReviews.map(review => (
-                                    <tr key={review._id}>
-                                        <td>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                                <img
-                                                    src={review.product?.image}
-                                                    alt={review.product?.name}
-                                                    style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '6px' }}
-                                                />
-                                                <div>
-                                                    <div style={{ fontWeight: 600, color: 'var(--admin-text)' }}>
-                                                        {review.product?.name}
+                                {reviews.map(review => {
+                                    const isExpanded = expandedReviews.has(review._id);
+                                    return (
+                                        <React.Fragment key={review._id}>
+                                            <tr className={isExpanded ? 'active-row' : ''} style={{ cursor: 'pointer' }} onClick={() => toggleExpand(review._id)}>
+                                                <td>
+                                                    <button
+                                                        className="expand-btn"
+                                                        onClick={(e) => { e.stopPropagation(); toggleExpand(review._id); }}
+                                                        style={{ background: 'none', border: 'none', color: 'var(--admin-text-secondary)' }}
+                                                    >
+                                                        {isExpanded ? <FaChevronDown size={12} /> : <FaChevronRight size={12} />}
+                                                    </button>
+                                                </td>
+                                                <td>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                        <img
+                                                            src={review.product?.image}
+                                                            alt={review.product?.name}
+                                                            style={{ width: '30px', height: '30px', objectFit: 'cover', borderRadius: '4px' }}
+                                                        />
+                                                        <div style={{ fontWeight: 600, color: 'var(--admin-text)', fontSize: '0.9rem' }}>
+                                                            {review.product?.name}
+                                                        </div>
                                                     </div>
-                                                    <div style={{ fontSize: '0.75rem', color: 'var(--admin-text-secondary)' }}>
-                                                        ₹{review.product?.price}
+                                                </td>
+                                                <td>
+                                                    <div style={{ fontSize: '0.9rem' }}>{review.user?.name}</div>
+                                                </td>
+                                                <td>{renderStars(review.rating)}</td>
+                                                <td>
+                                                    <div style={{
+                                                        fontSize: '0.85rem',
+                                                        color: 'var(--admin-text-secondary)',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        whiteSpace: 'nowrap',
+                                                        maxWidth: '200px'
+                                                    }}>
+                                                        {review.title || review.comment}
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div>
-                                                <div style={{ fontWeight: 500 }}>{review.user?.name}</div>
-                                                <div style={{ fontSize: '0.75rem', color: 'var(--admin-text-secondary)' }}>
-                                                    {review.user?.email}
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>{renderStars(review.rating)}</td>
-                                        <td>
-                                            <div style={{ maxWidth: '300px' }}>
-                                                {review.title && (
-                                                    <div style={{ fontWeight: 600, marginBottom: '4px' }}>
-                                                        {review.title}
-                                                    </div>
-                                                )}
-                                                <div style={{
-                                                    fontSize: '0.85rem',
-                                                    color: 'var(--admin-text-secondary)',
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis',
-                                                    display: '-webkit-box',
-                                                    WebkitLineClamp: 2,
-                                                    WebkitBoxOrient: 'vertical'
-                                                }}>
-                                                    {review.comment}
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span className={getStatusBadgeClass(review.status)}>
-                                                {review.status}
-                                            </span>
-                                            {review.isVerifiedPurchase && (
-                                                <div style={{ fontSize: '0.7rem', color: '#10b981', marginTop: '4px' }}>
-                                                    ✓ Verified
-                                                </div>
+                                                </td>
+                                                <td onClick={(e) => e.stopPropagation()}>
+                                                    <button
+                                                        onClick={() => {
+                                                            const newStatus = review.status === 'approved' ? 'rejected' : 'approved';
+                                                            handleStatusUpdate(review._id, newStatus);
+                                                        }}
+                                                        className={`status-badge ${review.status === 'approved' ? 'status-success' : 'status-neutral'}`}
+                                                        style={{ border: 'none', cursor: 'pointer', minWidth: '70px', fontSize: '0.75rem' }}
+                                                    >
+                                                        {review.status === 'approved' ? 'Active' : 'Inactive'}
+                                                    </button>
+                                                    {review.status === 'pending' && <div style={{ fontSize: '0.65rem', color: '#f59e0b', marginTop: '2px' }}>Pending Review</div>}
+                                                </td>
+                                                <td style={{ fontSize: '0.8rem', color: 'var(--admin-text-secondary)' }}>
+                                                    {new Date(review.createdAt).toLocaleDateString()}
+                                                </td>
+                                                <td style={{ textAlign: 'right' }} onClick={(e) => e.stopPropagation()}>
+                                                    <button
+                                                        className="admin-btn-icon"
+                                                        title="Delete"
+                                                        onClick={() => handleDelete(review._id)}
+                                                    >
+                                                        <FaTrash size={14} color="#ef4444" />
+                                                    </button>
+                                                </td>
+                                            </tr>
+
+                                            {/* Expanded Content */}
+                                            {isExpanded && (
+                                                <tr className="variant-row">
+                                                    <td colSpan="8" style={{ padding: '0 !important', background: 'var(--admin-bg-light)' }}>
+                                                        <div style={{ padding: '20px 20px 20px 60px', background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                                                            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '30px' }}>
+                                                                <div>
+                                                                    <div style={{ marginBottom: '15px' }}>
+                                                                        <h4 style={{ margin: '0 0 8px 0', fontSize: '1rem', color: 'var(--admin-text)' }}>
+                                                                            {review.title || 'Review Details'}
+                                                                        </h4>
+                                                                        <p style={{ color: 'var(--admin-text-secondary)', lineHeight: '1.6', fontSize: '0.95rem' }}>
+                                                                            {review.comment}
+                                                                        </p>
+                                                                    </div>
+
+                                                                    {review.images && review.images.length > 0 && (
+                                                                        <div>
+                                                                            <strong style={{ display: 'block', fontSize: '0.85rem', marginBottom: '8px', color: 'var(--admin-text)' }}>User Images</strong>
+                                                                            <div style={{ display: 'flex', gap: '8px' }}>
+                                                                                {review.images.map((img, idx) => (
+                                                                                    <a key={idx} href={img} target="_blank" rel="noopener noreferrer">
+                                                                                        <img
+                                                                                            src={img}
+                                                                                            alt={`Review ${idx}`}
+                                                                                            style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #e2e8f0' }}
+                                                                                        />
+                                                                                    </a>
+                                                                                ))}
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+
+                                                                <div style={{ background: '#fff', padding: '15px', borderRadius: '8px', border: '1px solid #e2e8f0', alignSelf: 'start' }}>
+                                                                    <h5 style={{ margin: '0 0 10px 0', color: 'var(--admin-text)', borderBottom: '1px solid #eee', paddingBottom: '8px' }}>Metadata</h5>
+                                                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem', color: 'var(--admin-text-secondary)' }}>
+                                                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                                            <span>User Email:</span>
+                                                                            <span style={{ fontWeight: 500 }}>{review.user?.email || 'N/A'}</span>
+                                                                        </div>
+                                                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                                            <span>Order Verified:</span>
+                                                                            {review.isVerifiedPurchase ? (
+                                                                                <span style={{ color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px' }}><FaCheck size={10} /> Yes</span>
+                                                                            ) : (
+                                                                                <span>No</span>
+                                                                            )}
+                                                                        </div>
+                                                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                                            <span>Product Price:</span>
+                                                                            <span>₹{review.product?.price}</span>
+                                                                        </div>
+                                                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                                            <span>Review ID:</span>
+                                                                            <span style={{ fontFamily: 'monospace' }}>{review._id.substring(0, 8)}...</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
                                             )}
-                                        </td>
-                                        <td style={{ fontSize: '0.85rem', color: 'var(--admin-text-secondary)' }}>
-                                            {new Date(review.createdAt).toLocaleDateString()}
-                                        </td>
-                                        <td style={{ textAlign: 'right' }}>
-                                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
-                                                <button
-                                                    className="admin-btn-icon"
-                                                    title="View Details"
-                                                    onClick={() => {
-                                                        setSelectedReview(review);
-                                                        setShowDetailModal(true);
-                                                    }}
-                                                >
-                                                    <FaEye />
-                                                </button>
-                                                {review.status === 'pending' && (
-                                                    <>
-                                                        <button
-                                                            className="admin-btn-icon"
-                                                            style={{ color: '#10b981' }}
-                                                            title="Approve"
-                                                            onClick={() => handleStatusUpdate(review._id, 'approved')}
-                                                        >
-                                                            <FaCheck />
-                                                        </button>
-                                                        <button
-                                                            className="admin-btn-danger"
-                                                            title="Reject"
-                                                            onClick={() => handleStatusUpdate(review._id, 'rejected')}
-                                                        >
-                                                            <FaTimes />
-                                                        </button>
-                                                    </>
-                                                )}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
+                                        </React.Fragment>
+                                    );
+                                })}
                             </tbody>
                         </table>
 
@@ -397,123 +457,6 @@ const ReviewList = () => {
                         />
                     </>
                 )}
-            </div>
-
-            {/* Review Detail Modal */}
-            {showDetailModal && selectedReview && (
-                <ReviewDetailModal
-                    review={selectedReview}
-                    onClose={() => setShowDetailModal(false)}
-                    onApprove={() => handleStatusUpdate(selectedReview._id, 'approved')}
-                    onReject={() => handleStatusUpdate(selectedReview._id, 'rejected')}
-                    onDelete={() => handleDelete(selectedReview._id)}
-                    renderStars={renderStars}
-                />
-            )}
-        </div>
-    );
-};
-
-// Review Detail Modal Component
-const ReviewDetailModal = ({ review, onClose, onApprove, onReject, onDelete, renderStars }) => {
-    return (
-        <div className="review-modal-overlay" onClick={onClose}>
-            <div className="review-detail-modal" onClick={(e) => e.stopPropagation()}>
-                <div className="modal-header">
-                    <h3>Review Details</h3>
-                    <button className="modal-close" onClick={onClose}>
-                        <FaTimes />
-                    </button>
-                </div>
-
-                <div className="modal-body">
-                    {/* Product Info */}
-                    <div className="review-product-info">
-                        <img src={review.product?.image} alt={review.product?.name} />
-                        <div>
-                            <h4>{review.product?.name}</h4>
-                            <p>₹{review.product?.price}</p>
-                        </div>
-                    </div>
-
-                    {/* User Info */}
-                    <div className="review-user-info">
-                        <div>
-                            <strong>Reviewer:</strong> {review.user?.name}
-                        </div>
-                        <div>
-                            <strong>Email:</strong> {review.user?.email}
-                        </div>
-                        <div>
-                            <strong>Date:</strong> {new Date(review.createdAt).toLocaleString()}
-                        </div>
-                        {review.isVerifiedPurchase && (
-                            <div style={{ color: '#10b981', fontWeight: 600 }}>
-                                ✓ Verified Purchase
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Rating */}
-                    <div className="review-rating-section">
-                        <strong>Rating:</strong>
-                        <div style={{ marginTop: '8px' }}>
-                            {renderStars(review.rating)}
-                        </div>
-                    </div>
-
-                    {/* Review Content */}
-                    {review.title && (
-                        <div className="review-title-section">
-                            <strong>Title:</strong>
-                            <p>{review.title}</p>
-                        </div>
-                    )}
-
-                    <div className="review-comment-section">
-                        <strong>Review:</strong>
-                        <p>{review.comment}</p>
-                    </div>
-
-                    {/* Images */}
-                    {review.images && review.images.length > 0 && (
-                        <div className="review-images-section">
-                            <strong>Images:</strong>
-                            <div className="review-images-grid">
-                                {review.images.map((img, idx) => (
-                                    <img key={idx} src={img} alt={`Review ${idx + 1}`} />
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Status */}
-                    <div className="review-status-section">
-                        <strong>Status:</strong>
-                        <span className={`status-badge status-${review.status === 'approved' ? 'success' : review.status === 'rejected' ? 'danger' : 'warning'}`}>
-                            {review.status}
-                        </span>
-                    </div>
-                </div>
-
-                <div className="modal-actions">
-                    {review.status === 'pending' && (
-                        <>
-                            <button className="btn-approve" onClick={onApprove}>
-                                <FaCheck /> Approve
-                            </button>
-                            <button className="btn-reject" onClick={onReject}>
-                                <FaTimes /> Reject
-                            </button>
-                        </>
-                    )}
-                    <button className="btn-delete" onClick={onDelete}>
-                        Delete Review
-                    </button>
-                    <button className="btn-secondary" onClick={onClose}>
-                        Close
-                    </button>
-                </div>
             </div>
         </div>
     );

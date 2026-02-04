@@ -9,6 +9,8 @@ router.post('/login', login);
 // Profile & Password
 router.put('/profile', require('../controllers/AuthController').updateProfile);
 router.post('/change-password', require('../controllers/AuthController').changePassword);
+router.post('/reset-password', require('../controllers/AuthController').resetPassword);
+router.post('/google-login', require('../controllers/AuthController').googleLogin);
 
 // Wishlist Routes
 router.get('/wishlist', require('../controllers/AuthController').getWishlist);

@@ -11,13 +11,19 @@ const sendOTP = async (req, res) => {
         return res.status(400).json({ success: false, message: 'Email is required' });
     }
 
-    // Generate 6-digit OTP
-    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-
-    // Calculate expiry (10 minutes from now)
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
-
+    // Check if user exists first
     try {
+        const user = await User.findOne({ emailOrMobile: email });
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        // Generate 6-digit OTP
+        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+        // Calculate expiry (5 minutes from now)
+        const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
         // Save OTP to DB (upsert: update if exists, else insert)
         await Otp.findOneAndUpdate(
             { emailOrMobile: email },
@@ -27,8 +33,13 @@ const sendOTP = async (req, res) => {
 
         const emailSent = await sendOTPEmail(email, otpCode);
 
+        // DEV HELPER: Only pass OTP back if NOT using real credentials (Mock Mode)
+        // Now that we have real credentials, this will correctly be undefined
+        const isMockMode = !process.env.SMTP_USER || process.env.SMTP_USER.includes('your-email');
+        const debugOtp = isMockMode ? otpCode : undefined;
+
         if (emailSent) {
-            res.status(200).json({ success: true, message: 'OTP sent successfully' });
+            res.status(200).json({ success: true, message: 'OTP sent successfully', debugOtp });
         } else {
             res.status(500).json({ success: false, message: 'Failed to send OTP. Please check SMTP settings.' });
         }
@@ -67,8 +78,8 @@ const verifyOTP = async (req, res) => {
                 user = await User.create({ emailOrMobile: email });
             }
 
-            // Delete OTP after usage
-            await Otp.deleteOne({ _id: storedOtp._id });
+            // DO NOT DELETE OTP HERE. It is needed for the resetPassword step.
+            // await Otp.deleteOne({ _id: storedOtp._id });
 
             // Return user info (and token in real app)
             res.status(200).json({
@@ -333,6 +344,49 @@ const deleteUser = async (req, res) => {
     }
 };
 
+const resetPassword = async (req, res) => {
+    let { email, otp, newPassword } = req.body;
+    if (email) email = email.toLowerCase();
+
+    if (!email || !otp || !newPassword) {
+        return res.status(400).json({ success: false, message: 'Email, OTP, and new password are required' });
+    }
+
+    try {
+        // Verify OTP
+        const storedOtp = await Otp.findOne({ emailOrMobile: email });
+
+        if (!storedOtp) {
+            return res.status(400).json({ success: false, message: 'OTP not found or expired' });
+        }
+
+        if (storedOtp.otp !== otp) {
+            return res.status(400).json({ success: false, message: 'Invalid OTP' });
+        }
+
+        if (Date.now() > storedOtp.expiresAt) {
+            return res.status(400).json({ success: false, message: 'OTP has expired' });
+        }
+
+        // OTP Valid. Update Password.
+        const user = await User.findOne({ emailOrMobile: email });
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        user.password = newPassword;
+        await user.save();
+
+        // Delete OTP
+        await Otp.deleteOne({ _id: storedOtp._id });
+
+        res.status(200).json({ success: true, message: 'Password reset successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+};
+
 const createStaff = async (req, res) => {
     let { name, email, password, role, isAdmin } = req.body;
     if (email) email = email.toLowerCase();
@@ -367,13 +421,57 @@ const createStaff = async (req, res) => {
     }
 };
 
+const googleLogin = async (req, res) => {
+    let { email, name, googleId } = req.body;
+    if (email) email = email.toLowerCase();
+
+    if (!email) {
+        return res.status(400).json({ success: false, message: 'Email is required' });
+    }
+
+    try {
+        let user = await User.findOne({ emailOrMobile: email });
+
+        if (!user) {
+            // Create new user if not exists
+            user = await User.create({
+                name: name || 'Google User',
+                emailOrMobile: email,
+                password: 'GOOGLE_LOGIN_' + Math.random().toString(36).slice(-8), // Dummy password
+                mobile: '',
+                isSocialLogin: true,
+                googleId: googleId
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.emailOrMobile,
+                mobile: user.mobile,
+                isAdmin: user.isAdmin,
+                role: user.role
+            },
+            token: 'mock-jwt-token-' + user._id
+        });
+
+    } catch (error) {
+        console.error('Google Login Error:', error);
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+};
+
 module.exports = {
     sendOTP,
     verifyOTP,
     signup,
     login,
+    googleLogin,
     updateProfile,
     changePassword,
+    resetPassword,
     getWishlist,
     addToWishlist,
     removeFromWishlist,

@@ -2,14 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
     FaPlus, FaSearch, FaEdit, FaEye, FaToggleOn, FaToggleOff,
-    FaTrash, FaPercentage, FaDollarSign, FaCalendarAlt
+    FaTrash, FaPercentage, FaRupeeSign, FaCalendarAlt
 } from 'react-icons/fa';
+import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import '../../admin.css';
 import './Coupons.css';
 import AdminSelect from '../../components/AdminSelect';
 import AdminPagination from '../../components/AdminPagination'; // Added
 
 const CouponList = () => {
+    const { user } = useAdminAuth();
     const [coupons, setCoupons] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -79,7 +81,11 @@ const CouponList = () => {
             try {
                 const response = await fetch(`http://localhost:5001/api/coupons/${couponId}`, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${user ? localStorage.getItem('adminAuthToken') : ''}`,
+                        'user-id': user?.email || (localStorage.getItem('adminAuthUser') ? JSON.parse(localStorage.getItem('adminAuthUser')).email : '')
+                    },
                     body: JSON.stringify({ isActive: !currentStatus })
                 });
 
@@ -97,7 +103,11 @@ const CouponList = () => {
         if (window.confirm('Are you sure you want to delete this coupon? This action cannot be undone.')) {
             try {
                 const response = await fetch(`http://localhost:5001/api/coupons/${couponId}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${user ? localStorage.getItem('adminAuthToken') : ''}`,
+                        'user-id': user?.email || (localStorage.getItem('adminAuthUser') ? JSON.parse(localStorage.getItem('adminAuthUser')).email : '') // Fallback
+                    }
                 });
 
                 if (response.ok) {
@@ -245,7 +255,7 @@ const CouponList = () => {
                                     <th>Validity</th>
                                     <th>Usage</th>
                                     <th>Status</th>
-                                    <th style={{ textAlign: 'right' }}>Actions</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -272,8 +282,8 @@ const CouponList = () => {
                                                         </>
                                                     ) : (
                                                         <>
-                                                            <FaDollarSign size={12} color="#10b981" />
-                                                            <span style={{ fontWeight: 600 }}>${coupon.discountValue}</span>
+                                                            <FaRupeeSign size={12} color="#10b981" />
+                                                            <span style={{ fontWeight: 600 }}>₹{coupon.discountValue}</span>
                                                         </>
                                                     )}
                                                 </div>
@@ -317,8 +327,8 @@ const CouponList = () => {
                                                     </span>
                                                 </div>
                                             </td>
-                                            <td style={{ textAlign: 'right' }}>
-                                                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px' }}>
+                                            <td>
+                                                <div style={{ display: 'flex', justifyContent: 'flex-start', gap: '6px' }}>
                                                     <Link
                                                         to={`/admin/coupons/${coupon._id}`}
                                                         className="admin-btn-icon"

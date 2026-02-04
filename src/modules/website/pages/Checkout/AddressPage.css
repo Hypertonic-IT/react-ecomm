@@ -231,6 +231,13 @@
     font-size: 14px;
 }
 
+.full-width-select {
+    width: 100%;
+    padding: 12px;
+    background: #fff;
+    cursor: pointer;
+}
+
 .form-row {
     display: flex;
     gap: 15px;

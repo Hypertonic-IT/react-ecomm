@@ -62,25 +62,25 @@ export const categories = [
 export const heroSlides = [
     {
         id: 1,
-        image: "https://images.unsplash.com/photo-1529139574466-a302d2d3f524?q=80&w=2570&auto=format&fit=crop",
-        title: "New Summer Collection",
-        subtitle: "Up to 40% Off",
-        cta: "Shop Now",
-        link: "/products?filter=summer"
+        image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop",
+        title: "New Season Arrivals",
+        subtitle: "Fashion for the Future",
+        cta: "Explore Now",
+        link: "/products?filter=new"
     },
     {
         id: 2,
-        image: "https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?q=80&w=2070&auto=format&fit=crop",
-        title: "Men's Premium Style", // Changed Title
-        subtitle: "Elevate Your Style",
+        image: "https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?q=80&w=2670&auto=format&fit=crop",
+        title: "Men's Premium Collection",
+        subtitle: "Sophisticated Style",
         cta: "Shop Men",
         link: "/products?category=Men"
     },
     {
         id: 3,
-        image: "https://images.unsplash.com/photo-1616847231687-0e6d62d29cb5?q=80&w=1762&auto=format&fit=crop",
-        title: "Women's Ethnic Wear",
-        subtitle: "Elegant & Traditional",
+        image: "https://images.unsplash.com/photo-1549570652-9732dc79495c?q=80&w=2574&auto=format&fit=crop",
+        title: "Women's Exclusive",
+        subtitle: "Elegance Redefined",
         cta: "Shop Women",
         link: "/products?category=Women"
     }
@@ -90,7 +90,7 @@ export const products = [
     {
         id: 101,
         name: "Classic Denim Jacket",
-        price: 49.99,
+        price: 2499,
         category: "Men",
         image: "https://images.unsplash.com/photo-1523205771623-e0faa4d2813d?w=500&q=80",
         isNew: true,
@@ -100,8 +100,8 @@ export const products = [
     {
         id: 102,
         name: "Floral Summer Dress",
-        price: 35.50,
-        oldPrice: 50.00,
+        price: 1499,
+        oldPrice: 1999,
         category: "Women",
         image: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=500&q=80",
         isSale: true,
@@ -111,7 +111,7 @@ export const products = [
     {
         id: 103,
         name: "Urban Street Hoodie",
-        price: 55.00,
+        price: 2999,
         category: "Men",
         image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500&q=80",
         isNew: true,
@@ -120,7 +120,7 @@ export const products = [
     {
         id: 104,
         name: "Leather Crossbody Bag",
-        price: 89.99,
+        price: 3999,
         category: "Accessories",
         image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&q=80",
         isTrending: true,
@@ -129,7 +129,7 @@ export const products = [
     {
         id: 105,
         name: "Kids' Cotton T-Shirt",
-        price: 15.00,
+        price: 499,
         category: "Kids",
         image: "https://images.unsplash.com/photo-1519238263496-61437a8ac686?w=500&q=80",
         rating: 4.6
@@ -137,7 +137,7 @@ export const products = [
     {
         id: 106,
         name: "Slim Fit Chinos",
-        price: 39.99,
+        price: 1299,
         category: "Men",
         image: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=500&q=80",
         isTrending: true,
@@ -146,7 +146,7 @@ export const products = [
     {
         id: 107,
         name: "Summer Straw Hat",
-        price: 24.99,
+        price: 799,
         category: "Accessories",
         image: "https://images.unsplash.com/photo-1514327605112-b887c0e61c0a?w=500&q=80",
         isNew: true,
@@ -155,7 +155,7 @@ export const products = [
     {
         id: 108,
         name: "Running Sneakers",
-        price: 79.99,
+        price: 3499,
         category: "Footwear",
         image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80",
         isTrending: true,
@@ -164,7 +164,7 @@ export const products = [
     {
         id: 109,
         name: "Elegant Evening Gown",
-        price: 120.00,
+        price: 5999,
         category: "Women",
         image: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=500&q=80",
         isNew: true,
@@ -173,7 +173,7 @@ export const products = [
     {
         id: 110,
         name: "Leather Boots",
-        price: 110.00,
+        price: 4999,
         category: "Footwear",
         image: "https://images.unsplash.com/photo-1628253747716-0c4f5c90fdda?w=500&q=80",
         rating: 4.6
@@ -181,7 +181,7 @@ export const products = [
     {
         id: 111,
         name: "Men's Classic Watch",
-        price: 199.99,
+        price: 8999,
         category: "Accessories",
         image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80",
         isTrending: true,
@@ -190,7 +190,7 @@ export const products = [
     {
         id: 112,
         name: "Striped Cotton Shirt",
-        price: 34.50,
+        price: 999,
         category: "Men",
         image: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&q=80",
         rating: 4.3
@@ -198,7 +198,7 @@ export const products = [
     {
         id: 113,
         name: "Denim Shorts",
-        price: 29.99,
+        price: 899,
         category: "Women",
         image: "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=500&q=80",
         isSale: true,
@@ -207,7 +207,7 @@ export const products = [
     {
         id: 114,
         name: "Aviator Sunglasses",
-        price: 99.00,
+        price: 2499,
         category: "Accessories",
         image: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=500&q=80",
         isTrending: true,
@@ -216,7 +216,7 @@ export const products = [
     {
         id: 115,
         name: "Patterned Scarf",
-        price: 19.99,
+        price: 399,
         category: "Accessories",
         image: "https://images.unsplash.com/photo-1584030373081-f37b7bb4faae?w=500&q=80",
         rating: 4.2
@@ -224,7 +224,7 @@ export const products = [
     {
         id: 116,
         name: "Kids' Denim Jacket",
-        price: 45.00,
+        price: 1199,
         category: "Kids",
         image: "https://images.unsplash.com/photo-1622290291314-e67306341f22?w=500&q=80",
         isNew: true,
@@ -233,7 +233,7 @@ export const products = [
     {
         id: 117,
         name: "Wireless Headphones",
-        price: 149.99,
+        price: 4999,
         category: "Accessories",
         image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80",
         isTrending: true,
@@ -242,7 +242,7 @@ export const products = [
     {
         id: 118,
         name: "Yoga Leggings",
-        price: 28.00,
+        price: 699,
         category: "Women",
         image: "https://images.unsplash.com/photo-1506619216599-9d16d0903dfd?w=500&q=80",
         rating: 4.5
@@ -250,7 +250,7 @@ export const products = [
     {
         id: 119,
         name: "Men's Polo Shirt",
-        price: 32.00,
+        price: 799,
         category: "Men",
         image: "https://images.unsplash.com/photo-1586363104862-3a5e2ab60d99?w=500&q=80",
         rating: 4.3
@@ -258,7 +258,7 @@ export const products = [
     {
         id: 120,
         name: "Ankle Boots",
-        price: 85.00,
+        price: 2999,
         category: "Footwear",
         image: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=500&q=80",
         isNew: true,

@@ -58,7 +58,7 @@ const PaymentPage = () => {
                 name: item.name,
                 qty: item.quantity,
                 image: item.image,
-                price: item.price,
+                price: item.salePrice || item.price, // Use effective price
                 product: item.id
             })),
             shippingAddress: shippingAddress,
@@ -167,18 +167,21 @@ const PaymentPage = () => {
                         <div className="section-title" style={{ marginBottom: '15px', fontSize: '18px', fontWeight: 'bold' }}>Order Summary</div>
                         <div className="order-summary-box" style={{ background: '#fff', padding: '20px', borderRadius: '12px', border: '1px solid #eee' }}>
                             <div className="summary-items" style={{ maxHeight: '300px', overflowY: 'auto', marginBottom: '20px' }}>
-                                {cart.map((item, index) => (
-                                    <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '15px', borderBottom: '1px solid #f0f0f0', paddingBottom: '10px' }}>
-                                        <img src={item.image} alt={item.name} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }} />
-                                        <div style={{ flex: 1 }}>
-                                            <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '4px' }}>{item.name}</div>
-                                            <div style={{ fontSize: '12px', color: '#666' }}>Qty: {item.quantity} x ₹{item.price}</div>
+                                {cart.map((item, index) => {
+                                    const effectivePrice = item.salePrice || item.price;
+                                    return (
+                                        <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '15px', borderBottom: '1px solid #f0f0f0', paddingBottom: '10px' }}>
+                                            <img src={item.image} alt={item.name} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }} />
+                                            <div style={{ flex: 1 }}>
+                                                <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '4px' }}>{item.name}</div>
+                                                <div style={{ fontSize: '12px', color: '#666' }}>Qty: {item.quantity} x ₹{effectivePrice}</div>
+                                            </div>
+                                            <div style={{ fontSize: '14px', fontWeight: 'bold' }}>
+                                                ₹{effectivePrice * item.quantity}
+                                            </div>
                                         </div>
-                                        <div style={{ fontSize: '14px', fontWeight: 'bold' }}>
-                                            ₹{item.price * item.quantity}
-                                        </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
 
                             <div className="summary-totals" style={{ borderTop: '2px solid #f0f0f0', paddingTop: '15px' }}>
@@ -198,7 +201,7 @@ const PaymentPage = () => {
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '15px', fontSize: '18px', fontWeight: 'bold' }}>
                                     <span>Total</span>
-                                    <span>₹{(getCartTotal() - (appliedCoupon ? appliedCoupon.discount : 0)).toLocaleString()}</span>
+                                    <span>₹{Math.max(0, (getCartTotal() - (appliedCoupon ? appliedCoupon.discount : 0))).toLocaleString()}</span>
                                 </div>
                             </div>
                         </div>

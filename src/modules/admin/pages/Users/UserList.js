@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FaUser, FaSearch, FaEnvelope, FaTrash, FaPlus, FaTimes } from 'react-icons/fa';
 import AdminSelect from '../../components/AdminSelect'; // Added for entries select
-import AdminPagination from '../../components/AdminPagination'; // Added
+import AdminPagination from '../../components/AdminPagination';
+import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import '../../admin.css';
 
 const UserList = () => {
@@ -29,11 +30,18 @@ const UserList = () => {
         }
     });
 
+    const { token: adminAuthToken, user } = useAdminAuth();
+
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                // Assuming fetching all users
-                const response = await fetch('http://localhost:5001/api/users');
+                const token = localStorage.getItem('adminAuthToken');
+                const response = await fetch('http://localhost:5001/api/users', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'user-id': user?.email || (localStorage.getItem('adminAuthUser') ? JSON.parse(localStorage.getItem('adminAuthUser')).email : '')
+                    }
+                });
                 if (response.ok) {
                     const data = await response.json();
                     setUsers(data);
@@ -48,7 +56,7 @@ const UserList = () => {
         };
 
         fetchUsers();
-    }, []);
+    }, [user]);
 
     const filteredUsers = users.filter(user =>
         (user.name && user.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -61,9 +69,108 @@ const UserList = () => {
     const currentUsers = filteredUsers.slice(indexOfFirstEntry, indexOfLastEntry);
 
 
-    const fetchUsers = async () => { /* ... existing ... */ };
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
 
-    // ... (rest of handlers) ...
+        if (name === 'password') {
+            checkPasswordStrength(value);
+        }
+    };
+
+    const checkPasswordStrength = (password) => {
+        let score = 0;
+        let checks = {
+            length: password.length >= 8,
+            uppercase: /[A-Z]/.test(password),
+            lowercase: /[a-z]/.test(password),
+            number: /[0-9]/.test(password)
+        };
+
+        if (checks.length) score++;
+        if (checks.uppercase) score++;
+        if (checks.lowercase) score++;
+        if (checks.number) score++;
+
+        let label = 'weak';
+        if (score === 4) label = 'strong';
+        else if (score >= 2) label = 'medium';
+
+        setPasswordStrength({ score, label, checks });
+    };
+
+    const handleDeleteUser = async (userId) => {
+        if (window.confirm('Are you sure you want to delete this user?')) {
+            try {
+                const token = localStorage.getItem('adminAuthToken');
+                const response = await fetch(`http://localhost:5001/api/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'user-id': user?.email || (localStorage.getItem('adminAuthUser') ? JSON.parse(localStorage.getItem('adminAuthUser')).email : '')
+                    }
+                });
+
+                if (response.ok) {
+                    setUsers(users.filter(u => u._id !== userId));
+                } else {
+                    alert('Failed to delete user');
+                }
+            } catch (error) {
+                console.error("Error deleting user:", error);
+            }
+        }
+    };
+
+    const handleAddCustomer = async (e) => {
+        e.preventDefault();
+        setSaving(true);
+
+        try {
+            // Use the signup endpoint which is public/available
+            const response = await fetch('http://localhost:5001/api/auth/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: formData.name,
+                    email: formData.email,
+                    password: formData.password,
+                    mobile: formData.phone
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert('Customer added successfully');
+                setShowAddModal(false);
+                setFormData({
+                    name: '',
+                    email: '',
+                    password: '',
+                    phone: ''
+                });
+                // After adding, refresh the list
+                // We need to re-fetch users. 
+                // Since fetchUsers is defined inside useEffect, we can't call it here easily 
+                // unless we move it out or trigger a reload.
+                // For now, let's just trigger a window reload or a state update if we refactor.
+                window.location.reload();
+            } else {
+                alert(data.message || 'Error adding customer');
+            }
+        } catch (error) {
+            console.error('Error adding customer:', error);
+            alert('Failed to connect to server');
+        } finally {
+            setSaving(false);
+        }
+    };
 
     return (
         <div className="admin-page-container fade-in">
@@ -120,7 +227,7 @@ const UserList = () => {
                                     <th>Email</th>
                                     <th>Access Level</th>
                                     <th>Joined</th>
-                                    <th style={{ textAlign: 'right' }}>Actions</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -153,8 +260,12 @@ const UserList = () => {
                                             </div>
                                         </td>
                                         <td>{new Date(user.createdAt).toLocaleDateString()}</td>
-                                        <td style={{ textAlign: 'right' }}>
-                                            <button className="admin-btn-danger" title="Delete User">
+                                        <td>
+                                            <button
+                                                className="admin-btn-danger"
+                                                title="Delete User"
+                                                onClick={() => handleDeleteUser(user._id)}
+                                            >
                                                 <FaTrash />
                                             </button>
                                         </td>
