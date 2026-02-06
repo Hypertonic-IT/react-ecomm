@@ -529,7 +529,7 @@ body {
 /* --- Form Elements --- */
 .admin-input {
     width: 100%;
-    padding: 9px 12px;
+    padding: 7px 10px;
     border: 1px solid var(--admin-border);
     border-radius: 8px;
     background-color: #ffffff;

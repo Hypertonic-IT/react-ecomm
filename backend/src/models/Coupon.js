@@ -145,7 +145,9 @@ couponSchema.methods.canUserUse = function (userId) {
 };
 
 // Calculate discount for cart
-couponSchema.methods.calculateDiscount = function (cartTotal, cartItems = []) {
+couponSchema.methods.calculateDiscount = function (inputCartTotal, cartItems = []) {
+    const cartTotal = parseFloat(inputCartTotal) || 0;
+
     // Check minimum order value
     if (cartTotal < this.minOrderValue) {
         return {
@@ -162,15 +164,23 @@ couponSchema.methods.calculateDiscount = function (cartTotal, cartItems = []) {
         // Calculate total of items from applicable categories
         applicableAmount = cartItems
             .filter(item => this.applicableCategories.includes(item.category))
-            .reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            .reduce((sum, item) => sum + ((parseFloat(item.price) || 0) * (parseInt(item.quantity) || 1)), 0);
     } else if (this.applicableTo === 'products') {
         // Calculate total of applicable products
         applicableAmount = cartItems
             .filter(item => this.applicableProducts.some(p => p.toString() === item.productId.toString()))
-            .reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            .reduce((sum, item) => sum + ((parseFloat(item.price) || 0) * (parseInt(item.quantity) || 1)), 0);
+    } else if (this.applicableTo === 'all') {
+        // Re-calculate applicable amount based on cart items just to be safe
+        // if cartItems is provided, to handle any potential drift from inputCartTotal
+        if (cartItems.length > 0) {
+            applicableAmount = cartItems.reduce((sum, item) => sum + ((parseFloat(item.price) || 0) * (parseInt(item.quantity) || 1)), 0);
+            // If the calculated total from items significantly differs from cartTotal, trust cartTotal for minOrder check but use item sum for discount calculation?
+            // For now, let's trust applicableAmount calculation if items exist.
+        }
     }
 
-    if (applicableAmount === 0) {
+    if (applicableAmount === 0 && this.applicableTo !== 'all') {
         return {
             applicable: false,
             message: 'No applicable items in cart',

@@ -1,0 +1,47 @@
+/* Mobile Phone View Fixes */
+
+/* Ensure header stays above hero */
+.header {
+    z-index: 1000 !important;
+}
+
+/* Fix mobile menu overlay z-index */
+.mobile-menu-overlay {
+    z-index: 1001 !important;
+}
+
+/* Ensure hero doesn't overlap header */
+.hero-container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Additional mobile-specific fixes */
+@media (max-width: 768px) {
+
+    /* Prevent text overflow in topbar */
+    .topbar-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Ensure proper spacing */
+    body {
+        overflow-x: hidden;
+    }
+}
+
+@media (max-width: 480px) {
+
+    /* Ultra small screens */
+    .header {
+        position: sticky;
+        top: 0;
+    }
+
+    /* Compact everything */
+    * {
+        -webkit-tap-highlight-color: transparent;
+    }
+}

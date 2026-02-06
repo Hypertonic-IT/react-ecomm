@@ -26,7 +26,8 @@ const ProductDetail = () => {
         products,
         applyCoupon,
         removeCoupon,
-        appliedCoupon
+        appliedCoupon,
+        showToast
     } = useShop();
     const { formatPrice } = useCurrency();
     const { user, token } = useAuth(); // Get user and token from AuthContext
@@ -39,9 +40,26 @@ const ProductDetail = () => {
     const [couponCode, setCouponCode] = useState('');
     const [isCouponOpen, setIsCouponOpen] = useState(false);
 
+    const checkAndApplyCoupon = async (code) => {
+        if (!code) return;
+
+        // Check if item is in cart
+        const isInCart = cart.some(item =>
+            item.id === product.id &&
+            item.selectedColor === selectedColor &&
+            item.selectedSize === selectedSize
+        );
+
+        if (!isInCart) {
+            // Show warning to user as requested
+            showToast("Please add this item to your cart first to apply the coupon.", "warning");
+        } else {
+            await applyCoupon(code, user?.id);
+        }
+    };
+
     const handleApplyCoupon = async () => {
-        if (!couponCode) return;
-        await applyCoupon(couponCode, user?.id);
+        await checkAndApplyCoupon(couponCode);
     };
 
     useEffect(() => {
@@ -129,7 +147,31 @@ const ProductDetail = () => {
                         <div className="pdp-info-header">
                             <h1 className="pdp-title">{product.name}</h1>
                             <div className="pdp-price">
-                                {product.discount > 0 ? (
+                                {appliedCoupon ? (
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <span style={{ fontSize: '1.8rem', fontWeight: '700', color: '#166534' }}>
+                                                {formatPrice(
+                                                    appliedCoupon.discountType === 'percentage'
+                                                        ? (product.salePrice || product.price) * (1 - appliedCoupon.discountValue / 100)
+                                                        : (product.salePrice || product.price) - appliedCoupon.discountValue
+                                                )}
+                                            </span>
+                                            <span style={{
+                                                background: '#dcfce7', color: '#166534', fontSize: '0.75rem',
+                                                padding: '2px 8px', borderRadius: '12px', fontWeight: '700', border: '1px solid #166534'
+                                            }}>
+                                                COUPON APPLIED
+                                            </span>
+                                        </div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                                            <span style={{ textDecoration: 'line-through', color: '#94a3b8', fontSize: '1rem' }}>
+                                                {formatPrice(product.salePrice || product.price)}
+                                            </span>
+                                            <span style={{ fontSize: '0.9rem', color: '#64748b' }}>Original Price</span>
+                                        </div>
+                                    </div>
+                                ) : product.discount > 0 ? (
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                         <span style={{ color: '#ef4444', fontWeight: '700', fontSize: '1.5rem' }}>
                                             {formatPrice(product.salePrice)}
@@ -197,116 +239,118 @@ const ProductDetail = () => {
 
                         {/* Attractive Coupon Card */}
                         {/* Attractive Coupon Card */}
-                        <div className="pdp-coupon-card" style={{
-                            margin: '20px 0',
-                            padding: '16px',
-                            background: '#f8fafc',
-                            border: '1px dashed #3b82f6',
-                            borderRadius: '12px',
-                            transition: 'all 0.3s ease'
-                        }}>
-                            {!appliedCoupon ? (
-                                <>
-                                    <div className="pdp-coupon-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: isCouponOpen ? '15px' : '0' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        {(product.salePrice || product.price) > 5999 && (
+                            <div className="pdp-coupon-card" style={{
+                                margin: '20px 0',
+                                padding: '16px',
+                                background: '#f8fafc',
+                                border: '1px dashed #3b82f6',
+                                borderRadius: '12px',
+                                transition: 'all 0.3s ease'
+                            }}>
+                                {!appliedCoupon ? (
+                                    <>
+                                        <div className="pdp-coupon-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: isCouponOpen ? '15px' : '0' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                                <div style={{
+                                                    width: '32px', height: '32px',
+                                                    background: '#eff6ff', borderRadius: '8px',
+                                                    display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3b82f6'
+                                                }}>
+                                                    <FaPercentage size={14} />
+                                                </div>
+                                                <div>
+                                                    <div style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b' }}>Offers & Coupons</div>
+                                                    {!isCouponOpen && <div style={{ fontSize: '11px', color: '#64748b' }}>Save up to ₹500 on this item</div>}
+                                                </div>
+                                            </div>
+                                            <button
+                                                onClick={() => setIsCouponOpen(!isCouponOpen)}
+                                                style={{
+                                                    background: 'transparent',
+                                                    border: 'none',
+                                                    color: '#3b82f6',
+                                                    fontWeight: '600',
+                                                    fontSize: '12px',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                {isCouponOpen ? 'Close' : 'View All Offers >'}
+                                            </button>
+                                        </div>
+
+                                        {isCouponOpen && (
+                                            <div className="pdp-coupon-content animate-fade-in" style={{ borderTop: '1px solid #e2e8f0', paddingTop: '15px', marginTop: '10px' }}>
+                                                <div style={{ marginBottom: '15px' }}>
+                                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Enter promo code"
+                                                            value={couponCode}
+                                                            onChange={(e) => setCouponCode(e.target.value)}
+                                                            style={{ flex: 1, padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '13px', outline: 'none' }}
+                                                        />
+                                                        <button onClick={handleApplyCoupon} style={{ background: '#0f172a', color: '#fff', border: 'none', padding: '0 16px', borderRadius: '6px', fontWeight: '600', fontSize: '12px', cursor: 'pointer' }}>
+                                                            APPLY
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                {/* Use reusable component */}
+                                                <AvailableCoupons
+                                                    coupons={availableCoupons}
+                                                    onApply={(code) => checkAndApplyCoupon(code)}
+                                                />
+                                            </div>
+                                        )}
+                                    </>
+                                ) : (
+                                    <div style={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        background: '#dcfce7',
+                                        border: '1px solid #166534',
+                                        borderRadius: '8px',
+                                        padding: '12px'
+                                    }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                             <div style={{
-                                                width: '32px', height: '32px',
-                                                background: '#eff6ff', borderRadius: '8px',
-                                                display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3b82f6'
+                                                width: '36px', height: '36px',
+                                                background: '#166534', borderRadius: '50%',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                color: '#fff'
                                             }}>
-                                                <FaPercentage size={14} />
+                                                <FaCheck size={16} />
                                             </div>
                                             <div>
-                                                <div style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b' }}>Offers & Coupons</div>
-                                                {!isCouponOpen && <div style={{ fontSize: '11px', color: '#64748b' }}>Save up to ₹500 on this item</div>}
+                                                <div style={{ fontSize: '14px', fontWeight: '800', color: '#166534' }}>
+                                                    '{appliedCoupon.code}' APPLIED!
+                                                </div>
+                                                <div style={{ fontSize: '12px', color: '#15803d', fontWeight: '500' }}>
+                                                    Savings of {formatPrice(appliedCoupon.discount)} applied.
+                                                </div>
                                             </div>
                                         </div>
                                         <button
-                                            onClick={() => setIsCouponOpen(!isCouponOpen)}
+                                            onClick={removeCoupon}
                                             style={{
-                                                background: 'transparent',
-                                                border: 'none',
-                                                color: '#3b82f6',
-                                                fontWeight: '600',
-                                                fontSize: '12px',
+                                                background: '#fff',
+                                                border: '1px solid #ef4444',
+                                                color: '#ef4444',
+                                                padding: '6px 12px',
+                                                borderRadius: '6px',
+                                                fontSize: '11px',
+                                                fontWeight: '700',
                                                 cursor: 'pointer'
                                             }}
                                         >
-                                            {isCouponOpen ? 'Close' : 'View All Offers >'}
+                                            REMOVE
                                         </button>
                                     </div>
-
-                                    {isCouponOpen && (
-                                        <div className="pdp-coupon-content animate-fade-in" style={{ borderTop: '1px solid #e2e8f0', paddingTop: '15px', marginTop: '10px' }}>
-                                            <div style={{ marginBottom: '15px' }}>
-                                                <div style={{ display: 'flex', gap: '8px' }}>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Enter promo code"
-                                                        value={couponCode}
-                                                        onChange={(e) => setCouponCode(e.target.value)}
-                                                        style={{ flex: 1, padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '13px', outline: 'none' }}
-                                                    />
-                                                    <button onClick={handleApplyCoupon} style={{ background: '#0f172a', color: '#fff', border: 'none', padding: '0 16px', borderRadius: '6px', fontWeight: '600', fontSize: '12px', cursor: 'pointer' }}>
-                                                        APPLY
-                                                    </button>
-                                                </div>
-                                            </div>
-
-                                            {/* Use reusable component */}
-                                            <AvailableCoupons
-                                                coupons={availableCoupons}
-                                                onApply={(code) => applyCoupon(code, user?.id)}
-                                            />
-                                        </div>
-                                    )}
-                                </>
-                            ) : (
-                                <div style={{
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    background: '#dcfce7',
-                                    border: '1px solid #166534',
-                                    borderRadius: '8px',
-                                    padding: '12px'
-                                }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                        <div style={{
-                                            width: '36px', height: '36px',
-                                            background: '#166534', borderRadius: '50%',
-                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                            color: '#fff'
-                                        }}>
-                                            <FaCheck size={16} />
-                                        </div>
-                                        <div>
-                                            <div style={{ fontSize: '14px', fontWeight: '800', color: '#166534' }}>
-                                                '{appliedCoupon.code}' APPLIED!
-                                            </div>
-                                            <div style={{ fontSize: '12px', color: '#15803d', fontWeight: '500' }}>
-                                                Savings of {formatPrice(appliedCoupon.discount)} applied.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <button
-                                        onClick={removeCoupon}
-                                        style={{
-                                            background: '#fff',
-                                            border: '1px solid #ef4444',
-                                            color: '#ef4444',
-                                            padding: '6px 12px',
-                                            borderRadius: '6px',
-                                            fontSize: '11px',
-                                            fontWeight: '700',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        REMOVE
-                                    </button>
-                                </div>
-                            )}
-                        </div>
+                                )}
+                            </div>
+                        )}
 
                         <div className="pdp-actions">
                             {(() => {

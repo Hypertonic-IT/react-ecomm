@@ -1,6 +1,12 @@
 const { sendOTPEmail } = require('../services/EmailService');
 const Otp = require('../models/Otp');
 const User = require('../models/User');
+const jwt = require('jsonwebtoken');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'hypertonic_secret_key_123';
+const generateToken = (id) => {
+    return jwt.sign({ id }, JWT_SECRET, { expiresIn: '30d' });
+};
 
 const sendOTP = async (req, res) => {
     let { email } = req.body;
@@ -92,7 +98,7 @@ const verifyOTP = async (req, res) => {
                     isAdmin: user.isAdmin,
                     role: user.role
                 },
-                token: 'mock-jwt-token-' + user._id // Mock token for now
+                token: generateToken(user._id)
             });
         } else {
             res.status(400).json({ success: false, message: 'Invalid OTP' });
@@ -128,7 +134,7 @@ const signup = async (req, res) => {
                 email: newUser.emailOrMobile,
                 mobile: newUser.mobile
             },
-            token: 'mock-jwt-token-' + newUser._id
+            token: generateToken(newUser._id)
         });
     } catch (error) {
         console.error(error);
@@ -161,7 +167,7 @@ const login = async (req, res) => {
                 isAdmin: user.isAdmin,
                 role: user.role
             },
-            token: 'mock-jwt-token-' + user._id
+            token: generateToken(user._id)
         });
 
     } catch (error) {
@@ -171,24 +177,14 @@ const login = async (req, res) => {
 };
 
 const updateProfile = async (req, res) => {
-    // In production, get user ID from authenticated token/header
-    // For now, identifying by email provided in body or header (insecure but consistent with current MVP)
-    // Better approach matching getMyOrders: use 'user-id' header
-    let userEmail = req.headers['user-id'];
-    if (userEmail) userEmail = userEmail.toLowerCase();
-
-    if (!userEmail) {
-        return res.status(401).json({ success: false, message: 'Unauthorized' });
-    }
-
     try {
-        const { name, mobile } = req.body;
-
-        const user = await User.findOne({ emailOrMobile: userEmail });
+        const user = req.user; // Populated by protect middleware
 
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
+
+        const { name, mobile } = req.body;
 
         if (name) user.name = name;
         if (mobile) user.mobile = mobile;
@@ -214,25 +210,17 @@ const updateProfile = async (req, res) => {
 
 
 const changePassword = async (req, res) => {
-    // In production, get user ID from authenticated token/header
-    let userEmail = req.headers['user-id'];
-    if (userEmail) userEmail = userEmail.toLowerCase();
-
-    if (!userEmail) {
-        return res.status(401).json({ success: false, message: 'Unauthorized' });
-    }
-
-    const { currentPassword, newPassword } = req.body;
-
-    if (!currentPassword || !newPassword) {
-        return res.status(400).json({ success: false, message: 'Current and new passwords are required' });
-    }
-
     try {
-        const user = await User.findOne({ emailOrMobile: userEmail });
+        const user = req.user;
 
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        const { currentPassword, newPassword } = req.body;
+
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ success: false, message: 'Current and new passwords are required' });
         }
 
         // Verify current password
@@ -252,13 +240,8 @@ const changePassword = async (req, res) => {
 };
 
 const getWishlist = async (req, res) => {
-    let userEmail = req.headers['user-id'];
-    if (userEmail) userEmail = userEmail.toLowerCase();
-
-    if (!userEmail) return res.status(401).json({ success: false, message: 'Unauthorized' });
-
     try {
-        const user = await User.findOne({ emailOrMobile: userEmail });
+        const user = req.user;
         if (!user) return res.status(404).json({ success: false, message: 'User not found' });
 
         res.status(200).json({ success: true, wishlist: user.wishlist || [] });
@@ -268,15 +251,10 @@ const getWishlist = async (req, res) => {
 };
 
 const addToWishlist = async (req, res) => {
-    let userEmail = req.headers['user-id'];
-    if (userEmail) userEmail = userEmail.toLowerCase();
-
-    if (!userEmail) return res.status(401).json({ success: false, message: 'Unauthorized' });
-
     const { productId, name, price, image, inStock } = req.body;
 
     try {
-        const user = await User.findOne({ emailOrMobile: userEmail });
+        const user = req.user;
         if (!user) return res.status(404).json({ success: false, message: 'User not found' });
 
         // Initialize wishlist if undefined
@@ -296,15 +274,10 @@ const addToWishlist = async (req, res) => {
 };
 
 const removeFromWishlist = async (req, res) => {
-    let userEmail = req.headers['user-id'];
-    if (userEmail) userEmail = userEmail.toLowerCase();
-
-    if (!userEmail) return res.status(401).json({ success: false, message: 'Unauthorized' });
-
     const { productId } = req.params;
 
     try {
-        const user = await User.findOne({ emailOrMobile: userEmail });
+        const user = req.user;
         if (!user) return res.status(404).json({ success: false, message: 'User not found' });
 
         if (user.wishlist) {
@@ -454,7 +427,7 @@ const googleLogin = async (req, res) => {
                 isAdmin: user.isAdmin,
                 role: user.role
             },
-            token: 'mock-jwt-token-' + user._id
+            token: generateToken(user._id)
         });
 
     } catch (error) {

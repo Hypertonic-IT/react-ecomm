@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     FaSearch, FaFilter, FaUpload, FaPlus, FaEdit, FaHistory,
     FaChevronDown, FaChevronRight, FaExclamationTriangle, FaDownload,
@@ -10,6 +11,7 @@ import AdminPagination from '../../components/AdminPagination'; // Added
 import './Inventory.css';
 
 const InventoryManagement = () => {
+    const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -268,7 +270,11 @@ const InventoryManagement = () => {
                     </div>
 
                     {/* Add Inventory Button - Moved Here */}
-                    <button className="admin-btn-outline" style={{ whiteSpace: 'nowrap' }}>
+                    <button
+                        className="admin-btn-outline"
+                        style={{ whiteSpace: 'nowrap' }}
+                        onClick={() => navigate('/admin/products/new')}
+                    >
                         <FaPlus size={12} /> Add Inventory
                     </button>
                 </div>

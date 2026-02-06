@@ -187,8 +187,8 @@ export const authService = {
 
     // Verify token validity
     verifyToken: async (token) => {
-        // Simple mock check - Match backend format 'mock-jwt-token-'
-        if (token && (token.startsWith('mock_token_') || token.startsWith('mock-jwt-token-'))) {
+        // Accept real JWTs (long strings) or legacy mock tokens
+        if (token && token.length > 20) {
             return { valid: true };
         }
         return { valid: false };
@@ -202,15 +202,13 @@ export const authService = {
     // Update Profile
     updateProfile: async (userData) => {
         try {
-            // Get current user for ID header
-            const currentUser = JSON.parse(localStorage.getItem('authUser'));
-            const userId = currentUser ? currentUser.email : '';
+            const token = localStorage.getItem('authToken');
 
             const response = await fetch(`${AUTH_API_URL}/profile`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'user-id': userId
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(userData)
             });
@@ -228,14 +226,13 @@ export const authService = {
     // Change Password
     changePassword: async (currentPassword, newPassword) => {
         try {
-            const currentUser = JSON.parse(localStorage.getItem('authUser'));
-            const userId = currentUser ? currentUser.email : '';
+            const token = localStorage.getItem('authToken');
 
             const response = await fetch(`${AUTH_API_URL}/change-password`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'user-id': userId
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({ currentPassword, newPassword })
             });
@@ -252,12 +249,11 @@ export const authService = {
 
     getWishlist: async () => {
         try {
-            const currentUser = JSON.parse(localStorage.getItem('authUser'));
-            const userId = currentUser ? currentUser.email : '';
-            if (!userId) return [];
+            const token = localStorage.getItem('authToken');
+            if (!token) return [];
 
             const response = await fetch(`${AUTH_API_URL}/wishlist`, {
-                headers: { 'user-id': userId }
+                headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();
             return data.success ? data.wishlist : [];
@@ -269,15 +265,14 @@ export const authService = {
 
     addToWishlist: async (product) => {
         try {
-            const currentUser = JSON.parse(localStorage.getItem('authUser'));
-            const userId = currentUser ? currentUser.email : '';
-            if (!userId) return { success: false, message: 'Please login' };
+            const token = localStorage.getItem('authToken');
+            if (!token) return { success: false, message: 'Please login' };
 
             const response = await fetch(`${AUTH_API_URL}/wishlist/add`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'user-id': userId
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     productId: product.id,
@@ -297,13 +292,12 @@ export const authService = {
 
     removeFromWishlist: async (productId) => {
         try {
-            const currentUser = JSON.parse(localStorage.getItem('authUser'));
-            const userId = currentUser ? currentUser.email : '';
-            if (!userId) return { success: false };
+            const token = localStorage.getItem('authToken');
+            if (!token) return { success: false };
 
             const response = await fetch(`${AUTH_API_URL}/wishlist/${productId}`, {
                 method: 'DELETE',
-                headers: { 'user-id': userId }
+                headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();
             return data;

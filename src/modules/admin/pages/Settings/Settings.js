@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { FaSave, FaGlobe, FaCreditCard, FaShareAlt } from 'react-icons/fa';
+import { FaSave, FaGlobe, FaCreditCard, FaShareAlt, FaLock } from 'react-icons/fa';
 import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import '../../admin.css';
 
 const Settings = () => {
-    const { user } = useAdminAuth();
+    const { user, token } = useAdminAuth();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
@@ -20,6 +20,12 @@ const Settings = () => {
             instagram: '',
             linkedin: ''
         }
+    });
+
+    const [passwordData, setPasswordData] = useState({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
     });
 
     useEffect(() => {
@@ -79,7 +85,7 @@ const Settings = () => {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'user-id': user?.email
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(formData)
             });
@@ -89,6 +95,47 @@ const Settings = () => {
             alert('Failed to update settings');
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handlePasswordChange = (e) => {
+        const { name, value } = e.target;
+        setPasswordData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handlePasswordSubmit = async (e) => {
+        e.preventDefault();
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+            alert("New passwords don't match");
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:5001/api/auth/change-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    currentPassword: passwordData.currentPassword,
+                    newPassword: passwordData.newPassword
+                })
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                alert('Password changed successfully!');
+                setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+            } else {
+                alert(data.message || 'Failed to change password');
+            }
+        } catch (error) {
+            console.error("Error changing password:", error);
+            alert('Failed to change password');
         }
     };
 
@@ -119,7 +166,7 @@ const Settings = () => {
                             value={formData.siteName}
                             onChange={handleChange}
                             className="admin-input"
-                            style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                            style={{ width: '100%', padding: '8px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
                         />
                     </div>
 
@@ -131,7 +178,7 @@ const Settings = () => {
                             value={formData.supportEmail}
                             onChange={handleChange}
                             className="admin-input"
-                            style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                            style={{ width: '100%', padding: '8px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
                         />
                     </div>
                 </div>
@@ -152,7 +199,7 @@ const Settings = () => {
                                 value={formData.currencySymbol}
                                 onChange={handleChange}
                                 className="admin-input"
-                                style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                                style={{ width: '100%', padding: '8px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
                             />
                         </div>
                         <div className="form-group">
@@ -163,7 +210,7 @@ const Settings = () => {
                                 value={formData.shippingFee}
                                 onChange={handleChange}
                                 className="admin-input"
-                                style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                                style={{ width: '100%', padding: '8px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
                             />
                         </div>
                         <div className="form-group">
@@ -174,7 +221,7 @@ const Settings = () => {
                                 value={formData.freeShippingThreshold}
                                 onChange={handleChange}
                                 className="admin-input"
-                                style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                                style={{ width: '100%', padding: '8px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
                             />
                         </div>
                     </div>
@@ -196,7 +243,7 @@ const Settings = () => {
                                 value={formData.socialLinks.facebook}
                                 onChange={handleChange}
                                 className="admin-input"
-                                style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                                style={{ width: '100%', padding: '8px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
                             />
                         </div>
                         <div className="form-group">
@@ -245,6 +292,65 @@ const Settings = () => {
                     {saving ? 'Saving...' : 'Save Settings'}
                 </button>
 
+            </form>
+
+            {/* Password Change Section */}
+            <form onSubmit={handlePasswordSubmit} style={{ display: 'grid', gap: '24px', maxWidth: '800px', marginTop: '40px' }}>
+                <div className="admin-card" style={{ background: 'var(--admin-card-bg)', padding: '24px', borderRadius: '16px', border: '1px solid var(--admin-border)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', borderBottom: '1px solid var(--admin-border)', paddingBottom: '10px' }}>
+                        <FaLock className="text-primary" />
+                        <h3 style={{ fontSize: '1.2rem', color: 'var(--admin-text)', margin: 0 }}>Change Password</h3>
+                    </div>
+
+                    <div className="form-group" style={{ marginBottom: '15px' }}>
+                        <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Current Password</label>
+                        <input
+                            type="password"
+                            name="currentPassword"
+                            value={passwordData.currentPassword}
+                            onChange={handlePasswordChange}
+                            required
+                            className="admin-input"
+                            style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                        />
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                        <div className="form-group">
+                            <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>New Password</label>
+                            <input
+                                type="password"
+                                name="newPassword"
+                                value={passwordData.newPassword}
+                                onChange={handlePasswordChange}
+                                required
+                                className="admin-input"
+                                style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Confirm New Password</label>
+                            <input
+                                type="password"
+                                name="confirmPassword"
+                                value={passwordData.confirmPassword}
+                                onChange={handlePasswordChange}
+                                required
+                                className="admin-input"
+                                style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <button
+                    type="submit"
+                    className="admin-btn-primary"
+                    style={{ justifySelf: 'start', padding: '12px 30px', display: 'flex', alignItems: 'center', gap: '10px' }}
+                >
+                    <FaLock />
+                    Update Password
+                </button>
             </form>
         </div>
     );

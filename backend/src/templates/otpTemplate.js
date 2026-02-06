@@ -1,187 +1,165 @@
-const otpTemplate = (otp) => `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Your Identity</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500&display=swap');
-        
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f3f4f6;
-            -webkit-font-smoothing: antialiased;
-        }
+/**
+ * OTP Email Template
+ * Generates a beautiful HTML email template for OTP verification
+ */
 
-        .wrapper {
-            width: 100%;
-            table-layout: fixed;
-            background-color: #f3f4f6;
-            padding: 40px 0;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-
-        .header {
-            background: linear-gradient(135deg, #000000 0%, #1e293b 100%);
-            padding: 40px 20px;
-            text-align: center;
-        }
-
-        .logo {
-            font-family: 'Outfit', sans-serif;
-            font-size: 32px;
-            font-weight: 800;
-            color: #ffffff;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            text-decoration: none;
-        }
-
-        .content {
-            padding: 48px 40px;
-            text-align: center;
-        }
-
-        .title {
-            font-family: 'Outfit', sans-serif;
-            font-size: 28px;
-            font-weight: 700;
-            color: #111827;
-            margin: 0 0 16px 0;
-        }
-
-        .message {
-            font-size: 16px;
-            line-height: 26px;
-            color: #6b7280;
-            margin-bottom: 32px;
-        }
-
-        .otp-box {
-            background-color: #f9fafb;
-            border: 2px dashed #e5e7eb;
-            border-radius: 16px;
-            padding: 32px;
-            margin-bottom: 32px;
-        }
-
-        .otp-code {
-            font-family: 'Outfit', sans-serif;
-            font-size: 48px;
-            font-weight: 800;
-            letter-spacing: 12px;
-            color: #000000;
-            margin: 0;
-            line-height: 1;
-        }
-
-        .timer-info {
-            display: inline-flex;
-            align-items: center;
-            background-color: #fee2e2;
-            color: #ef4444;
-            padding: 8px 16px;
-            border-radius: 9999px;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 24px;
-        }
-
-        .footer {
-            padding: 32px 20px;
-            background-color: #f9fafb;
-            text-align: center;
-            border-top: 1px solid #f3f4f6;
-        }
-
-        .footer-text {
-            font-size: 13px;
-            color: #9ca3af;
-            margin-bottom: 8px;
-        }
-
-        .social-links {
-            margin-top: 16px;
-        }
-
-        .social-links a {
-            color: #9ca3af;
-            text-decoration: none;
-            margin: 0 10px;
-            font-size: 12px;
-        }
-        
-        .ignore-msg {
-            font-size: 13px;
-            color: #9ca3af;
-            margin-top: 24px;
-        }
-
-        /* Mobile Adjustments */
-        @media only screen and (max-width: 600px) {
+const otpTemplate = (otp) => {
+    return `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Verify Your Account</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                padding: 40px 20px;
+            }
             .container {
-                border-radius: 0;
+                max-width: 600px;
+                margin: 0 auto;
+                background: white;
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            }
+            .header {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                padding: 40px 30px;
+                text-align: center;
+                color: white;
+            }
+            .header h1 {
+                font-size: 28px;
+                font-weight: 700;
+                margin-bottom: 8px;
+            }
+            .header p {
+                font-size: 16px;
+                opacity: 0.9;
             }
             .content {
-                padding: 40px 24px;
+                padding: 40px 30px;
+                text-align: center;
             }
-            .otp-code {
+            .content h2 {
+                font-size: 24px;
+                color: #2d3748;
+                margin-bottom: 16px;
+            }
+            .content p {
+                font-size: 16px;
+                color: #4a5568;
+                line-height: 1.6;
+                margin-bottom: 30px;
+            }
+            .otp-box {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
                 font-size: 36px;
+                font-weight: 700;
                 letter-spacing: 8px;
+                padding: 20px 40px;
+                border-radius: 12px;
+                display: inline-block;
+                margin: 20px 0;
+                box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
             }
-        }
-    </style>
-</head>
-<body>
-    <div class="wrapper">
+            .warning {
+                background: #fff5f5;
+                border-left: 4px solid #fc8181;
+                padding: 16px;
+                margin: 30px 0;
+                border-radius: 8px;
+                text-align: left;
+            }
+            .warning p {
+                color: #742a2a;
+                font-size: 14px;
+                margin: 0;
+            }
+            .footer {
+                background: #f7fafc;
+                padding: 30px;
+                text-align: center;
+                border-top: 1px solid #e2e8f0;
+            }
+            .footer p {
+                font-size: 14px;
+                color: #718096;
+                margin-bottom: 8px;
+            }
+            .footer a {
+                color: #667eea;
+                text-decoration: none;
+                font-weight: 600;
+            }
+            .social-links {
+                margin-top: 20px;
+            }
+            .social-links a {
+                display: inline-block;
+                margin: 0 8px;
+                color: #718096;
+                text-decoration: none;
+                font-size: 14px;
+            }
+        </style>
+    </head>
+    <body>
         <div class="container">
             <div class="header">
-                <a href="#" class="logo">HYPERTONIC</a>
+                <h1>🔐 Hypertonic</h1>
+                <p>Premium E-Commerce Experience</p>
             </div>
             
             <div class="content">
-                <h1 class="title">Security Verification</h1>
-                <p class="message">
-                    To proceed with your request, please use the following one-time verification code. For your security, please do not share this code with anyone.
+                <h2>Verify Your Account</h2>
+                <p>
+                    Thank you for choosing Hypertonic! To complete your registration or password reset, 
+                    please use the One-Time Password (OTP) below:
                 </p>
                 
                 <div class="otp-box">
-                    <h2 class="otp-code">${otp}</h2>
+                    ${otp}
                 </div>
                 
-                <div class="timer-info">
-                    VALID FOR 5 MINUTES ONLY
-                </div>
-                
-                <p class="ignore-msg">
-                    If you didn't request this code, you can safely ignore this email. Someone may have entered your email by mistake.
+                <p style="margin-top: 30px;">
+                    This code will expire in <strong>10 minutes</strong>. 
+                    Please do not share this code with anyone.
                 </p>
+                
+                <div class="warning">
+                    <p>
+                        <strong>⚠️ Security Notice:</strong><br>
+                        If you didn't request this code, please ignore this email. 
+                        Your account is safe and no action is required.
+                    </p>
+                </div>
             </div>
             
             <div class="footer">
-                <p class="footer-text">© 2026 Hypertonic Solutions. All rights reserved.</p>
+                <p>Need help? Contact us at <a href="mailto:support@hypertonic.com">support@hypertonic.com</a></p>
+                <p style="margin-top: 16px; font-size: 12px; color: #a0aec0;">
+                    © ${new Date().getFullYear()} Hypertonic. All rights reserved.
+                </p>
                 <div class="social-links">
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Support Center</a>
-                    <a href="#">Terms of Service</a>
+                    <a href="#">Privacy Policy</a> • 
+                    <a href="#">Terms of Service</a> • 
+                    <a href="#">Help Center</a>
                 </div>
             </div>
         </div>
-    </div>
-</body>
-</html>
-`;
+    </body>
+    </html>
+    `;
+};
 
 module.exports = otpTemplate;
-

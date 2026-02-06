@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import {
     FaHome, FaBoxOpen, FaShoppingBag, FaUsers, FaCog, FaSignOutAlt,
     FaList, FaClipboardList, FaTags, FaStar, FaChartLine, FaLayerGroup,
-    FaTimes, FaUserShield
+    FaTimes, FaUserShield, FaNewspaper
 } from 'react-icons/fa';
 
 import { useAdminAuth } from '../../../context/AdminAuthContext';
@@ -61,6 +61,10 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                 <NavLink to="/admin/reviews" onClick={onClose} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
                     <FaStar className="admin-nav-icon" />
                     <span>Reviews</span>
+                </NavLink>
+                <NavLink to="/admin/blogs" onClick={onClose} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
+                    <FaNewspaper className="admin-nav-icon" />
+                    <span>Blog Posts</span>
                 </NavLink>
 
                 <div className="nav-section-label">System</div>

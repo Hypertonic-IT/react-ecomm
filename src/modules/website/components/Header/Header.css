@@ -158,13 +158,14 @@
     left: 0;
     width: 100%;
     height: 100vh;
-    background: var(--white);
+    background: #ffffff !important;
     z-index: 1001;
     padding: 100px 30px 40px;
     display: flex;
     flex-direction: column;
     gap: 20px;
     overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .mobile-link {
@@ -208,6 +209,11 @@
         font-size: 18px;
     }
 
+    /* Hide search on mobile */
+    .nav-icons .icon-wrap:first-child {
+        display: none;
+    }
+
     .logo {
         font-size: 20px;
     }
@@ -219,19 +225,69 @@
 }
 
 @media (max-width: 600px) {
-    .nav-icons {
-        gap: 16px;
-        font-size: 16px;
+    .nav-container {
+        padding: 0 12px;
+        height: 60px;
     }
 
-    .logo {
+    .nav-icons {
+        gap: 8px;
         font-size: 18px;
     }
 
+    .header-icon {
+        padding: 6px;
+    }
+
+    .logo {
+        font-size: 16px;
+        letter-spacing: 0.5px;
+    }
+
     .badge {
-        width: 16px;
-        height: 16px;
-        font-size: 9px;
+        width: 14px;
+        height: 14px;
+        font-size: 8px;
+        top: -2px;
+        right: -2px;
+    }
+
+    .user-initial {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-container {
+        padding: 0 8px;
+        height: 56px;
+    }
+
+    .nav-icons {
+        gap: 4px;
+        font-size: 16px;
+    }
+
+    .header-icon {
+        padding: 4px;
+    }
+
+    .logo {
+        font-size: 14px;
+    }
+
+    .badge {
+        width: 12px;
+        height: 12px;
+        font-size: 7px;
+    }
+
+    .user-initial {
+        width: 24px;
+        height: 24px;
+        font-size: 11px;
     }
 }
 

@@ -43,16 +43,18 @@ const TopBar = () => {
         }
     };
 
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+
     const styles = {
         bar: {
             backgroundColor: '#000',
             color: '#fff',
-            fontSize: '11px',
-            padding: '8px 0',
+            fontSize: isMobile ? '8px' : '11px',
+            padding: isMobile ? '6px 0' : '8px 0',
             textAlign: 'center',
             position: 'relative',
             textTransform: 'uppercase',
-            letterSpacing: '1px',
+            letterSpacing: isMobile ? '0.5px' : '1px',
             zIndex: 1001,
             borderBottom: '1px solid rgba(255,255,255,0.1)'
         },
@@ -62,28 +64,34 @@ const TopBar = () => {
             alignItems: 'center',
             maxWidth: '1440px',
             margin: '0 auto',
-            padding: '0 40px'
+            padding: isMobile ? '0 8px' : '0 40px',
+            flexWrap: isMobile ? 'wrap' : 'nowrap'
         },
         centerText: {
             flex: 1,
             textAlign: 'center',
-            fontWeight: '600'
+            fontWeight: '600',
+            fontSize: isMobile ? '8px' : 'inherit',
+            order: isMobile ? 3 : 0,
+            width: isMobile ? '100%' : 'auto',
+            marginTop: isMobile ? '4px' : '0'
         },
         rightSide: {
             display: 'flex',
             alignItems: 'center',
-            gap: '20px',
+            gap: isMobile ? '8px' : '20px',
         },
         dropdown: {
             position: 'relative',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            gap: '6px',
-            padding: '4px 8px',
+            gap: '4px',
+            padding: isMobile ? '2px 4px' : '4px 8px',
             borderRadius: '4px',
             transition: 'background 0.2s',
-            userSelect: 'none'
+            userSelect: 'none',
+            fontSize: isMobile ? '8px' : 'inherit'
         },
         menu: {
             position: 'absolute',
@@ -111,9 +119,11 @@ const TopBar = () => {
         },
         leftSide: {
             display: 'flex',
-            gap: '20px'
+            gap: isMobile ? '6px' : '20px',
+            fontSize: isMobile ? '7px' : 'inherit'
         }
     };
+
 
     return (
         <div style={styles.bar}>

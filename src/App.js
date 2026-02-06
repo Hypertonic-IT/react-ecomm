@@ -55,6 +55,8 @@ import ProductReports from "./modules/admin/pages/Reports/ProductReports";
 
 import StaffList from "./modules/admin/pages/Users/StaffList";
 import Settings from "./modules/admin/pages/Settings/Settings";
+import AdminBlogList from "./modules/admin/pages/Blogs/BlogList";
+import AdminBlogAddEdit from "./modules/admin/pages/Blogs/BlogAddEdit";
 
 
 function App() {
@@ -178,6 +180,11 @@ function App() {
                   <Route path="reports/inventory" element={<AdminPlaceholder title="Inventory Reports" />} />
                   <Route path="reports/coupons" element={<AdminPlaceholder title="Coupon Reports" />} />
                   <Route path="analytics" element={<Navigate to="reports" replace />} />
+
+                  {/* Blog Management */}
+                  <Route path="blogs" element={<AdminBlogList />} />
+                  <Route path="blogs/new" element={<AdminBlogAddEdit />} />
+                  <Route path="blogs/edit/:id" element={<AdminBlogAddEdit />} />
 
                   <Route path="settings" element={<Settings />} />
                 </Route>

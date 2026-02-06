@@ -174,7 +174,7 @@ const OrderList = () => {
                                         </td>
                                         <td>
                                             <div style={{ fontWeight: '600', color: 'var(--admin-text)' }}>{order.shippingAddress?.fullName || order.user?.name || 'Guest'}</div>
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--admin-text-secondary)' }}>{order.user?.email}</div>
+                                            <div style={{ fontSize: '0.8rem', color: 'var(--admin-text-secondary)' }}>{order.user?.emailOrMobile}</div>
                                         </td>
                                         <td style={{ color: 'var(--admin-text-secondary)' }}>
                                             {new Date(order.createdAt).toLocaleDateString()}

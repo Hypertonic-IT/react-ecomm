@@ -26,7 +26,9 @@ const Products = () => {
     });
 
     const [currentPage, setCurrentPage] = useState(1);
+    const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
     const itemsPerPage = 12; // Increased slightly for better grid
+
 
     // Parse query params for initial category & search filter
     useEffect(() => {
@@ -88,16 +90,46 @@ const Products = () => {
             <Header />
 
             <div className="products-container">
-                <FilterSidebar
-                    filters={filters}
-                    setFilters={setFilters}
-                    categories={categories.filter(c => !c.isLink)}
-                />
+                {/* Desktop Filter Sidebar */}
+                <div className="desktop-filter-wrapper">
+                    <FilterSidebar
+                        filters={filters}
+                        setFilters={setFilters}
+                        categories={categories.filter(c => !c.isLink)}
+                    />
+                </div>
+
+                {/* Mobile Filter Drawer */}
+                {mobileFilterOpen && (
+                    <>
+                        <div className="mobile-filter-overlay" onClick={() => setMobileFilterOpen(false)} />
+                        <div className="mobile-filter-drawer">
+                            <div className="mobile-filter-header">
+                                <h3>Filters</h3>
+                                <button onClick={() => setMobileFilterOpen(false)} className="close-filter-btn">✕</button>
+                            </div>
+                            <FilterSidebar
+                                filters={filters}
+                                setFilters={setFilters}
+                                categories={categories.filter(c => !c.isLink)}
+                            />
+                        </div>
+                    </>
+                )}
 
                 <div className="products-content">
                     <div className="products-header">
-                        <h1>Shop</h1>
-                        <span className="products-count">Showing {currentItems.length} of {sortedProducts.length} results</span>
+                        <div className="products-header-left">
+                            <h1>Shop</h1>
+                            <span className="products-count">Showing {currentItems.length} of {sortedProducts.length} results</span>
+                        </div>
+                        {/* Mobile Filter Button */}
+                        <button className="mobile-filter-btn" onClick={() => setMobileFilterOpen(true)}>
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M2 4h16M6 10h8M9 16h2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                            </svg>
+                            Filters
+                        </button>
                     </div>
 
                     {currentItems.length > 0 ? (

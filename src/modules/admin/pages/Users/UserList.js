@@ -60,7 +60,7 @@ const UserList = () => {
 
     const filteredUsers = users.filter(user =>
         (user.name && user.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (user.email && user.email.toLowerCase().includes(searchTerm.toLowerCase()))
+        (user.emailOrMobile && user.emailOrMobile.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
     // Pagination
@@ -248,7 +248,7 @@ const UserList = () => {
                                         <td>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--admin-text-secondary)' }}>
                                                 <FaEnvelope size={12} />
-                                                {user.email}
+                                                {user.emailOrMobile}
                                             </div>
                                         </td>
                                         <td>
