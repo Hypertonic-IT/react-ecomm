@@ -10,7 +10,7 @@ const ProductAddEdit = () => {
     const { id } = useParams();
     const isEditMode = !!id;
     const navigate = useNavigate();
-    const { user } = useAdminAuth();
+    const { user, token } = useAdminAuth();
 
     const [formData, setFormData] = useState({
         name: '',
@@ -137,6 +137,39 @@ const ProductAddEdit = () => {
         setFormData(prev => ({ ...prev, galleryImages: updated.join('\n') }));
     };
 
+    const replaceGalleryImageHandler = async (e, index) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setUploading(true);
+        const uploadData = new FormData();
+        uploadData.append('image', file);
+
+        try {
+            const response = await fetch('http://localhost:5001/api/upload', {
+                method: 'POST',
+                body: uploadData
+            });
+            const data = await response.json();
+
+            if (response.ok) {
+                const currentImages = formData.galleryImages ? formData.galleryImages.split('\n').filter(Boolean) : [];
+                // Replace the exact url at the index
+                currentImages[index] = data.image;
+                setFormData(prev => ({ ...prev, galleryImages: currentImages.join('\n') }));
+            } else {
+                console.error('Failed to upload replacement:', file.name);
+                alert(data.message || 'Error replacing file');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Error replacing file');
+        } finally {
+            setUploading(false);
+            if (e.target) e.target.value = null; // Clear input
+        }
+    };
+
     // Fetch categories on mount
     useEffect(() => {
         const fetchCategories = async () => {
@@ -178,6 +211,7 @@ const ProductAddEdit = () => {
                         isActive: data.isActive !== undefined ? data.isActive : true,
                         shortDescription: data.shortDescription || '',
                         shippingInfo: data.shippingInfo || '',
+                        galleryImages: Array.isArray(data.images) ? data.images.join('\n') : (data.images || ''),
                         specifications: Array.isArray(data.specifications)
                             ? data.specifications.map(s => `${s.name}: ${s.value}`).join('\n')
                             : '',
@@ -259,18 +293,27 @@ const ProductAddEdit = () => {
 
             const method = isEditMode ? 'PUT' : 'POST';
 
-            await fetch(url, {
+            const response = await fetch(url, {
                 method,
                 headers: {
                     'Content-Type': 'application/json',
-                    'user-id': user?.email
+                    'Authorization': `Bearer ${token}`,
+                    'user-id': user?.email || ''
                 },
                 body: JSON.stringify(payload)
             });
 
-            navigate('/admin/products');
+            if (response.ok) {
+                alert(isEditMode ? 'Product updated successfully!' : 'Product added successfully!');
+                navigate('/admin/products');
+            } else {
+                const data = await response.json();
+                console.error("Backend failed to save:", data);
+                alert(`Error: ${data.message || 'Failed to save product'}`);
+            }
         } catch (error) {
             console.error("Error saving product:", error);
+            alert("Network error trying to save product. Check console.");
         } finally {
             setLoading(false);
         }
@@ -750,14 +793,38 @@ const ProductAddEdit = () => {
                                 {formData.galleryImages && formData.galleryImages.split('\n').map((url, index) => url.trim() && (
                                     <div key={index} style={{ position: 'relative', paddingTop: '100%', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--admin-border)' }}>
                                         <img src={url} alt={`Gallery ${index}`} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+
+                                        {/* Replace Icon */}
+                                        <label
+                                            style={{
+                                                position: 'absolute', top: '4px', right: '35px',
+                                                background: 'rgba(0,0,0,0.6)', color: '#fff',
+                                                border: 'none', borderRadius: '4px',
+                                                width: '26px', height: '26px',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                cursor: uploading ? 'not-allowed' : 'pointer'
+                                            }}
+                                            title="Replace Image"
+                                        >
+                                            <FaCloudUploadAlt size={14} />
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                style={{ display: 'none' }}
+                                                onChange={(e) => replaceGalleryImageHandler(e, index)}
+                                                disabled={uploading}
+                                            />
+                                        </label>
+
+                                        {/* Delete Icon */}
                                         <button
                                             type="button"
                                             onClick={() => removeGalleryImage(index)}
                                             style={{
                                                 position: 'absolute', top: '4px', right: '4px',
-                                                background: 'rgba(0,0,0,0.6)', color: '#fff',
+                                                background: 'rgba(255,0,0,0.8)', color: '#fff',
                                                 border: 'none', borderRadius: '4px',
-                                                width: '24px', height: '24px',
+                                                width: '26px', height: '26px',
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                                 cursor: 'pointer'
                                             }}
