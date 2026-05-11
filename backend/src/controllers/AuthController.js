@@ -3,7 +3,7 @@ const Otp = require('../models/Otp');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'hypertonic_secret_key_123';
+const JWT_SECRET = process.env.JWT_SECRET || 'kayaroop_secret_key_123';
 const generateToken = (id) => {
     return jwt.sign({ id }, JWT_SECRET, { expiresIn: '30d' });
 };

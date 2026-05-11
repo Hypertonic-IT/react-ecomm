@@ -4,12 +4,14 @@ export const addressService = {
     getAllAddresses: async () => {
         try {
             const user = JSON.parse(localStorage.getItem('authUser'));
-            const userId = user ? user.email : 'guest'; // specific for this mocked backend
+            const userId = user ? user.email : 'guest';
+            const token = localStorage.getItem('authToken');
 
             const response = await fetch(API_URL, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'user-id': userId
+                    'user-id': userId,
+                    'Authorization': token ? `Bearer ${token}` : ''
                 }
             });
             return await response.json();
@@ -23,12 +25,14 @@ export const addressService = {
         try {
             const user = JSON.parse(localStorage.getItem('authUser'));
             const userId = user ? user.email : 'guest';
+            const token = localStorage.getItem('authToken');
 
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'user-id': userId
+                    'user-id': userId,
+                    'Authorization': token ? `Bearer ${token}` : ''
                 },
                 body: JSON.stringify(addressData)
             });
@@ -43,12 +47,14 @@ export const addressService = {
         try {
             const user = JSON.parse(localStorage.getItem('authUser'));
             const userId = user ? user.email : 'guest';
+            const token = localStorage.getItem('authToken');
 
             const response = await fetch(`${API_URL}/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'user-id': userId
+                    'user-id': userId,
+                    'Authorization': token ? `Bearer ${token}` : ''
                 },
                 body: JSON.stringify(addressData)
             });
@@ -63,12 +69,14 @@ export const addressService = {
         try {
             const user = JSON.parse(localStorage.getItem('authUser'));
             const userId = user ? user.email : 'guest';
+            const token = localStorage.getItem('authToken');
 
             const response = await fetch(`${API_URL}/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    'user-id': userId
+                    'user-id': userId,
+                    'Authorization': token ? `Bearer ${token}` : ''
                 }
             });
             return await response.json();

@@ -561,12 +561,12 @@ try {
 ## 📞 Support
 
 For issues or questions:
-- Backend Team: backend@hypertonic-it.com
+- Backend Team: backend@kayaroop-it.com
 - Documentation: /docs/inventory-backend
 - Slack: #inventory-system
 
 ---
 
-**Built with ❤️ by Hypertonic IT Solutions**
+**Built with ❤️ by Kayaroop IT Solutions**
 **Version: 1.0.0**
 **Last Updated: 2024-01-28**

@@ -50,7 +50,7 @@ function Home() {
   return (
     <>
       <Helmet>
-        <title>Hypertonic | Premium Fashion Store</title>
+        <title>Kayaroop | Premium Fashion Store</title>
         <meta name="description" content="Shop the latest trends in fashion for Men, Women, and Kids." />
       </Helmet>
 

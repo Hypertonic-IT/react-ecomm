@@ -8,14 +8,14 @@ const Software = () => {
   return (
     <>
       <Helmet>
-        <title>Terms and Conditions - Hypertonic IT Solutions</title>
+        <title>Terms and Conditions - Kayaroop IT Solutions</title>
         <meta
           name="description"
-          content="Read the Terms and Conditions of Hypertonic IT Solutions. Understand our policies for website usage, services, and privacy."
+          content="Read the Terms and Conditions of Kayaroop IT Solutions. Understand our policies for website usage, services, and privacy."
         />
         <meta
           name="keywords"
-          content="Terms and Conditions, Website Usage, Policies, Hypertonic IT Solutions"
+          content="Terms and Conditions, Website Usage, Policies, Kayaroop IT Solutions"
         />
       </Helmet>
       <Nav />

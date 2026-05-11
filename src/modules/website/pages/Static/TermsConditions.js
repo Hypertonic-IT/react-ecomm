@@ -16,7 +16,7 @@ const TermsConditions = () => {
 
                 <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginTop: '30px', marginBottom: '15px' }}>1. Agreement to Terms</h3>
                 <p style={{ marginBottom: '15px' }}>
-                    These Terms and Conditions constitute a legally binding agreement made between you, whether personally or on behalf of an entity (“you”) and Hypertonic (“we,” “us” or “our”), concerning your access to and use of our website.
+                    These Terms and Conditions constitute a legally binding agreement made between you, whether personally or on behalf of an entity (“you”) and Kayaroop (“we,” “us” or “our”), concerning your access to and use of our website.
                 </p>
 
                 <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginTop: '30px', marginBottom: '15px' }}>2. Intellectual Property Rights</h3>
@@ -41,7 +41,7 @@ const TermsConditions = () => {
 
                 <div style={{ marginTop: '60px', paddingTop: '20px', borderTop: '1px solid #eee' }}>
                     <p style={{ fontSize: '14px', color: '#666' }}>
-                        If you have any questions about these Terms, please contact us at legal@hypertonic.com
+                        If you have any questions about these Terms, please contact us at legal@kayaroop.com
                     </p>
                 </div>
             </div>

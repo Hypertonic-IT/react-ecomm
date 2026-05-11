@@ -20,9 +20,11 @@ const Products = () => {
 
     // Initial Filters State
     const [filters, setFilters] = useState({
+        genders: [],
         categories: [],
-        priceRange: { min: 0, max: 1000 },
-        sortBy: 'newest'
+        priceRange: { min: 0, max: 10000 }, // Default max bumped to 10000 for realistic prices
+        sortBy: 'newest',
+        search: ''
     });
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -36,12 +38,29 @@ const Products = () => {
         const categoryParam = searchParams.get('category');
         const searchParam = searchParams.get('search');
 
+        let initialGenders = [];
+        let initialCategories = [];
+
+        if (categoryParam) {
+            if (categoryParam === 'Men' || categoryParam === 'Women' || categoryParam === "Men's Clothing" || categoryParam === "Women's Clothing") {
+                initialGenders.push(categoryParam);
+            } else {
+                initialCategories.push(categoryParam);
+            }
+        }
+
         setFilters(prev => ({
             ...prev,
-            categories: categoryParam ? [categoryParam] : [],
+            genders: initialGenders,
+            categories: initialCategories,
             search: searchParam || ''
         }));
     }, [location]);
+
+    // Reset pagination to page 1 whenever filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filters]);
 
     // Filtering Logic
     const filteredProducts = products.filter(product => {
@@ -50,9 +69,20 @@ const Products = () => {
             return false;
         }
 
+        // Gender Filter
+        if (filters.genders.length > 0) {
+            const hasGender = filters.genders.some(g => 
+                product.category === g || (product.categories && product.categories.includes(g))
+            );
+            if (!hasGender) return false;
+        }
+
         // Category Filter
-        if (filters.categories.length > 0 && !filters.categories.includes(product.category)) {
-            return false;
+        if (filters.categories.length > 0) {
+            const hasCategory = filters.categories.some(c => 
+                product.category === c || (product.categories && product.categories.includes(c))
+            );
+            if (!hasCategory) return false;
         }
 
         // Price Filter
@@ -82,7 +112,7 @@ const Products = () => {
     return (
         <div className="products-page">
             <Helmet>
-                <title>Shop All Products | Hypertonic</title>
+                <title>Shop All Products | Kayaroop</title>
                 <meta name="description" content="Browse our exclusive collection of fashion items." />
             </Helmet>
 
@@ -243,7 +273,7 @@ const Products = () => {
                         <div className="no-results">
                             <h3>No products found matching your filters.</h3>
                             <button
-                                onClick={() => setFilters({ categories: [], priceRange: { min: 0, max: 1000 }, sortBy: 'newest' })}
+                                onClick={() => setFilters({ genders: [], categories: [], priceRange: { min: 0, max: 10000 }, sortBy: 'newest', search: '' })}
                                 style={{
                                     marginTop: '20px',
                                     padding: '12px 24px',

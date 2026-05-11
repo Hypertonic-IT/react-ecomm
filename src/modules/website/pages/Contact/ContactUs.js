@@ -102,7 +102,7 @@ const ContactUs = () => {
                             </div>
                             <div>
                                 <h4 style={{ fontWeight: 'bold', marginBottom: '5px' }}>Email Address</h4>
-                                <p style={{ color: '#666', fontSize: '14px' }}>support@hypertonic.com</p>
+                                <p style={{ color: '#666', fontSize: '14px' }}>support@kayaroop.com</p>
                             </div>
                         </div>
 

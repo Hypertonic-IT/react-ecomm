@@ -16,7 +16,7 @@ const AuthLayout = ({ children, title, subtitle }) => {
                     />
                 </div>
                 <div className="brand-overlay">
-                    <h1 className="brand-title" style={{ textShadow: '2px 2px 10px rgba(0,0,0,0.7)', fontWeight: '800', color: '#ffffff' }}>HYPERTONIC</h1>
+                    <h1 className="brand-title" style={{ textShadow: '2px 2px 10px rgba(0,0,0,0.7)', fontWeight: '800', color: '#ffffff' }}>KAYAROOP</h1>
                     <p className="brand-tagline" style={{ textShadow: '1px 1px 6px rgba(0,0,0,0.6)', color: '#ffffff' }}>Elevate Your Style</p>
                 </div>
             </div>

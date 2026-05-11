@@ -243,7 +243,7 @@ MongoDB Atlas Cluster
     └── Replica Set 3 (Secondary)
     │
     ▼
-Database: hypertonic_ecommerce
+Database: kayaroop_ecommerce
     │
     ├── Collection: users
     ├── Collection: products

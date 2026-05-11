@@ -77,7 +77,7 @@ const Header = () => {
 
                 {/* LOGO */}
                 <Link to="/" className="logo" onClick={() => setMobileMenuOpen(false)}>
-                    HYPERTONIC
+                    KAYAROOP
                 </Link>
 
                 {/* DESKTOP MENU */}

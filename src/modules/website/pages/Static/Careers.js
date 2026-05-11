@@ -29,7 +29,7 @@ const Careers = () => {
                 <div style={{ position: 'relative', zIndex: 1, padding: '20px' }}>
                     <h1 style={{ fontSize: '56px', fontWeight: 'bold', marginBottom: '20px' }}>Join Our Team</h1>
                     <p style={{ fontSize: '20px', maxWidth: '600px', margin: '0 auto' }}>
-                        Help us redefine the future of fashion. We are looking for passionate individuals to join the Hypertonic family.
+                        Help us redefine the future of fashion. We are looking for passionate individuals to join the Kayaroop family.
                     </p>
                 </div>
             </div>
@@ -99,7 +99,7 @@ const Careers = () => {
                     />
                     <h3 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '15px' }}>Don't see a perfect fit?</h3>
                     <p style={{ color: '#666', marginBottom: '20px' }}>
-                        We are always looking for talent. Send your resume to <a href="mailto:careers@hypertonic.com" style={{ color: '#d4a373' }}>careers@hypertonic.com</a>
+                        We are always looking for talent. Send your resume to <a href="mailto:careers@kayaroop.com" style={{ color: '#d4a373' }}>careers@kayaroop.com</a>
                     </p>
                 </div>
             </div>

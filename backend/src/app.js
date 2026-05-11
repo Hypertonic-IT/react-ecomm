@@ -52,7 +52,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Health check
 app.get('/', (req, res) => {
-    res.send('Hypertonic Backend API is running...');
+    res.send('Kayaroop Backend API is running...');
 });
 
 // Global Error Handler

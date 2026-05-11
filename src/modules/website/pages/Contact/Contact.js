@@ -11,8 +11,8 @@ function Contact() {
   return (
     <>
       <Helmet>
-        <title>Contact Us - Hypertonic IT Solutions</title>
-        <meta name="description" content="Get in touch with Hypertonic IT Solutions for expert IT services, including website development, app development, and custom software solutions." />
+        <title>Contact Us - Kayaroop IT Solutions</title>
+        <meta name="description" content="Get in touch with Kayaroop IT Solutions for expert IT services, including website development, app development, and custom software solutions." />
       </Helmet>
       <Nav />
       <Section21 />

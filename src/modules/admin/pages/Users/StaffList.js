@@ -279,7 +279,7 @@ const StaffList = () => {
                                         value={formData.email}
                                         onChange={handleInputChange}
                                         required
-                                        placeholder="email@hypertonic.com"
+                                        placeholder="email@kayaroop.com"
                                     />
                                 </div>
 

@@ -116,14 +116,14 @@ const otpTemplate = (otp) => {
     <body>
         <div class="container">
             <div class="header">
-                <h1>🔐 Hypertonic</h1>
+                <h1>🔐 Kayaroop</h1>
                 <p>Premium E-Commerce Experience</p>
             </div>
             
             <div class="content">
                 <h2>Verify Your Account</h2>
                 <p>
-                    Thank you for choosing Hypertonic! To complete your registration or password reset, 
+                    Thank you for choosing Kayaroop! To complete your registration or password reset, 
                     please use the One-Time Password (OTP) below:
                 </p>
                 
@@ -146,9 +146,9 @@ const otpTemplate = (otp) => {
             </div>
             
             <div class="footer">
-                <p>Need help? Contact us at <a href="mailto:support@hypertonic.com">support@hypertonic.com</a></p>
+                <p>Need help? Contact us at <a href="mailto:support@kayaroop.com">support@kayaroop.com</a></p>
                 <p style="margin-top: 16px; font-size: 12px; color: #a0aec0;">
-                    © ${new Date().getFullYear()} Hypertonic. All rights reserved.
+                    © ${new Date().getFullYear()} Kayaroop. All rights reserved.
                 </p>
                 <div class="social-links">
                     <a href="#">Privacy Policy</a> • 

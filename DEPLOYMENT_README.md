@@ -287,4 +287,4 @@ You'll know deployment was successful when:
 
 **Last Updated:** 2026-02-06  
 **Version:** 1.0  
-**Project:** Hypertonic E-commerce Website
+**Project:** Kayaroop E-commerce Website

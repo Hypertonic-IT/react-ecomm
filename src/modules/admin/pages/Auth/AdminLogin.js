@@ -49,7 +49,7 @@ const AdminLogin = () => {
         <div className="admin-auth-container">
             <div className="admin-auth-card">
                 <div className="admin-auth-header">
-                    <h2>Hypertonic<span style={{ color: '#3b82f6' }}>.Admin</span></h2>
+                    <h2>Kayaroop<span style={{ color: '#3b82f6' }}>.Admin</span></h2>
                     <p>Enter your credentials to access the control panel</p>
                 </div>
 

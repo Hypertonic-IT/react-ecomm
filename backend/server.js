@@ -70,3 +70,5 @@ process.once('SIGUSR2', async () => {
 // Listen for termination signals from OS 
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+// Trigger nodemon restart
+// Trigger again

@@ -71,7 +71,7 @@ Use this checklist alongside the full deployment guide: `.agent/workflows/cpanel
 ### MongoDB Atlas
 - [ ] Create MongoDB Atlas account
 - [ ] Create cluster (free tier)
-- [ ] Create database: `hypertonic_ecommerce`
+- [ ] Create database: `kayaroop_ecommerce`
 - [ ] Create database user
 - [ ] Whitelist IP addresses (0.0.0.0/0 or server IP)
 - [ ] Copy connection string

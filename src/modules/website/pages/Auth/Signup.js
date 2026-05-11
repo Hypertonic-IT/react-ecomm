@@ -247,7 +247,7 @@ const Signup = () => {
                 <div className="success-message">
                     <div className="success-icon">✓</div>
                     <h3>Account Created!</h3>
-                    <p>Welcome to Hypertonic. Redirecting you to the homepage...</p>
+                    <p>Welcome to Kayaroop. Redirecting you to the homepage...</p>
                 </div>
             )}
         </AuthLayout>

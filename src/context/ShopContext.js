@@ -44,11 +44,29 @@ export const ShopProvider = ({ children }) => {
                     // If backend is empty, maybe use static data as seed? 
                     // For now, let's use backend preferred.
                     // Map backend data to frontend structure if needed (e.g. _id -> id)
-                    const mappedProducts = data.map(p => ({
-                        id: p._id, // Map _id to id for frontend compatibility
-                        ...p,
-                        price: parseFloat(p.price)
-                    }));
+                    const mappedProducts = data.map(p => {
+                        // Correctly map relative image paths to the backend server URL
+                        let imageUrl = p.image;
+                        if (imageUrl && imageUrl.startsWith('/uploads')) {
+                            imageUrl = `http://localhost:5001${imageUrl}`;
+                        }
+                        
+                        // Also map gallery images
+                        const mappedGallery = (p.images || []).map(img => {
+                            if (img && img.startsWith('/uploads')) {
+                                return `http://localhost:5001${img}`;
+                            }
+                            return img;
+                        });
+
+                        return {
+                            id: p._id, // Map _id to id for frontend compatibility
+                            ...p,
+                            image: imageUrl,
+                            images: mappedGallery,
+                            price: parseFloat(p.price)
+                        };
+                    });
 
                     if (mappedProducts.length > 0) {
                         // Only show active products on the website

@@ -16,7 +16,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
         <aside className={`admin-sidebar ${isOpen ? 'open' : ''}`}>
             <div className="admin-sidebar-header">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <img src="/img/hyperlogo.png" alt="Hypertonic Logo" style={{ height: '40px', objectFit: 'contain' }} />
+                    <h3 style={{ margin: 0, fontWeight: 800, color: 'var(--primary-color, #2d3748)' }}>KAYAROOP</h3>
                 </div>
                 {/* Mobile Close Button */}
                 <button className="mobile-close-btn" onClick={onClose}>

@@ -16,7 +16,7 @@ const PrivacyPolicy = () => {
 
                 <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginTop: '30px', marginBottom: '15px' }}>1. Introduction</h3>
                 <p style={{ marginBottom: '15px' }}>
-                    Welcome to Hypertonic. We respect your privacy and are committed to protecting your personal data.
+                    Welcome to Kayaroop. We respect your privacy and are committed to protecting your personal data.
                     This privacy policy will inform you as to how we look after your personal data when you visit our website
                     (regardless of where you visit it from) and tell you about your privacy rights and how the law protects you.
                 </p>
@@ -49,7 +49,7 @@ const PrivacyPolicy = () => {
 
                 <div style={{ marginTop: '60px', paddingTop: '20px', borderTop: '1px solid #eee' }}>
                     <p style={{ fontSize: '14px', color: '#666' }}>
-                        If you have any questions about this privacy policy, please contact us at privacy@hypertonic.com
+                        If you have any questions about this privacy policy, please contact us at privacy@kayaroop.com
                     </p>
                 </div>
             </div>

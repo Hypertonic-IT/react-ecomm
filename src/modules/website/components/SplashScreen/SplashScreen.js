@@ -19,7 +19,7 @@ const SplashScreen = ({ isLoading }) => {
                             transition={{ duration: 1.2, ease: "easeOut" }}
                             className="logo-wrapper"
                         >
-                            <h1 className="simple-logo">HYPERTONIC</h1>
+                            <h1 className="simple-logo">KAYAROOP</h1>
                             <div className="logo-underline"></div>
                         </motion.div>
                     </div>

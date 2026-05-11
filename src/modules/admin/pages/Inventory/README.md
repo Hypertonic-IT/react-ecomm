@@ -1,7 +1,7 @@
 # Inventory Management System - Complete Documentation
 
 ## 🎯 Overview
-A comprehensive, real-time inventory management system for the Hypertonic IT Solutions admin panel with advanced features for stock tracking, variant management, and bulk operations.
+A comprehensive, real-time inventory management system for the Kayaroop IT Solutions admin panel with advanced features for stock tracking, variant management, and bulk operations.
 
 ---
 
@@ -333,7 +333,7 @@ Body: { countInStock: number }
 ## 📞 Support
 
 For issues or questions:
-- Email: support@hypertonic-it.com
+- Email: support@kayaroop-it.com
 - Slack: #admin-panel-support
 - Documentation: /docs/inventory
 
@@ -353,4 +353,4 @@ For issues or questions:
 
 ---
 
-**Built with ❤️ by Hypertonic IT Solutions**
+**Built with ❤️ by Kayaroop IT Solutions**

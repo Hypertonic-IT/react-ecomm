@@ -31,7 +31,7 @@ This will create:
 1. Go to https://cloud.mongodb.com
 2. Sign up (free tier is fine)
 3. Create a new cluster
-4. Create database: `hypertonic_ecommerce`
+4. Create database: `kayaroop_ecommerce`
 5. Create a database user with password
 6. Whitelist all IPs: `0.0.0.0/0`
 7. Get connection string (Connect → Drivers)
@@ -60,7 +60,7 @@ This will create:
 4. **Add Environment Variables** (click "Add Variable" for each):
    ```
    MONGODB_URI = your_mongodb_atlas_connection_string
-   DB_NAME = hypertonic_ecommerce
+   DB_NAME = kayaroop_ecommerce
    PORT = 3001
    NODE_ENV = production
    JWT_SECRET = your_super_secure_random_string_here

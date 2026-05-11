@@ -18,8 +18,8 @@ const AboutUs = () => {
     return (
         <>
             <Helmet>
-                <title>About Us - Hypertonic</title>
-                <meta name="description" content="Learn about Hypertonic - your trusted fashion destination for quality clothing and exceptional style." />
+                <title>About Us - Kayaroop</title>
+                <meta name="description" content="Learn about Kayaroop - your trusted fashion destination for quality clothing and exceptional style." />
             </Helmet>
 
             <div style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif', color: '#1a1a1a', backgroundColor: '#ffffff' }}>
@@ -81,7 +81,7 @@ const AboutUs = () => {
                                     Our Story
                                 </h2>
                                 <p style={{ fontSize: '1.05rem', lineHeight: '1.8', color: '#555', marginBottom: '20px' }}>
-                                    Hypertonic was born from a simple belief: everyone deserves to look and feel their best without compromising on quality.
+                                    Kayaroop was born from a simple belief: everyone deserves to look and feel their best without compromising on quality.
                                 </p>
                                 <p style={{ fontSize: '1.05rem', lineHeight: '1.8', color: '#555', marginBottom: '20px' }}>
                                     We recognized a gap in the market for quality fashion that's both stylish and accessible. Too often, the choice was between great design and reasonable prices. We set out to change that narrative.
@@ -181,7 +181,7 @@ const AboutUs = () => {
                     <div className="container" style={{ maxWidth: '1200px', margin: '0 auto' }}>
                         <div style={{ textAlign: 'center', marginBottom: '60px' }}>
                             <h2 style={{ fontSize: '2rem', fontWeight: '700', marginBottom: '15px', color: '#111', letterSpacing: '-0.5px' }}>
-                                Why Choose Hypertonic?
+                                Why Choose Kayaroop?
                             </h2>
                             <div style={{ width: '40px', height: '2px', background: '#111', margin: '0 auto' }}></div>
                         </div>

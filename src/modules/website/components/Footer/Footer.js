@@ -12,7 +12,7 @@ const Footer = () => {
             <div className="footer-container">
                 <div className="footer-grid">
                     <div className="footer-col">
-                        <h4>Hypertonic</h4>
+                        <h4>Kayaroop</h4>
                         <p className="footer-text">
                             Premium fashion destination for the modern individual. Quality, Style, and Elegance redefined for you.
                         </p>
@@ -62,7 +62,7 @@ const Footer = () => {
                 </div>
 
                 <div className="footer-bottom">
-                    <div>&copy; {new Date().getFullYear()} Hypertonic. All rights reserved.</div>
+                    <div>&copy; {new Date().getFullYear()} Kayaroop. All rights reserved.</div>
                     <div className="payment-icons">
                         <FaCcVisa /> <FaCcMastercard /> <FaCcPaypal />
                     </div>

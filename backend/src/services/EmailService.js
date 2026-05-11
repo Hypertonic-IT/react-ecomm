@@ -43,7 +43,7 @@ const sendOTPEmail = async (to, otp) => {
     try {
         const transporter = await getTransporter();
         const hasRealCreds = process.env.SMTP_USER && !process.env.SMTP_USER.includes('your-email');
-        const sender = hasRealCreds ? (process.env.SMTP_FROM || process.env.SMTP_USER) : '"Hypertonic Support" <support@hypertonic.com>';
+        const sender = hasRealCreds ? (process.env.SMTP_FROM || process.env.SMTP_USER) : '"Kayaroop Support" <support@kayaroop.com>';
 
         const mailOptions = {
             from: sender,

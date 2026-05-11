@@ -3,11 +3,11 @@ const mongoose = require('mongoose');
 const siteConfigSchema = mongoose.Schema({
     siteName: {
         type: String,
-        default: "Hypertonic"
+        default: "Kayaroop"
     },
     supportEmail: {
         type: String,
-        default: "support@hypertonic.com"
+        default: "support@kayaroop.com"
     },
     currencySymbol: {
         type: String,

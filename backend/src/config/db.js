@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
     try {
-        const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/hypertonic', {
+        const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/kayaroop', {
             // These options are no longer needed in Mongoose 6+, but harmless to keep if unsure of version
             // useNewUrlParser: true,
             // useUnifiedTopology: true,

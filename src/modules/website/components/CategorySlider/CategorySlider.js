@@ -10,7 +10,7 @@ const CategorySlider = () => {
     const scrollRef = React.useRef(null);
     const [isHovered, setIsHovered] = React.useState(false);
 
-    const safeCategories = categories || [];
+    const safeCategories = (categories || []).filter(c => !c.showInHeader);
 
     // Duplicate categories for the marquee loop effect if needed, but only if we have some data
     // If we have very few categories, we might want to repeat them more times to fill the width

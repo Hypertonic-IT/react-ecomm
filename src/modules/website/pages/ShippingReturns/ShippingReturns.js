@@ -83,7 +83,7 @@ const ShippingReturns = () => {
 
                 <div style={{ marginTop: '60px', paddingTop: '20px', borderTop: '1px solid #eee' }}>
                     <p style={{ fontSize: '14px', color: '#666' }}>
-                        If you have any questions about shipping or returns, please contact us at support@hypertonic.com
+                        If you have any questions about shipping or returns, please contact us at support@kayaroop.com
                     </p>
                 </div>
             </div>

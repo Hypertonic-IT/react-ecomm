@@ -158,7 +158,6 @@ const productInventorySchema = new mongoose.Schema({
 
 // Indexes for performance
 productInventorySchema.index({ productId: 1 });
-productInventorySchema.index({ 'variants.sku': 1 });
 productInventorySchema.index({ category: 1 });
 productInventorySchema.index({ 'variants.stock': 1 });
 

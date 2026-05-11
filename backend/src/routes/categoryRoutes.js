@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const Category = require('../models/Category');
+const { protect, admin } = require('../middleware/authMiddleware');
 
 // GET all categories
 router.get('/', async (req, res) => {
@@ -28,7 +29,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST new category
-router.post('/', async (req, res) => {
+router.post('/', protect, admin, async (req, res) => {
     try {
         const { name, slug, description, status, image, showInHeader } = req.body;
         const category = new Category({
@@ -47,7 +48,7 @@ router.post('/', async (req, res) => {
 });
 
 // DELETE category
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', protect, admin, async (req, res) => {
     try {
         await Category.findByIdAndDelete(req.params.id);
         res.json({ message: 'Category deleted' });
@@ -57,7 +58,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 // PUT update category
-router.put('/:id', async (req, res) => {
+router.put('/:id', protect, admin, async (req, res) => {
     try {
         const updatedCategory = await Category.findByIdAndUpdate(
             req.params.id,
