@@ -7,7 +7,7 @@ import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import '../../admin.css';
 import AdminSelect from '../../components/AdminSelect';
 import AdminPagination from '../../components/AdminPagination';
-import { API_BASE_URL, BASE_URL, getImageUrl } from '../../../../../config';
+import { API_BASE_URL, BASE_URL, getImageUrl } from 'config';
 
 const BlogList = () => {
     const { user } = useAdminAuth();

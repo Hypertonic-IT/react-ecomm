@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FaStar, FaExclamationTriangle, FaTrophy } from 'react-icons/fa';
 import ReportFilter from './components/ReportFilter';
 import './Reports.css';
-import { API_BASE_URL, BASE_URL } from '../../../../../config';
+import { API_BASE_URL, BASE_URL } from 'config';
 
 const ProductReports = () => {
     const [data, setData] = useState({

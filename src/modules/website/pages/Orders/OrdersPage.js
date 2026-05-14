@@ -5,7 +5,7 @@ import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 import { orderService } from '../../../../services/orderService';
 import { FaBoxOpen, FaClock, FaMoneyBillWave } from 'react-icons/fa';
-import { getImageUrl } from '../../../../../config';
+import { getImageUrl } from 'config';
 
 const OrdersPage = () => {
     const [orders, setOrders] = useState([]);

@@ -98,6 +98,8 @@ This will create:
    REACT_APP_API_URL=https://api.yourdomain.com
    ```
 
+   Note: The frontend reads the API base URL from the REACT_APP_API_URL environment variable at build time. If this variable is not set during build, the app will fall back to http://localhost:5001 for local development. Provide the full base URL (for example: https://api.yourdomain.com) without a trailing slash.
+
 2. Rebuild frontend:
    ```bash
    npm run build

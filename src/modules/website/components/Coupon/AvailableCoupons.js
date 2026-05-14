@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaCheck } from 'react-icons/fa';
-import { API_BASE_URL, BASE_URL } from '../../../../../config';
+import { API_BASE_URL, BASE_URL } from 'config';
 
 const AvailableCoupons = ({ onApply, coupons: propCoupons }) => {
     const [coupons, setCoupons] = useState([]);

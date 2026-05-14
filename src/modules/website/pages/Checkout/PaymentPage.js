@@ -8,7 +8,7 @@ import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 import { FaCheckCircle, FaMapMarkerAlt, FaCreditCard, FaShoppingCart } from 'react-icons/fa';
 import './AddressPage.css'; // Reuse CSS
-import { getImageUrl } from '../../../../../config';
+import { getImageUrl } from 'config';
 
 const PaymentPage = () => {
     const navigate = useNavigate();

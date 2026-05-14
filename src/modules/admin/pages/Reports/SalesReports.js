@@ -5,7 +5,7 @@ import {
 import ReportFilter from './components/ReportFilter';
 import AdminPagination from '../../components/AdminPagination';
 import './Reports.css';
-import { API_BASE_URL, BASE_URL } from '../../../../../config';
+import { API_BASE_URL, BASE_URL } from 'config';
 
 const SalesReports = () => {
     const [salesData, setSalesData] = useState([]);

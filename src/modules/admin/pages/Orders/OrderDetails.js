@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { FaArrowLeft, FaPrint, FaTruck, FaMapMarkerAlt, FaUser } from 'react-icons/fa';
 import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import '../../admin.css';
-import { API_BASE_URL, BASE_URL } from '../../../../../config';
+import { API_BASE_URL, BASE_URL } from 'config';
 
 const OrderDetails = () => {
     const { id } = useParams();

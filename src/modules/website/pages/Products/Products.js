@@ -11,7 +11,7 @@ import { useShop } from '../../../../context/ShopContext';
 import { useCurrency } from '../../../../context/CurrencyContext';
 import { FaHeart, FaEye } from 'react-icons/fa';
 import './Products.css';
-import { getImageUrl } from '../../../../../config';
+import { getImageUrl } from 'config';
 
 const Products = () => {
     const location = useLocation();

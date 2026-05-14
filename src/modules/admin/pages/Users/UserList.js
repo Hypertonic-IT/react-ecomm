@@ -4,7 +4,7 @@ import AdminSelect from '../../components/AdminSelect'; // Added for entries sel
 import AdminPagination from '../../components/AdminPagination';
 import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import '../../admin.css';
-import { API_BASE_URL, BASE_URL } from '../../../../../config';
+import { API_BASE_URL, BASE_URL } from 'config';
 
 const UserList = () => {
     const [users, setUsers] = useState([]);

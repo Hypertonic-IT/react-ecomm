@@ -1,4 +1,6 @@
-const API_URL = 'http://localhost:5001/api/orders';
+import apiUrl from '../config/api';
+
+const API_URL = apiUrl('/api/orders');
 
 export const orderService = {
     createOrder: async (orderData) => {

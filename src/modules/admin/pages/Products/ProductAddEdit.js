@@ -5,7 +5,7 @@ import { FaSave, FaArrowLeft, FaImages, FaTrash, FaPlus, FaCloudUploadAlt, FaTim
 import AdminSelect from '../../components/AdminSelect';
 import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import '../../admin.css';
-import { API_BASE_URL, BASE_URL } from '../../../../../config';
+import { API_BASE_URL, BASE_URL } from 'config';
 
 const ProductAddEdit = () => {
     const { id } = useParams();

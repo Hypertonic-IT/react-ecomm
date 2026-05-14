@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaEye, FaPen, FaEllipsisH } from 'react-icons/fa';
 import { useAdminAuth } from '../../../context/AdminAuthContext';
-import { API_BASE_URL, BASE_URL } from '../../../../config';
+import { API_BASE_URL, BASE_URL } from 'config';
 
 const RecentOrders = () => {
     const [orders, setOrders] = useState([]);

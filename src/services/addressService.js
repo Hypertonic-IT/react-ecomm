@@ -1,4 +1,6 @@
-const API_URL = 'http://localhost:5001/api/addresses';
+import apiUrl from '../config/api';
+
+const API_URL = apiUrl('/api/addresses');
 
 export const addressService = {
     getAllAddresses: async () => {

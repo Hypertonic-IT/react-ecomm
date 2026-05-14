@@ -4,7 +4,7 @@ import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 import TopBar from '../../components/TopBar/TopBar';
 import { FaCalendar, FaUser, FaSearch, FaChevronRight, FaChevronLeft, FaHeart, FaComment, FaEnvelope, FaThumbTack } from 'react-icons/fa';
-import { API_BASE_URL, BASE_URL, getImageUrl } from '../../../../../config';
+import { API_BASE_URL, BASE_URL, getImageUrl } from 'config';
 
 const categories = ['Fashion', 'Lifestyle', 'Technology', 'Beauty', 'Accessories'];
 

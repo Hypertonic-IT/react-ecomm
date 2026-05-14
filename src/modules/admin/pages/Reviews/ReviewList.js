@@ -5,7 +5,7 @@ import AdminPagination from '../../components/AdminPagination';
 import '../../admin.css';
 import '../Inventory/Inventory.css'; // Import Inventory styles for table consistency
 import './Reviews.css';
-import { API_BASE_URL, BASE_URL, getImageUrl } from '../../../../../config';
+import { API_BASE_URL, BASE_URL, getImageUrl } from 'config';
 
 const ReviewList = () => {
     // ... rest of the code ...

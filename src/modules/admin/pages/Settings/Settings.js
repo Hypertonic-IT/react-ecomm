@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaSave, FaGlobe, FaCreditCard, FaShareAlt, FaLock } from 'react-icons/fa';
 import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import '../../admin.css';
-import { API_BASE_URL, BASE_URL } from '../../../../../config';
+import { API_BASE_URL, BASE_URL } from 'config';
 
 const Settings = () => {
     const { user, token } = useAdminAuth();

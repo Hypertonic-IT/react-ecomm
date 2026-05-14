@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { FaSave, FaArrowLeft, FaPercentage, FaRupeeSign } from 'react-icons/fa';
 import '../../admin.css';
 import './Coupons.css';
-import { API_BASE_URL, BASE_URL } from '../../../../../config';
+import { API_BASE_URL, BASE_URL } from 'config';
 
 const CouponAddEdit = () => {
     const { id } = useParams();

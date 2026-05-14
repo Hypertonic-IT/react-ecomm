@@ -3,7 +3,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useShop } from '../../../../context/ShopContext';
 import './CategorySlider.css';
-import { getImageUrl } from '../../../../../config';
+import { getImageUrl } from 'config';
 
 const CategorySlider = () => {
     const navigate = useNavigate();

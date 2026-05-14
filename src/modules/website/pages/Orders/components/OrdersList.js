@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { orderService } from '../../../../../services/orderService';
 import { FaBoxOpen, FaClock, FaMoneyBillWave } from 'react-icons/fa';
-import { getImageUrl } from '../../../../../../config';
+import { getImageUrl } from 'config';
 
 const OrdersList = () => {
     const [orders, setOrders] = useState([]);

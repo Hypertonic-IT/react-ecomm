@@ -4,7 +4,7 @@ import { heroSlides } from '../../../../data/fashionData';
 import { FaArrowRight, FaArrowLeft, FaLongArrowAltRight } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import './Hero.css';
-import { getImageUrl } from '../../../../../config';
+import { getImageUrl } from 'config';
 
 const Hero = () => {
     const [current, setCurrent] = useState(0);

@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { products as productsData } from '../data/fashionData';
 import Toast from '../modules/website/components/Toast/Toast';
+import apiUrl from '../config/api';
 
 const ShopContext = createContext();
 
@@ -22,7 +23,7 @@ export const ShopProvider = ({ children }) => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await fetch('http://localhost:5001/api/categories');
+                const response = await fetch(apiUrl('/api/categories'));
                 if (response.ok) {
                     const data = await response.json();
                     setCategories(data);
@@ -38,7 +39,7 @@ export const ShopProvider = ({ children }) => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch('http://localhost:5001/api/products');
+                const response = await fetch(apiUrl('/api/products'));
                 if (response.ok) {
                     const data = await response.json();
                     // If backend is empty, maybe use static data as seed? 
@@ -48,13 +49,13 @@ export const ShopProvider = ({ children }) => {
                         // Correctly map relative image paths to the backend server URL
                         let imageUrl = p.image;
                         if (imageUrl && imageUrl.startsWith('/uploads')) {
-                            imageUrl = `http://localhost:5001${imageUrl}`;
+                            imageUrl = apiUrl(imageUrl);
                         }
                         
                         // Also map gallery images
                         const mappedGallery = (p.images || []).map(img => {
                             if (img && img.startsWith('/uploads')) {
-                                return `http://localhost:5001${img}`;
+                                return apiUrl(img);
                             }
                             return img;
                         });
@@ -234,7 +235,7 @@ export const ShopProvider = ({ children }) => {
 
     const applyCoupon = async (code, userId = null) => {
         try {
-            const response = await fetch('http://localhost:5001/api/coupons/validate', {
+            const response = await fetch(apiUrl('/api/coupons/validate'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

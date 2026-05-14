@@ -6,6 +6,7 @@ import DashboardStats from '../../components/DashboardStats';
 import RecentOrders from '../../components/RecentOrders';
 import AdminSelect from '../../components/AdminSelect';
 import { useAdminAuth } from '../../../../context/AdminAuthContext';
+import apiUrl from 'config/api';
 
 const Dashboard = () => {
     const [chartRange, setChartRange] = useState('This Week'); // Added state
@@ -29,7 +30,7 @@ const Dashboard = () => {
         const fetchStats = async () => {
             try {
                 const token = localStorage.getItem('adminAuthToken');
-                const response = await fetch('http://localhost:5001/api/admin/stats', {
+                const response = await fetch(apiUrl('/api/admin/stats'), {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'user-id': user?.email || (localStorage.getItem('adminAuthUser') ? JSON.parse(localStorage.getItem('adminAuthUser')).email : '')

@@ -5,7 +5,7 @@ import Footer from '../../components/Footer/Footer';
 import TopBar from '../../components/TopBar/TopBar';
 import { FaCalendar, FaUser, FaFacebook, FaTwitter, FaLinkedin, FaPinterest, FaChevronRight } from 'react-icons/fa';
 import DOMPurify from 'dompurify';
-import { API_BASE_URL, BASE_URL, getImageUrl } from '../../../../../config';
+import { API_BASE_URL, BASE_URL, getImageUrl } from 'config';
 const BlogPost = () => {
     const { id } = useParams();
     const [post, setPost] = useState(null);

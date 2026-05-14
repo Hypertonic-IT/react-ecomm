@@ -13,7 +13,7 @@ import Newsletter from '../../components/Newsletter/Newsletter';
 import './ProductDetail.css';
 import './Reviews.css';
 import AvailableCoupons from '../../components/Coupon/AvailableCoupons';
-import { API_BASE_URL, BASE_URL } from '../../../../../config';
+import { API_BASE_URL, BASE_URL } from 'config';
 
 const ProductDetail = () => {
     const { id } = useParams();

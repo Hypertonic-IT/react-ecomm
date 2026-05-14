@@ -1,4 +1,6 @@
-// const url = "http://localhost:8000"; // testing
-const url = "https://node.kayaroop.co";    // live
+import apiUrl from '../config/api';
+
+// Export the base API (no trailing slash)
+const url = apiUrl();
 
 export { url };

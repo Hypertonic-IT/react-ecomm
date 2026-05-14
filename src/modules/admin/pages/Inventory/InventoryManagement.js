@@ -9,7 +9,7 @@ import '../../admin.css';
 import AdminSelect from '../../components/AdminSelect'; // Added
 import AdminPagination from '../../components/AdminPagination'; // Added
 import './Inventory.css';
-import { API_BASE_URL, BASE_URL, getImageUrl } from '../../../../../config';
+import { API_BASE_URL, BASE_URL, getImageUrl } from 'config';
 
 const InventoryManagement = () => {
     const navigate = useNavigate();

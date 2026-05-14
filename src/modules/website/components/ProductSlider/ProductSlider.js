@@ -6,7 +6,7 @@ import { useShop } from '../../../../context/ShopContext';
 import { useCurrency } from '../../../../context/CurrencyContext';
 import { motion } from 'framer-motion';
 import './ProductSlider.css';
-import { getImageUrl } from '../../../../../config';
+import { getImageUrl } from 'config';
 
 const ProductSlider = ({ title, products }) => {
     const { addToCart, toggleWishlist, wishlist } = useShop();

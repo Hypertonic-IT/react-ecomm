@@ -9,7 +9,7 @@ import { useShop } from '../../../../context/ShopContext';
 import { useCurrency } from '../../../../context/CurrencyContext';
 import { FaHeartBroken, FaTrash } from 'react-icons/fa';
 import './Wishlist.css';
-import { getImageUrl } from '../../../../../config';
+import { getImageUrl } from 'config';
 
 const WishlistCard = ({ product, onRemove, onMoveToCart }) => {
     const { formatPrice } = useCurrency();

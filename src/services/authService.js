@@ -1,7 +1,9 @@
 // Persistent Authentication Service
 // Calls the backend API for all auth operations
 
-const AUTH_API_URL = 'http://localhost:5001/api/auth';
+import apiUrl from '../config/api';
+
+const AUTH_API_URL = apiUrl('/api/auth');
 
 export const authService = {
     // Login with email/mobile and password

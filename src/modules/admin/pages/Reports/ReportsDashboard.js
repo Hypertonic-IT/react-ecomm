@@ -6,7 +6,7 @@ import {
 } from 'react-icons/fa';
 import ReportFilter from './components/ReportFilter';
 import './Reports.css';
-import { API_BASE_URL, BASE_URL } from '../../../../../config';
+import { API_BASE_URL, BASE_URL } from 'config';
 
 const ReportsDashboard = () => {
     const navigate = useNavigate();

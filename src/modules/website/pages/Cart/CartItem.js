@@ -4,7 +4,7 @@ import { FaTrash, FaHeart, FaMinus, FaPlus } from 'react-icons/fa';
 import { useShop } from '../../../../context/ShopContext';
 import { useCurrency } from '../../../../context/CurrencyContext';
 import { Link } from 'react-router-dom';
-import { getImageUrl } from '../../../../../config';
+import { getImageUrl } from 'config';
 
 const CartItem = ({ item }) => {
     const { updateQuantity, removeFromCart, toggleWishlist, wishlist } = useShop();

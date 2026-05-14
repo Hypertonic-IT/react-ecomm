@@ -9,7 +9,7 @@ import '../../admin.css';
 import './Coupons.css';
 import AdminSelect from '../../components/AdminSelect';
 import AdminPagination from '../../components/AdminPagination'; // Added
-import { API_BASE_URL, BASE_URL } from '../../../../../config';
+import { API_BASE_URL, BASE_URL } from 'config';
 
 const CouponList = () => {
     const { user } = useAdminAuth();

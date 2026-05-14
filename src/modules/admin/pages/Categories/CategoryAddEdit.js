@@ -6,7 +6,7 @@ import AdminSelect from '../../components/AdminSelect';
 
 import { useShop } from '../../../../context/ShopContext';
 import '../../admin.css';
-import { API_BASE_URL, BASE_URL } from '../../../../../config';
+import { API_BASE_URL, BASE_URL } from 'config';
 
 const CategoryAddEdit = () => {
     const { id } = useParams();

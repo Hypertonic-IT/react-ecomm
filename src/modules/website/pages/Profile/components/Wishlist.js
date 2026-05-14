@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaHeart, FaTrash } from 'react-icons/fa';
 import { authService } from '../../../../../services/authService';
-import { getImageUrl } from '../../../../../../config';
+import { getImageUrl } from 'config';
 
 const Wishlist = () => {
     const navigate = useNavigate();

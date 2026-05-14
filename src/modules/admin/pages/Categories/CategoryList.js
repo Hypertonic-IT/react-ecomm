@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import AdminSelect from '../../components/AdminSelect';
 import AdminPagination from '../../components/AdminPagination'; // Added
 import { categories as defaultCategories } from '../../../../data/fashionData';
-import { API_BASE_URL, BASE_URL, getImageUrl } from '../../../../../config';
+import { API_BASE_URL, BASE_URL, getImageUrl } from 'config';
 
 const CategoryList = () => {
     const [categories, setCategories] = useState([]);
