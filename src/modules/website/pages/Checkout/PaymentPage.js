@@ -8,6 +8,7 @@ import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 import { FaCheckCircle, FaMapMarkerAlt, FaCreditCard, FaShoppingCart } from 'react-icons/fa';
 import './AddressPage.css'; // Reuse CSS
+import { getImageUrl } from '../../../../../config';
 
 const PaymentPage = () => {
     const navigate = useNavigate();
@@ -171,7 +172,7 @@ const PaymentPage = () => {
                                     const effectivePrice = item.salePrice || item.price;
                                     return (
                                         <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '15px', borderBottom: '1px solid #f0f0f0', paddingBottom: '10px' }}>
-                                            <img src={item.image} alt={item.name} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }} />
+                                            <img src={getImageUrl(item.image)} alt={item.name} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }} />
                                             <div style={{ flex: 1 }}>
                                                 <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '4px' }}>{item.name}</div>
                                                 <div style={{ fontSize: '12px', color: '#666' }}>Qty: {item.quantity} x ₹{effectivePrice}</div>

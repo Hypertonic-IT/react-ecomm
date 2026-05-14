@@ -9,6 +9,7 @@ import { useShop } from '../../../../context/ShopContext';
 import { useCurrency } from '../../../../context/CurrencyContext';
 import { FaHeartBroken, FaTrash } from 'react-icons/fa';
 import './Wishlist.css';
+import { getImageUrl } from '../../../../../config';
 
 const WishlistCard = ({ product, onRemove, onMoveToCart }) => {
     const { formatPrice } = useCurrency();
@@ -22,7 +23,7 @@ const WishlistCard = ({ product, onRemove, onMoveToCart }) => {
             <div className="w-image-wrap">
                 <Link to={`/product/${product.id}`}>
                     <img
-                        src={product.image}
+                        src={getImageUrl(product.image)}
                         alt={product.name}
                         className="w-image"
                         onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80' }}

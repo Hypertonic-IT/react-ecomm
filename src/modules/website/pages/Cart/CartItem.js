@@ -4,6 +4,7 @@ import { FaTrash, FaHeart, FaMinus, FaPlus } from 'react-icons/fa';
 import { useShop } from '../../../../context/ShopContext';
 import { useCurrency } from '../../../../context/CurrencyContext';
 import { Link } from 'react-router-dom';
+import { getImageUrl } from '../../../../../config';
 
 const CartItem = ({ item }) => {
     const { updateQuantity, removeFromCart, toggleWishlist, wishlist } = useShop();
@@ -19,7 +20,7 @@ const CartItem = ({ item }) => {
             <div className="item-image-wrap">
                 <Link to={`/product/${item.id}`}>
                     <img
-                        src={item.image}
+                        src={getImageUrl(item.image)}
                         alt={item.name}
                         className="item-image"
                         onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80' }}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaCheck } from 'react-icons/fa';
+import { API_BASE_URL, BASE_URL } from '../../../../../config';
 
 const AvailableCoupons = ({ onApply, coupons: propCoupons }) => {
     const [coupons, setCoupons] = useState([]);
@@ -15,7 +16,7 @@ const AvailableCoupons = ({ onApply, coupons: propCoupons }) => {
 
         const fetchCoupons = async () => {
             try {
-                const res = await fetch('http://localhost:5001/api/coupons/active');
+                const res = await fetch(`${API_BASE_URL}/coupons/active`);
                 if (res.ok) {
                     const data = await res.json();
                     setCoupons(data.data || []);

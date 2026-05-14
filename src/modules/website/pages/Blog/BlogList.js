@@ -4,6 +4,7 @@ import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 import TopBar from '../../components/TopBar/TopBar';
 import { FaCalendar, FaUser, FaSearch, FaChevronRight, FaChevronLeft, FaHeart, FaComment, FaEnvelope, FaThumbTack } from 'react-icons/fa';
+import { API_BASE_URL, BASE_URL, getImageUrl } from '../../../../../config';
 
 const categories = ['Fashion', 'Lifestyle', 'Technology', 'Beauty', 'Accessories'];
 
@@ -40,7 +41,7 @@ const BlogList = () => {
 
     const fetchBlogs = async () => {
         try {
-            const res = await fetch(`http://localhost:5001/api/blogs?pageNumber=${page}&status=published`);
+            const res = await fetch(`${API_BASE_URL}/blogs?pageNumber=${page}&status=published`);
             const data = await res.json();
             setBlogs(data.blogs || []);
             setPages(data.pages || 1);
@@ -54,7 +55,7 @@ const BlogList = () => {
     const fetchPopularBlogs = async () => {
         try {
             // Fetch popular blogs specifically
-            const res = await fetch(`http://localhost:5001/api/blogs?status=published&isPopular=true`);
+            const res = await fetch(`${API_BASE_URL}/blogs?status=published&isPopular=true`);
             const data = await res.json();
             setPopularBlogs(data.blogs || []);
         } catch (error) {
@@ -241,7 +242,7 @@ const BlogList = () => {
                                         }}>
                                             {post.image ? (
                                                 <img
-                                                    src={post.image}
+                                                    src={getImageUrl(post.image)}
                                                     alt={post.title}
                                                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                                 />
@@ -369,7 +370,7 @@ const BlogList = () => {
                                             }}>
                                                 {post.image ? (
                                                     <img
-                                                        src={post.image}
+                                                        src={getImageUrl(post.image)}
                                                         alt={post.title}
                                                         style={{
                                                             width: '100%',
@@ -677,7 +678,7 @@ const BlogList = () => {
                                         }}>
                                             {post.image ? (
                                                 <img
-                                                    src={post.image}
+                                                    src={getImageUrl(post.image)}
                                                     alt={post.title}
                                                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                                 />

@@ -5,6 +5,7 @@ import { FaSave, FaArrowLeft, FaImages, FaTrash, FaPlus, FaCloudUploadAlt, FaTim
 import AdminSelect from '../../components/AdminSelect';
 import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import '../../admin.css';
+import { API_BASE_URL, BASE_URL } from '../../../../../config';
 
 const ProductAddEdit = () => {
     const { id } = useParams();
@@ -61,7 +62,7 @@ const ProductAddEdit = () => {
                 const uploadData = new FormData();
                 uploadData.append('image', file);
 
-                const response = await fetch('http://localhost:5001/api/upload', {
+                const response = await fetch(`${API_BASE_URL}/upload`, {
                     method: 'POST',
                     body: uploadData
                 });
@@ -96,7 +97,7 @@ const ProductAddEdit = () => {
         setUploading(true);
 
         try {
-            const response = await fetch('http://localhost:5001/api/upload', {
+            const response = await fetch(`${API_BASE_URL}/upload`, {
                 method: 'POST',
                 body: uploadData
             });
@@ -146,7 +147,7 @@ const ProductAddEdit = () => {
         uploadData.append('image', file);
 
         try {
-            const response = await fetch('http://localhost:5001/api/upload', {
+            const response = await fetch(`${API_BASE_URL}/upload`, {
                 method: 'POST',
                 body: uploadData
             });
@@ -174,7 +175,7 @@ const ProductAddEdit = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await fetch('http://localhost:5001/api/categories');
+                const response = await fetch(`${API_BASE_URL}/categories`);
                 if (response.ok) {
                     const data = await response.json();
                     setCategories(data);
@@ -191,7 +192,7 @@ const ProductAddEdit = () => {
         if (isEditMode) {
             const fetchProduct = async () => {
                 try {
-                    const response = await fetch(`http://localhost:5001/api/products/${id}`);
+                    const response = await fetch(`${API_BASE_URL}/products/${id}`);
                     const data = await response.json();
 
                     setFormData({
@@ -288,8 +289,8 @@ const ProductAddEdit = () => {
 
         try {
             const url = isEditMode
-                ? `http://localhost:5001/api/products/${id}`
-                : `http://localhost:5001/api/products`;
+                ? `${API_BASE_URL}/products/${id}`
+                : `${API_BASE_URL}/products`;
 
             const method = isEditMode ? 'PUT' : 'POST';
 

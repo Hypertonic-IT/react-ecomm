@@ -13,6 +13,7 @@ import Newsletter from '../../components/Newsletter/Newsletter';
 import './ProductDetail.css';
 import './Reviews.css';
 import AvailableCoupons from '../../components/Coupon/AvailableCoupons';
+import { API_BASE_URL, BASE_URL } from '../../../../../config';
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -65,7 +66,7 @@ const ProductDetail = () => {
     useEffect(() => {
         const fetchCoupons = async () => {
             try {
-                const response = await fetch('http://localhost:5001/api/coupons/active');
+                const response = await fetch(`${API_BASE_URL}/coupons/active`);
                 const result = await response.json();
                 if (result.success) {
                     setAvailableCoupons(result.data);
@@ -524,7 +525,7 @@ const ReviewsSection = ({ productId, productName }) => {
 
     const fetchReviews = async () => {
         try {
-            const response = await fetch(`http://localhost:5001/api/reviews/product/${productId}`);
+            const response = await fetch(`${API_BASE_URL}/reviews/product/${productId}`);
             if (response.ok) {
                 const data = await response.json();
                 // Fix: The API returns { success: true, reviews: [...], stats: ... }
@@ -578,7 +579,7 @@ const ReviewsSection = ({ productId, productName }) => {
                 return;
             }
 
-            const response = await fetch('http://localhost:5001/api/reviews', {
+            const response = await fetch(`${API_BASE_URL}/reviews`, {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify({

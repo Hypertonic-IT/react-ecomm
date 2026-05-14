@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { FaSave, FaArrowLeft, FaPercentage, FaRupeeSign } from 'react-icons/fa';
 import '../../admin.css';
 import './Coupons.css';
+import { API_BASE_URL, BASE_URL } from '../../../../../config';
 
 const CouponAddEdit = () => {
     const { id } = useParams();
@@ -41,7 +42,7 @@ const CouponAddEdit = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await fetch('http://localhost:5001/api/categories');
+            const response = await fetch(`${API_BASE_URL}/categories`);
             const data = await response.json();
             setCategories(data);
         } catch (error) {
@@ -51,7 +52,7 @@ const CouponAddEdit = () => {
 
     const fetchProducts = async () => {
         try {
-            const response = await fetch('http://localhost:5001/api/products');
+            const response = await fetch(`${API_BASE_URL}/products`);
             const data = await response.json();
             setProducts(data);
         } catch (error) {
@@ -61,7 +62,7 @@ const CouponAddEdit = () => {
 
     const fetchCoupon = async () => {
         try {
-            const response = await fetch(`http://localhost:5001/api/coupons/${id}`);
+            const response = await fetch(`${API_BASE_URL}/coupons/${id}`);
             const result = await response.json();
             if (result.success) {
                 const coupon = result.data;
@@ -120,8 +121,8 @@ const CouponAddEdit = () => {
 
         try {
             const url = isEditMode
-                ? `http://localhost:5001/api/coupons/${id}`
-                : 'http://localhost:5001/api/coupons';
+                ? `${API_BASE_URL}/coupons/${id}`
+                : `${API_BASE_URL}/coupons`;
 
             const method = isEditMode ? 'PUT' : 'POST';
 

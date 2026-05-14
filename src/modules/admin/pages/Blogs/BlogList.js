@@ -7,6 +7,7 @@ import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import '../../admin.css';
 import AdminSelect from '../../components/AdminSelect';
 import AdminPagination from '../../components/AdminPagination';
+import { API_BASE_URL, BASE_URL, getImageUrl } from '../../../../../config';
 
 const BlogList = () => {
     const { user } = useAdminAuth();
@@ -23,7 +24,7 @@ const BlogList = () => {
 
     const fetchBlogs = async () => {
         try {
-            const response = await fetch('http://localhost:5001/api/blogs');
+            const response = await fetch(`${API_BASE_URL}/blogs`);
             const data = await response.json();
             setBlogs(data.blogs || []);
             setLoading(false);
@@ -36,7 +37,7 @@ const BlogList = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this blog post?')) {
             try {
-                const response = await fetch(`http://localhost:5001/api/blogs/${id}`, {
+                const response = await fetch(`${API_BASE_URL}/blogs/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('adminAuthToken')}`
@@ -152,7 +153,7 @@ const BlogList = () => {
                                     <tr key={blog._id}>
                                         <td>
                                             {blog.image ? (
-                                                <img src={blog.image} alt={blog.title} style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 4 }} />
+                                                <img src={getImageUrl(blog.image)} alt={blog.title} style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 4 }} />
                                             ) : (
                                                 <div style={{ width: 40, height: 40, background: '#eee', borderRadius: 4 }}></div>
                                             )}

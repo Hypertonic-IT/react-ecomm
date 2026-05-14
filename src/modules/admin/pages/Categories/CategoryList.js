@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import AdminSelect from '../../components/AdminSelect';
 import AdminPagination from '../../components/AdminPagination'; // Added
 import { categories as defaultCategories } from '../../../../data/fashionData';
+import { API_BASE_URL, BASE_URL, getImageUrl } from '../../../../../config';
 
 const CategoryList = () => {
     const [categories, setCategories] = useState([]);
@@ -19,7 +20,7 @@ const CategoryList = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await fetch('http://localhost:5001/api/categories');
+            const response = await fetch(`${API_BASE_URL}/categories`);
             const data = await response.json();
             setCategories(data);
             setLoading(false);
@@ -32,7 +33,7 @@ const CategoryList = () => {
     const handleDelete = async (id) => {
         if (!window.confirm("Delete this category?")) return;
         try {
-            await fetch(`http://localhost:5001/api/categories/${id}`, { method: 'DELETE' });
+            await fetch(`${API_BASE_URL}/categories/${id}`, { method: 'DELETE' });
             fetchCategories();
         } catch (error) {
             console.error("Error deleting category:", error);
@@ -49,7 +50,7 @@ const CategoryList = () => {
             const exists = categories.some(existing => existing.slug === cat.id || existing.name === cat.title);
             if (!exists && !cat.isLink) { // Skip "New" and "Sale" links
                 try {
-                    await fetch('http://localhost:5001/api/categories', {
+                    await fetch(`${API_BASE_URL}/categories`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -146,7 +147,7 @@ const CategoryList = () => {
                                         <td style={{ color: 'var(--admin-text-secondary)' }}>/{cat.slug}</td>
                                         <td>
                                             {cat.image ? (
-                                                <img src={cat.image} alt={cat.name} style={{ width: '32px', height: '32px', borderRadius: '4px', objectFit: 'cover' }} />
+                                                <img src={getImageUrl(cat.image)} alt={cat.name} style={{ width: '32px', height: '32px', borderRadius: '4px', objectFit: 'cover' }} />
                                             ) : (
                                                 <span style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>No Img</span>
                                             )}

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { FaSave, FaArrowLeft, FaCloudUploadAlt, FaImage } from 'react-icons/fa';
 import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import '../../admin.css';
+import { API_BASE_URL, BASE_URL } from '../../../../../config';
 
 const BlogAddEdit = () => {
     const { id } = useParams();
@@ -32,7 +33,7 @@ const BlogAddEdit = () => {
         if (isEditMode) {
             const fetchBlog = async () => {
                 try {
-                    const response = await fetch(`http://localhost:5001/api/blogs/${id}`);
+                    const response = await fetch(`${API_BASE_URL}/blogs/${id}`);
                     const data = await response.json();
                     setFormData({
                         title: data.title || '',
@@ -75,7 +76,7 @@ const BlogAddEdit = () => {
         setUploading(true);
 
         try {
-            const response = await fetch('http://localhost:5001/api/upload', {
+            const response = await fetch(`${API_BASE_URL}/upload`, {
                 method: 'POST',
                 body: uploadData
             });
@@ -107,8 +108,8 @@ const BlogAddEdit = () => {
 
         try {
             const url = isEditMode
-                ? `http://localhost:5001/api/blogs/${id}`
-                : `http://localhost:5001/api/blogs`;
+                ? `${API_BASE_URL}/blogs/${id}`
+                : `${API_BASE_URL}/blogs`;
 
             const method = isEditMode ? 'PUT' : 'POST';
 

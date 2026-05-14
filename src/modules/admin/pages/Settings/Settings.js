@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaSave, FaGlobe, FaCreditCard, FaShareAlt, FaLock } from 'react-icons/fa';
 import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import '../../admin.css';
+import { API_BASE_URL, BASE_URL } from '../../../../../config';
 
 const Settings = () => {
     const { user, token } = useAdminAuth();
@@ -31,7 +32,7 @@ const Settings = () => {
     useEffect(() => {
         const fetchSettings = async () => {
             try {
-                const response = await fetch('http://localhost:5001/api/settings');
+                const response = await fetch(`${API_BASE_URL}/settings`);
                 const data = await response.json();
 
                 setFormData({
@@ -81,7 +82,7 @@ const Settings = () => {
         setSaving(true);
 
         try {
-            await fetch('http://localhost:5001/api/settings', {
+            await fetch(`${API_BASE_URL}/settings`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -114,7 +115,7 @@ const Settings = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:5001/api/auth/change-password', {
+            const response = await fetch(`${API_BASE_URL}/auth/change-password`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

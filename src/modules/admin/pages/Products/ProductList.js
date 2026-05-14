@@ -5,6 +5,7 @@ import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import AdminSelect from '../../components/AdminSelect';
 import AdminPagination from '../../components/AdminPagination'; // Added
 import '../../admin.css';
+import { API_BASE_URL, BASE_URL } from '../../../../../config';
 
 const ProductList = () => {
     const { user } = useAdminAuth();
@@ -18,7 +19,7 @@ const ProductList = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch('http://localhost:5001/api/products');
+                const response = await fetch(`${API_BASE_URL}/products`);
                 const data = await response.json();
                 setProducts(data);
                 setLoading(false);
@@ -34,7 +35,7 @@ const ProductList = () => {
     const deleteProduct = async (id) => {
         if (window.confirm('Are you sure you want to delete this product?')) {
             try {
-                await fetch(`http://localhost:5001/api/products/${id}`, {
+                await fetch(`${API_BASE_URL}/products/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${user ? localStorage.getItem('adminAuthToken') : ''}`,
@@ -52,7 +53,7 @@ const ProductList = () => {
         try {
             const updatedStatus = !product.isActive;
 
-            const response = await fetch(`http://localhost:5001/api/products/${product._id}`, {
+            const response = await fetch(`${API_BASE_URL}/products/${product._id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

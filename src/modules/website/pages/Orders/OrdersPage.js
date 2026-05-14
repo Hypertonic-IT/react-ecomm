@@ -5,6 +5,7 @@ import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 import { orderService } from '../../../../services/orderService';
 import { FaBoxOpen, FaClock, FaMoneyBillWave } from 'react-icons/fa';
+import { getImageUrl } from '../../../../../config';
 
 const OrdersPage = () => {
     const [orders, setOrders] = useState([]);
@@ -77,7 +78,7 @@ const OrdersPage = () => {
                                         {order.orderItems.map((item, idx) => (
                                             <div key={idx} style={{ position: 'relative', flex: '0 0 60px' }}>
                                                 <img
-                                                    src={item.image}
+                                                    src={getImageUrl(item.image)}
                                                     alt={item.name}
                                                     style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #eee' }}
                                                     title={`${item.name} (x${item.qty})`}

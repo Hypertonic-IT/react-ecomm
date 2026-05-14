@@ -11,6 +11,7 @@ import { useShop } from '../../../../context/ShopContext';
 import { useCurrency } from '../../../../context/CurrencyContext';
 import { FaHeart, FaEye } from 'react-icons/fa';
 import './Products.css';
+import { getImageUrl } from '../../../../../config';
 
 const Products = () => {
     const location = useLocation();
@@ -199,7 +200,7 @@ const Products = () => {
                                             )}
 
                                             <img
-                                                src={product.image}
+                                                src={getImageUrl(product.image)}
                                                 alt={product.name}
                                                 className="plp-image"
                                                 onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80' }}

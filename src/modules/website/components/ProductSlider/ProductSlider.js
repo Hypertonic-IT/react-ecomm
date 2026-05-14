@@ -6,6 +6,7 @@ import { useShop } from '../../../../context/ShopContext';
 import { useCurrency } from '../../../../context/CurrencyContext';
 import { motion } from 'framer-motion';
 import './ProductSlider.css';
+import { getImageUrl } from '../../../../../config';
 
 const ProductSlider = ({ title, products }) => {
     const { addToCart, toggleWishlist, wishlist } = useShop();
@@ -126,7 +127,7 @@ const ProductSlider = ({ title, products }) => {
                                     </button>
 
                                     <img
-                                        src={product.image}
+                                        src={getImageUrl(product.image)}
                                         alt={product.name}
                                         className="product-image"
                                         onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80' }}

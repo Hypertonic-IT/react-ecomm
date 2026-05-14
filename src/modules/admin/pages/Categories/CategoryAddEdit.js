@@ -6,6 +6,7 @@ import AdminSelect from '../../components/AdminSelect';
 
 import { useShop } from '../../../../context/ShopContext';
 import '../../admin.css';
+import { API_BASE_URL, BASE_URL } from '../../../../../config';
 
 const CategoryAddEdit = () => {
     const { id } = useParams();
@@ -32,7 +33,7 @@ const CategoryAddEdit = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await fetch('http://localhost:5001/api/categories');
+                const response = await fetch(`${API_BASE_URL}/categories`);
                 if (response.ok) {
                     const data = await response.json();
                     // Count how many have showInHeader=true, EXCLUDING current one if editing
@@ -51,7 +52,7 @@ const CategoryAddEdit = () => {
         if (isEditMode) {
             const fetchCategory = async () => {
                 try {
-                    const response = await fetch(`http://localhost:5001/api/categories/${id}`);
+                    const response = await fetch(`${API_BASE_URL}/categories/${id}`);
                     const data = await response.json();
 
                     if (response.ok) {
@@ -97,8 +98,8 @@ const CategoryAddEdit = () => {
 
         try {
             const url = isEditMode
-                ? `http://localhost:5001/api/categories/${id}`
-                : `http://localhost:5001/api/categories`;
+                ? `${API_BASE_URL}/categories/${id}`
+                : `${API_BASE_URL}/categories`;
 
             const method = isEditMode ? 'PUT' : 'POST';
 

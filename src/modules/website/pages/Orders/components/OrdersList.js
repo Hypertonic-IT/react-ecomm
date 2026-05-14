@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { orderService } from '../../../../../services/orderService';
 import { FaBoxOpen, FaClock, FaMoneyBillWave } from 'react-icons/fa';
+import { getImageUrl } from '../../../../../../config';
 
 const OrdersList = () => {
     const [orders, setOrders] = useState([]);
@@ -70,7 +71,7 @@ const OrdersList = () => {
                         {order.orderItems.map((item, idx) => (
                             <div key={idx} style={{ position: 'relative', flex: '0 0 60px' }}>
                                 <img
-                                    src={item.image}
+                                    src={getImageUrl(item.image)}
                                     alt={item.name}
                                     style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #eee' }}
                                     title={`${item.name} (x${item.qty})`}

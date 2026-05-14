@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaHeart, FaTrash } from 'react-icons/fa';
 import { authService } from '../../../../../services/authService';
+import { getImageUrl } from '../../../../../../config';
 
 const Wishlist = () => {
     const navigate = useNavigate();
@@ -74,7 +75,7 @@ const Wishlist = () => {
                     >
                         <div style={{ height: '200px', overflow: 'hidden' }}>
                             <img
-                                src={item.image}
+                                src={getImageUrl(item.image)}
                                 alt={item.name}
                                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                             />

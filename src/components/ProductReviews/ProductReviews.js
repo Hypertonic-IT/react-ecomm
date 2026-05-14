@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaStar, FaRegStar, FaStarHalfAlt, FaCheckCircle, FaImage, FaTimes } from 'react-icons/fa';
 import './ProductReviews.css';
+import { API_BASE_URL, BASE_URL } from '../../../config';
 
 const ProductReviews = ({ productId, userToken }) => {
     const [reviews, setReviews] = useState([]);
@@ -18,7 +19,7 @@ const ProductReviews = ({ productId, userToken }) => {
 
     const fetchReviews = async () => {
         try {
-            const response = await fetch(`http://localhost:5001/api/reviews/product/${productId}`);
+            const response = await fetch(`${API_BASE_URL}/reviews/product/${productId}`);
             const data = await response.json();
             if (data.success) {
                 setReviews(data.reviews);
@@ -33,7 +34,7 @@ const ProductReviews = ({ productId, userToken }) => {
 
     const checkReviewEligibility = async () => {
         try {
-            const response = await fetch(`http://localhost:5001/api/reviews/can-review/${productId}`, {
+            const response = await fetch(`${API_BASE_URL}/reviews/can-review/${productId}`, {
                 headers: {
                     'Authorization': `Bearer ${userToken}`
                 }
@@ -229,7 +230,7 @@ const WriteReviewModal = ({ productId, userToken, onClose, onSubmit }) => {
         setError('');
 
         try {
-            const response = await fetch('http://localhost:5001/api/reviews', {
+            const response = await fetch(`${API_BASE_URL}/reviews`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

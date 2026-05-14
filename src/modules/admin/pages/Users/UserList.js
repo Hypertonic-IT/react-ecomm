@@ -4,6 +4,7 @@ import AdminSelect from '../../components/AdminSelect'; // Added for entries sel
 import AdminPagination from '../../components/AdminPagination';
 import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import '../../admin.css';
+import { API_BASE_URL, BASE_URL } from '../../../../../config';
 
 const UserList = () => {
     const [users, setUsers] = useState([]);
@@ -36,7 +37,7 @@ const UserList = () => {
         const fetchUsers = async () => {
             try {
                 const token = localStorage.getItem('adminAuthToken');
-                const response = await fetch('http://localhost:5001/api/users', {
+                const response = await fetch(`${API_BASE_URL}/users`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'user-id': user?.email || (localStorage.getItem('adminAuthUser') ? JSON.parse(localStorage.getItem('adminAuthUser')).email : '')
@@ -106,7 +107,7 @@ const UserList = () => {
         if (window.confirm('Are you sure you want to delete this user?')) {
             try {
                 const token = localStorage.getItem('adminAuthToken');
-                const response = await fetch(`http://localhost:5001/api/users/${userId}`, {
+                const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -131,7 +132,7 @@ const UserList = () => {
 
         try {
             // Use the signup endpoint which is public/available
-            const response = await fetch('http://localhost:5001/api/auth/signup', {
+            const response = await fetch(`${API_BASE_URL}/auth/signup`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

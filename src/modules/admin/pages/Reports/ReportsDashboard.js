@@ -6,6 +6,7 @@ import {
 } from 'react-icons/fa';
 import ReportFilter from './components/ReportFilter';
 import './Reports.css';
+import { API_BASE_URL, BASE_URL } from '../../../../../config';
 
 const ReportsDashboard = () => {
     const navigate = useNavigate();
@@ -23,7 +24,7 @@ const ReportsDashboard = () => {
 
     const fetchDashboardStats = async () => {
         try {
-            const response = await fetch('http://localhost:5001/api/reports/dashboard');
+            const response = await fetch(`${API_BASE_URL}/reports/dashboard`);
             const data = await response.json();
             if (data.success) {
                 setStats(data.data);

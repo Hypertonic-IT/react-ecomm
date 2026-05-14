@@ -9,6 +9,7 @@ import '../../admin.css';
 import './Coupons.css';
 import AdminSelect from '../../components/AdminSelect';
 import AdminPagination from '../../components/AdminPagination'; // Added
+import { API_BASE_URL, BASE_URL } from '../../../../../config';
 
 const CouponList = () => {
     const { user } = useAdminAuth();
@@ -25,7 +26,7 @@ const CouponList = () => {
 
     const fetchCoupons = async () => {
         try {
-            const response = await fetch('http://localhost:5001/api/coupons');
+            const response = await fetch(`${API_BASE_URL}/coupons`);
             const data = await response.json();
             setCoupons(data.data || []);
             setLoading(false);
@@ -79,7 +80,7 @@ const CouponList = () => {
     const toggleCouponStatus = async (couponId, currentStatus) => {
         if (window.confirm(`Are you sure you want to ${currentStatus ? 'deactivate' : 'activate'} this coupon?`)) {
             try {
-                const response = await fetch(`http://localhost:5001/api/coupons/${couponId}`, {
+                const response = await fetch(`${API_BASE_URL}/coupons/${couponId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -102,7 +103,7 @@ const CouponList = () => {
     const deleteCoupon = async (couponId) => {
         if (window.confirm('Are you sure you want to delete this coupon? This action cannot be undone.')) {
             try {
-                const response = await fetch(`http://localhost:5001/api/coupons/${couponId}`, {
+                const response = await fetch(`${API_BASE_URL}/coupons/${couponId}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${user ? localStorage.getItem('adminAuthToken') : ''}`,

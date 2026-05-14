@@ -5,6 +5,7 @@ import Footer from '../../components/Footer/Footer';
 import TopBar from '../../components/TopBar/TopBar';
 import { FaCalendar, FaUser, FaFacebook, FaTwitter, FaLinkedin, FaPinterest, FaChevronRight } from 'react-icons/fa';
 import DOMPurify from 'dompurify';
+import { API_BASE_URL, BASE_URL, getImageUrl } from '../../../../../config';
 const BlogPost = () => {
     const { id } = useParams();
     const [post, setPost] = useState(null);
@@ -14,13 +15,13 @@ const BlogPost = () => {
     useEffect(() => {
         const fetchPost = async () => {
             try {
-                const res = await fetch(`http://localhost:5001/api/blogs/${id}`);
+                const res = await fetch(`${API_BASE_URL}/blogs/${id}`);
                 if (res.ok) {
                     const data = await res.json();
                     setPost(data);
 
                     // Fetch related posts
-                    const relatedRes = await fetch(`http://localhost:5001/api/blogs?status=published&limit=3`);
+                    const relatedRes = await fetch(`${API_BASE_URL}/blogs?status=published&limit=3`);
                     if (relatedRes.ok) {
                         const relatedData = await relatedRes.json();
                         setRelatedPosts(relatedData.blogs?.filter(b => b._id !== id).slice(0, 3) || []);
@@ -76,7 +77,7 @@ const BlogPost = () => {
                 {post.image && (
                     <div style={{ marginBottom: '40px' }}>
                         <img
-                            src={post.image}
+                            src={getImageUrl(post.image)}
                             alt={post.title}
                             style={{
                                 width: '100%',
@@ -222,7 +223,7 @@ const BlogPost = () => {
                                     }}>
                                         {article.image ? (
                                             <img
-                                                src={article.image}
+                                                src={getImageUrl(article.image)}
                                                 alt={article.title}
                                                 style={{
                                                     width: '100%',

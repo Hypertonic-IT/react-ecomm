@@ -5,6 +5,7 @@ import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import AdminSelect from '../../components/AdminSelect';
 import AdminPagination from '../../components/AdminPagination'; // Added
 import '../../admin.css';
+import { API_BASE_URL, BASE_URL } from '../../../../../config';
 
 const OrderList = () => {
     const { user } = useAdminAuth();
@@ -17,7 +18,7 @@ const OrderList = () => {
 
     const fetchOrders = async () => {
         try {
-            const response = await fetch('http://localhost:5001/api/orders', {
+            const response = await fetch(`${API_BASE_URL}/orders`, {
                 headers: {
                     'Authorization': `Bearer ${user ? localStorage.getItem('adminAuthToken') : ''}`,
                     'user-id': user?.email || (localStorage.getItem('adminAuthUser') ? JSON.parse(localStorage.getItem('adminAuthUser')).email : '')
@@ -44,7 +45,7 @@ const OrderList = () => {
         if (!window.confirm(`Are you sure you want to mark this order as ${newStatus}?`)) return;
 
         try {
-            const res = await fetch(`http://localhost:5001/api/orders/${id}/status`, {
+            const res = await fetch(`${API_BASE_URL}/orders/${id}/status`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

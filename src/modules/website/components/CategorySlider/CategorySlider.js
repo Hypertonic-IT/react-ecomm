@@ -3,6 +3,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useShop } from '../../../../context/ShopContext';
 import './CategorySlider.css';
+import { getImageUrl } from '../../../../../config';
 
 const CategorySlider = () => {
     const navigate = useNavigate();
@@ -75,7 +76,7 @@ const CategorySlider = () => {
                                     <div className="blob-card">
                                         <div className="blob-background"></div>
                                         <img
-                                            src={cat.image || 'https://images.unsplash.com/photo-1485230946086-1d932bf52210?w=500&q=80'}
+                                            src={getImageUrl(cat.image || 'https://images.unsplash.com/photo-1485230946086-1d932bf52210?w=500&q=80')}
                                             alt={cat.name || cat.title}
                                             className="category-image"
                                             onError={handleImageError}

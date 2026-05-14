@@ -5,6 +5,7 @@ import AdminSelect from '../../components/AdminSelect';
 import AdminPagination from '../../components/AdminPagination';
 import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import '../../admin.css';
+import { API_BASE_URL, BASE_URL } from '../../../../../config';
 
 const StaffList = () => {
     const { token } = useAdminAuth();
@@ -38,7 +39,7 @@ const StaffList = () => {
     const fetchStaff = async () => {
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:5001/api/users', {
+            const response = await fetch(`${API_BASE_URL}/users`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'user-id': localStorage.getItem('adminAuthUser') ? JSON.parse(localStorage.getItem('adminAuthUser')).emailOrMobile : ''
@@ -72,7 +73,7 @@ const StaffList = () => {
         setSaving(true);
         setError('');
         try {
-            const response = await fetch('http://localhost:5001/api/users/staff', {
+            const response = await fetch(`${API_BASE_URL}/users/staff`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -107,7 +108,7 @@ const StaffList = () => {
         if (!window.confirm('Are you sure you want to remove this staff member?')) return;
 
         try {
-            const response = await fetch(`http://localhost:5001/api/users/${id}`, {
+            const response = await fetch(`${API_BASE_URL}/users/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,

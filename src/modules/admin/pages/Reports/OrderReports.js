@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FaCheckCircle, FaTimesCircle, FaUndo, FaSearch } from 'react-icons/fa';
 import ReportFilter from './components/ReportFilter';
 import './Reports.css';
+import { API_BASE_URL, BASE_URL } from '../../../../../config';
 
 const OrderReports = () => {
     const [stats, setStats] = useState({
@@ -19,7 +20,7 @@ const OrderReports = () => {
     const fetchOrderStats = async () => {
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:5001/api/reports/orders');
+            const response = await fetch(`${API_BASE_URL}/reports/orders`);
             const data = await response.json();
             if (data.success) {
                 setStats(data.data.stats);

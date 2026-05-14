@@ -5,6 +5,7 @@ import AdminPagination from '../../components/AdminPagination';
 import '../../admin.css';
 import '../Inventory/Inventory.css'; // Import Inventory styles for table consistency
 import './Reviews.css';
+import { API_BASE_URL, BASE_URL, getImageUrl } from '../../../../../config';
 
 const ReviewList = () => {
     // ... rest of the code ...
@@ -42,7 +43,7 @@ const ReviewList = () => {
                 params.append('search', searchTerm);
             }
 
-            const response = await fetch(`http://localhost:5001/api/reviews/admin?${params}`, {
+            const response = await fetch(`${API_BASE_URL}/reviews/admin?${params}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'user-id': adminUser?.email || ''
@@ -66,7 +67,7 @@ const ReviewList = () => {
             const token = localStorage.getItem('adminAuthToken');
             const adminUser = localStorage.getItem('adminAuthUser') ? JSON.parse(localStorage.getItem('adminAuthUser')) : null;
 
-            const response = await fetch(`http://localhost:5001/api/reviews/${reviewId}/status`, {
+            const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}/status`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -101,7 +102,7 @@ const ReviewList = () => {
             const token = localStorage.getItem('adminAuthToken');
             const adminUser = localStorage.getItem('adminAuthUser') ? JSON.parse(localStorage.getItem('adminAuthUser')) : null;
 
-            const response = await fetch(`http://localhost:5001/api/reviews/${reviewId}`, {
+            const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -327,7 +328,7 @@ const ReviewList = () => {
                                                 <td>
                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                                         <img
-                                                            src={review.product?.image}
+                                                            src={getImageUrl(review.product?.image)}
                                                             alt={review.product?.name}
                                                             style={{ width: '30px', height: '30px', objectFit: 'cover', borderRadius: '4px' }}
                                                         />

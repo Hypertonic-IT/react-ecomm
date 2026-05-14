@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { FaArrowLeft, FaPrint, FaTruck, FaMapMarkerAlt, FaUser } from 'react-icons/fa';
 import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import '../../admin.css';
+import { API_BASE_URL, BASE_URL } from '../../../../../config';
 
 const OrderDetails = () => {
     const { id } = useParams();
@@ -13,7 +14,7 @@ const OrderDetails = () => {
     useEffect(() => {
         const fetchOrder = async () => {
             try {
-                const response = await fetch(`http://localhost:5001/api/orders/${id}`, {
+                const response = await fetch(`${API_BASE_URL}/orders/${id}`, {
                     headers: {
                         'user-id': user?.email
                     }

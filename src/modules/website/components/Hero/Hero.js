@@ -4,6 +4,7 @@ import { heroSlides } from '../../../../data/fashionData';
 import { FaArrowRight, FaArrowLeft, FaLongArrowAltRight } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import './Hero.css';
+import { getImageUrl } from '../../../../../config';
 
 const Hero = () => {
     const [current, setCurrent] = useState(0);
@@ -96,7 +97,7 @@ const Hero = () => {
                 >
                     <div className="hero-overlay" />
                     <img
-                        src={slide.image}
+                        src={getImageUrl(slide.image)}
                         alt={slide.title}
                         className="hero-image-bg"
                         onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1600&q=80'; }}

@@ -5,6 +5,7 @@ import {
 import ReportFilter from './components/ReportFilter';
 import AdminPagination from '../../components/AdminPagination';
 import './Reports.css';
+import { API_BASE_URL, BASE_URL } from '../../../../../config';
 
 const SalesReports = () => {
     const [salesData, setSalesData] = useState([]);
@@ -18,7 +19,7 @@ const SalesReports = () => {
     const fetchSalesData = async () => {
         setLoading(true);
         try {
-            const response = await fetch(`http://localhost:5001/api/reports/sales?dateRange=${filterDateRange}`);
+            const response = await fetch(`${API_BASE_URL}/reports/sales?dateRange=${filterDateRange}`);
             const data = await response.json();
             if (data.success) {
                 setSalesData(data.data);

@@ -9,6 +9,7 @@ import '../../admin.css';
 import AdminSelect from '../../components/AdminSelect'; // Added
 import AdminPagination from '../../components/AdminPagination'; // Added
 import './Inventory.css';
+import { API_BASE_URL, BASE_URL, getImageUrl } from '../../../../../config';
 
 const InventoryManagement = () => {
     const navigate = useNavigate();
@@ -34,7 +35,7 @@ const InventoryManagement = () => {
 
     const fetchInventory = async () => {
         try {
-            const response = await fetch('http://localhost:5001/api/products');
+            const response = await fetch(`${API_BASE_URL}/products`);
             const data = await response.json();
             setProducts(data);
             setLoading(false);
@@ -95,7 +96,7 @@ const InventoryManagement = () => {
     const handleUpdateStock = async (productId, newStock, reason = '') => {
         try {
             const product = products.find(p => p._id === productId);
-            const response = await fetch(`http://localhost:5001/api/products/${productId}`, {
+            const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -318,7 +319,7 @@ const InventoryManagement = () => {
                                                 <td>
                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                                         <img
-                                                            src={product.image}
+                                                            src={getImageUrl(product.image)}
                                                             alt={product.name}
                                                             style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '6px' }}
                                                         />

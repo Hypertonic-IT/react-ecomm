@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaEye, FaPen, FaEllipsisH } from 'react-icons/fa';
 import { useAdminAuth } from '../../../context/AdminAuthContext';
+import { API_BASE_URL, BASE_URL } from '../../../../config';
 
 const RecentOrders = () => {
     const [orders, setOrders] = useState([]);
@@ -17,7 +18,7 @@ const RecentOrders = () => {
     const fetchRecentOrders = async () => {
         try {
             const token = localStorage.getItem('adminAuthToken');
-            const response = await fetch('http://localhost:5001/api/orders', {
+            const response = await fetch(`${API_BASE_URL}/orders`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'user-id': user?.email || (localStorage.getItem('adminAuthUser') ? JSON.parse(localStorage.getItem('adminAuthUser')).email : '')
