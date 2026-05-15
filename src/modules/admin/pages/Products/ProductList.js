@@ -5,7 +5,7 @@ import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import AdminSelect from '../../components/AdminSelect';
 import AdminPagination from '../../components/AdminPagination'; // Added
 import '../../admin.css';
-import { API_BASE_URL, BASE_URL } from 'config';
+import { API_BASE_URL, BASE_URL, getImageUrl } from 'config';
 
 const ProductList = () => {
     const { user } = useAdminAuth();
@@ -152,7 +152,7 @@ const ProductList = () => {
                                     <tr key={product._id}>
                                         <td>
                                             <img
-                                                src={product.image}
+                                                src={getImageUrl(product.image)}
                                                 alt={product.name}
                                                 style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #eee' }}
                                             />

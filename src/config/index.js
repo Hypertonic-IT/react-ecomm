@@ -1,7 +1,11 @@
 import apiUrl from './api';
 
-export const API_BASE_URL = apiUrl();
-export const BASE_URL = apiUrl();
+// Compute base once and avoid duplicating `/api` if the provided REACT_APP_API_URL
+// already includes it. This makes the build resilient to env values like
+// `https://api.kayaroop.com` or `https://api.kayaroop.com/api`.
+const API_ROOT = apiUrl();
+export const API_BASE_URL = API_ROOT.endsWith('/api') ? API_ROOT : apiUrl('/api');
+export const BASE_URL = API_ROOT;
 
 export const getImageUrl = (imagePath) => {
     if (!imagePath) return '';
