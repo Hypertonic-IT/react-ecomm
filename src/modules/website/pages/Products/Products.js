@@ -16,7 +16,7 @@ import { getImageUrl } from 'config';
 const Products = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { addToCart, toggleWishlist, wishlist, products, categories } = useShop();
+    const { addToCart, toggleWishlist, wishlist, products, publicProducts, categories } = useShop();
     const { formatPrice } = useCurrency();
 
     // Initial Filters State
@@ -63,8 +63,11 @@ const Products = () => {
         setCurrentPage(1);
     }, [filters]);
 
+    // Use publicProducts (20 limited) for public listing; fall back to full products when publicProducts is empty
+    const sourceProducts = (publicProducts && publicProducts.length > 0) ? publicProducts : products;
+
     // Filtering Logic
-    const filteredProducts = products.filter(product => {
+    const filteredProducts = sourceProducts.filter(product => {
         // Search Filter
         if (filters.search && !product.name.toLowerCase().includes(filters.search.toLowerCase())) {
             return false;

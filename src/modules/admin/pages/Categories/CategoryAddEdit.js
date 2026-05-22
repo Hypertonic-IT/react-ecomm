@@ -5,6 +5,7 @@ import { FaSave, FaArrowLeft, FaImages } from 'react-icons/fa';
 import AdminSelect from '../../components/AdminSelect';
 
 import { useShop } from '../../../../context/ShopContext';
+import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import '../../admin.css';
 import { API_BASE_URL, BASE_URL } from 'config';
 
@@ -13,6 +14,8 @@ const CategoryAddEdit = () => {
     const isEditMode = !!id;
     const navigate = useNavigate();
     const { showToast } = useShop(); // Import showToast
+
+    const { user, token } = useAdminAuth();
 
     // Track stats for validation
     const [headerCategoryCount, setHeaderCategoryCount] = useState(0);
@@ -103,11 +106,13 @@ const CategoryAddEdit = () => {
 
             const method = isEditMode ? 'PUT' : 'POST';
 
+            const headers = { 'Content-Type': 'application/json' };
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+            if (user && user.email) headers['user-id'] = user.email;
+
             const response = await fetch(url, {
                 method,
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers,
                 body: JSON.stringify(formData)
             });
 

@@ -126,7 +126,6 @@ const Dashboard = () => {
 
             {/* 5. Quick Actions - Cleaner Row */}
             <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px' }}>
-                <QuickActionCard icon={FaPlus} label="Add Product" link="/admin/products/new" color="#2563eb" />
                 <QuickActionCard icon={FaBox} label="Manage Orders" link="/admin/orders" color="#8b5cf6" />
                 <QuickActionCard icon={FaUserPlus} label="Add Customer" link="/admin/users" color="#10b981" />
                 <QuickActionCard icon={FaFileAlt} label="Reports" link="/admin/reports" color="#f59e0b" />

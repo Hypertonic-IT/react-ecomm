@@ -17,6 +17,7 @@ export const ShopProvider = ({ children }) => {
     const [isTrackOrderOpen, setIsTrackOrderOpen] = useState(false);
 
     const [categories, setCategories] = useState([]);
+    const [publicProducts, setPublicProducts] = useState([]); // public-facing limited list (e.g., 10 men + 10 women)
     const [appliedCoupon, setAppliedCoupon] = useState(null);
 
     // Fetch Categories
@@ -72,9 +73,35 @@ export const ShopProvider = ({ children }) => {
                     if (mappedProducts.length > 0) {
                         // Only show active products on the website
                         const activeProducts = mappedProducts.filter(p => p.isActive !== false);
+                        // Restore full active products here; individual pages (Home) will pick slices like 10 Men / 10 Women
                         setProducts(activeProducts);
+
+                        // Build a safe publicProducts list: up to 10 Men and 10 Women
+                        const extract = (p) => {
+                            const tokens = [];
+                            const push = (v) => { if (v || v === 0) tokens.push(String(v).toLowerCase().trim()); };
+                            if (p.category) {
+                                if (typeof p.category === 'string') push(p.category.replace(/['’]/g, ''));
+                                else if (typeof p.category === 'object') push(p.category.id || p.category._id || p.category.name || p.category.title);
+                            }
+                            if (p.categoryId) push(p.categoryId);
+                            if (p.gender) push(p.gender);
+                            if (p.categories && Array.isArray(p.categories)) p.categories.forEach(c => push(c));
+                            return tokens.flatMap(t => t.split(/[,/\s]+/).map(x => x.replace(/[^a-z0-9]/g, '').trim()).filter(Boolean));
+                        };
+
+                        const isMen = (p) => extract(p).some(t => ['men', 'man', 'male'].includes(t) || (t.includes('men') && !t.includes('women')) || (t.includes('male') && !t.includes('female')));
+                        const isWomen = (p) => extract(p).some(t => ['women', 'woman', 'female'].includes(t) || t.includes('women') || t.includes('female'));
+
+                        const menProducts = activeProducts.filter(isMen).slice(0, 10);
+                        const menIds = new Set(menProducts.map(p => (p.id || p._id).toString()));
+                        const womenProducts = activeProducts.filter(p => isWomen(p) && !menIds.has((p.id || p._id).toString())).slice(0, 10);
+
+                        const publicList = [...menProducts, ...womenProducts];
+                        setPublicProducts(publicList);
                     } else {
                         setProducts([]); // No products in DB
+                        setPublicProducts([]);
                     }
                 } else {
                     setProducts([]); // API error
@@ -281,6 +308,7 @@ export const ShopProvider = ({ children }) => {
 
     const value = {
         products,
+        publicProducts,
         categories,
         cart,
         addToCart,
