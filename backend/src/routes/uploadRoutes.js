@@ -1,11 +1,19 @@
 const path = require('path');
 const express = require('express');
 const multer = require('multer');
+const fs = require('fs');
 const router = express.Router();
+
+const uploadDir = path.join(__dirname, '../../uploads');
+
+// Ensure uploads directory exists
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 const storage = multer.diskStorage({
     destination(req, file, cb) {
-        cb(null, 'uploads/');
+        cb(null, uploadDir);
     },
     filename(req, file, cb) {
         cb(null, `${Date.now()}${path.extname(file.originalname)}`);
@@ -32,14 +40,10 @@ const upload = multer({
 });
 
 router.post('/', upload.single('image'), (req, res) => {
-    // Return the full URL path that the frontend will access
-    // Assuming server runs on 5001. We return a relative path or full URL.
-    // For simplicity cross-origin, we can return the Full URL if we know the host, 
-    // or relative path and let frontend append host.
-    // Let's return path relative to server root.
+    // Return relative path. The frontend's getImageUrl will prepend the API base URL.
     res.send({
         message: 'Image Uploaded',
-        image: `http://localhost:5001/uploads/${req.file.filename}`
+        image: `/uploads/${req.file.filename}`
     });
 });
 
