@@ -76,7 +76,7 @@ const ContactUs = () => {
                             </div>
                             <div>
                                 <h4 style={{ fontWeight: 'bold', marginBottom: '5px' }}>Our Location</h4>
-                                <p style={{ color: '#666', fontSize: '14px' }}>123 Fashion Street, Creative Block,<br />New York, NY 10001</p>
+                                <p style={{ color: '#666', fontSize: '14px' }}>1st Floor, Plot No: 3, Near Neelam Chowk Metro station, Azad Colony, sector 15A,<br/> Faridabad, Haryana, 121007</p>
                             </div>
                         </div>
 

@@ -90,7 +90,7 @@ export const ShopProvider = ({ children }) => {
                             return tokens.flatMap(t => t.split(/[,/\s]+/).map(x => x.replace(/[^a-z0-9]/g, '').trim()).filter(Boolean));
                         };
 
-                        const isMen = (p) => extract(p).some(t => ['men', 'man', 'male'].includes(t) || (t.includes('men') && !t.includes('women')) || (t.includes('male') && !t.includes('female')));
+                        const isMen = (p) => extract(p).some(t => ['men', 'man', 'male'].includes(t) || t.includes('men') || t.includes('male'));
                         const isWomen = (p) => extract(p).some(t => ['women', 'woman', 'female'].includes(t) || t.includes('women') || t.includes('female'));
 
                         const menProducts = activeProducts.filter(isMen).slice(0, 10);

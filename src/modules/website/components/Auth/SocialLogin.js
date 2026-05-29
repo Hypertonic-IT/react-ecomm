@@ -13,11 +13,11 @@ const SocialLogin = ({ onGoogleLogin, onAppleLogin, loading = false }) => {
 
     return (
         <div className="social-login">
-            <div className="divider">
+            {/* <div className="divider">
                 <span>or continue with</span>
-            </div>
+            </div> */}
 
-            <div className="social-buttons">
+            {/* <div className="social-buttons">
                 <AuthButton
                     variant="social"
                     onClick={() => login()}
@@ -39,7 +39,7 @@ const SocialLogin = ({ onGoogleLogin, onAppleLogin, loading = false }) => {
                 >
                     Apple
                 </AuthButton>
-            </div>
+            </div> */}
         </div>
     );
 };

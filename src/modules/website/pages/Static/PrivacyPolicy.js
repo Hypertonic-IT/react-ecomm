@@ -12,7 +12,7 @@ const PrivacyPolicy = () => {
             <div style={{ maxWidth: '800px', margin: '40px auto', padding: '0 20px', lineHeight: '1.8' }}>
                 <h1 style={{ fontSize: '36px', fontWeight: 'bold', marginBottom: '40px', textAlign: 'center' }}>Privacy Policy</h1>
 
-                <p style={{ marginBottom: '20px' }}>Last Updated: January 1, 2024</p>
+                <p style={{ marginBottom: '20px' }}>Last Updated: April 1, 2026</p>
 
                 <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginTop: '30px', marginBottom: '15px' }}>1. Introduction</h3>
                 <p style={{ marginBottom: '15px' }}>

@@ -70,7 +70,7 @@ function Home() {
 
   const isMen = (p) => {
     const toks = extractCategoryTokens(p);
-    return toks.some(t => ['men', 'man', 'male'].includes(t) || (t.includes('men') && !t.includes('women')) || (t.includes('male') && !t.includes('female')));
+    return toks.some(t => ['men', 'man', 'male'].includes(t) || t.includes('men') || t.includes('male'));
   };
   const isWomen = (p) => {
     const toks = extractCategoryTokens(p);
