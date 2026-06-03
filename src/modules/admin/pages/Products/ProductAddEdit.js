@@ -54,6 +54,15 @@ const ProductAddEdit = () => {
             return;
         }
 
+        // Validate file sizes (10MB limit)
+        for (const file of files) {
+            if (file.size > 10 * 1024 * 1024) {
+                alert(`File "${file.name}" is too large. Maximum allowed size is 10MB.`);
+                if (e.target) e.target.value = null;
+                return;
+            }
+        }
+
         setUploading(true);
         const newUrls = [];
 
@@ -91,6 +100,12 @@ const ProductAddEdit = () => {
     const uploadMainImageHandler = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
+
+        // Validate file size (10MB limit)
+        if (file.size > 10 * 1024 * 1024) {
+            alert('File is too large. Maximum allowed size is 10MB.');
+            return;
+        }
 
         const uploadData = new FormData();
         uploadData.append('image', file);
@@ -141,6 +156,12 @@ const ProductAddEdit = () => {
     const replaceGalleryImageHandler = async (e, index) => {
         const file = e.target.files[0];
         if (!file) return;
+
+        // Validate file size (10MB limit)
+        if (file.size > 10 * 1024 * 1024) {
+            alert('File is too large. Maximum allowed size is 10MB.');
+            return;
+        }
 
         setUploading(true);
         const uploadData = new FormData();

@@ -71,6 +71,12 @@ const BlogAddEdit = () => {
         const file = e.target.files[0];
         if (!file) return;
 
+        // Validate file size (10MB limit)
+        if (file.size > 10 * 1024 * 1024) {
+            alert('File is too large. Maximum allowed size is 10MB.');
+            return;
+        }
+
         const uploadData = new FormData();
         uploadData.append('image', file);
         setUploading(true);
