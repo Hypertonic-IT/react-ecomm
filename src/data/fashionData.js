@@ -3,7 +3,7 @@ export const categories = [
     {
         id: 'men',
         title: 'Men',
-        image: 'https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?w=500&q=80',
+        image: 'https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&q=80&w=800',
         columns: [
             {
                 title: 'Top Wear',
@@ -22,7 +22,7 @@ export const categories = [
     {
         id: 'women',
         title: 'Women',
-        image: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=500&q=80',
+        image: 'https://images.unsplash.com/photo-1524041255072-7da0525d6b34?auto=format&fit=crop&q=80&w=800',
         columns: [
             {
                 title: 'Western Wear',
@@ -37,30 +37,7 @@ export const categories = [
                 items: ['Heels', 'Flats', 'Boots']
             }
         ]
-    },
-    {
-        id: 'kids',
-        title: 'Kids',
-        image: 'https://images.unsplash.com/photo-1519238263496-61437a8ac686?w=500&q=80',
-        columns: [
-            {
-                title: 'Boys',
-                items: ['T-Shirts', 'Shirts', 'Jeans']
-            },
-            {
-                title: 'Girls',
-                items: ['Dresses', 'Tops', 'Skirts']
-            }
-        ]
-    },
-    // Added specific category entries so admin "Sync Defaults" can upload them with images
-    { id: 'shirts', title: 'Shirts', image: 'https://images.unsplash.com/photo-1596755095514-ce00c3b75620?w=500&q=80' },
-    { id: 'sweaters', title: 'Sweaters', image: 'https://images.unsplash.com/photo-1614831623868-6c845b4fc231?w=500&q=80' },
-    { id: 'skirts', title: 'Skirts', image: 'https://images.unsplash.com/photo-1583496661160-c2561910d68f?w=500&q=80' },
-    { id: 'accessories', title: 'Accessories', image: 'https://images.unsplash.com/photo-1576053139778-7e32f2ae3cfd?w=500&q=80', isLink: true },
-    { id: 'footwear', title: 'Footwear', image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80', isLink: true },
-    { id: 'new', title: 'New Arrivals', isLink: true },
-    { id: 'sale', title: 'Sale', isLink: true, isHighlight: true }
+    }
 ];
 
 export const heroSlides = [
@@ -92,38 +69,26 @@ export const heroSlides = [
 
 export const products = [
     // 10 Men
-    { id: 201, name: "Classic Denim Jacket", price: 2499, category: "Men", image: "https://images.unsplash.com/photo-1523205771623-e0faa4d2813d?w=500&q=80", isTrending: true, rating: 4.5 },
-    { id: 202, name: "Urban Street Hoodie", price: 2999, category: "Men", image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500&q=80", isNew: true, rating: 4.2 },
-    { id: 203, name: "Slim Fit Chinos", price: 1299, category: "Men", image: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=500&q=80", isTrending: true, rating: 4.4 },
-    { id: 204, name: "Striped Cotton Shirt", price: 999, category: "Men", image: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&q=80", rating: 4.3 },
-    { id: 205, name: "Men's Polo Shirt", price: 799, category: "Men", image: "https://images.unsplash.com/photo-1586363104862-3a5e2ab60d99?w=500&q=80", rating: 4.3 },
-    { id: 206, name: "Men's Classic Watch", price: 8999, category: "Men", image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80", isTrending: true, rating: 4.9 },
-    { id: 207, name: "Casual Linen Shirt", price: 1199, category: "Men", image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=500&q=80", rating: 4.1 },
-    { id: 208, name: "Men's Runner Sneakers", price: 3499, category: "Men", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80", isTrending: true, rating: 4.7 },
-    { id: 209, name: "Denim Work Jacket", price: 2599, category: "Men", image: "https://images.unsplash.com/photo-1472437774355-71ab6752b434?w=500&q=80", rating: 4.2 },
-    { id: 210, name: "Tailored Blazer", price: 4999, category: "Men", image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&q=80", rating: 4.6 },
-
-    // Additional 10 Men products (211-220)
-    { id: 211, name: "Performance Polo Tee", price: 899, category: "Men", image: "https://images.unsplash.com/photo-1520975914050-63b4c4f4b5ef?w=500&q=80", rating: 4.1 },
-    { id: 212, name: "Fleece Zip-Up Hoodie", price: 1799, category: "Men", image: "https://images.unsplash.com/photo-1600180758890-9f4d4b7f4f2b?w=500&q=80", rating: 4.3 },
-    { id: 213, name: "Chino Shorts", price: 699, category: "Men", image: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=500&q=80", rating: 4.0 },
-    { id: 214, name: "Military Field Jacket", price: 3499, category: "Men", image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=500&q=80", rating: 4.4 },
-    { id: 215, name: "Slim Fit Dress Shirt", price: 1299, category: "Men", image: "https://images.unsplash.com/photo-1520975914050-63b4c4f4b5ef?w=500&q=80", rating: 4.2 },
-    { id: 216, name: "Lightweight Windbreaker", price: 2199, category: "Men", image: "https://images.unsplash.com/photo-1503342217505-b0a15a3f3e6a?w=500&q=80", rating: 4.0 },
-    { id: 217, name: "Corduroy Overshirt", price: 1599, category: "Men", image: "https://images.unsplash.com/photo-1516054714214-46b6d2f7f5b4?w=500&q=80", rating: 4.1 },
-    { id: 218, name: "Merino Crew Sweater", price: 2499, category: "Men", image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&q=80", rating: 4.5 },
-    { id: 219, name: "Trail Running Shoes", price: 3999, category: "Men", image: "https://images.unsplash.com/photo-1519744792095-2f2205e87b6f?w=500&q=80", rating: 4.6 },
-    { id: 220, name: "Everyday Leather Belt", price: 599, category: "Men", image: "https://images.unsplash.com/photo-1516822003754-cca485356ecb?w=500&q=80", rating: 4.2 },
+    { id: 201, name: "Casual Denim Jacket", price: 1499, category: "Men", image: "/uploads/products/casual-denim-jacket-1778505001762.png", isTrending: true, rating: 4.5 },
+    { id: 202, name: "Casual Leather Jacket", price: 1499, category: "Men", image: "/uploads/products/casual-leather-jacket-1778504998224.png", isTrending: true, rating: 4.4 },
+    { id: 203, name: "Casual Wool Hoodie", price: 1299, category: "Men", image: "/uploads/products/casual-wool-hoodie-1778505039962.png", rating: 4.3 },
+    { id: 204, name: "Classic Denim Hoodie", price: 1399, category: "Men", image: "/uploads/products/classic-denim-hoodie-1778505018510.png", isNew: true, rating: 4.2 },
+    { id: 205, name: "Casual Polyester Shirt", price: 999, category: "Men", image: "/uploads/products/casual-polyester-shirt-1778504984888.png", rating: 4.3 },
+    { id: 206, name: "Classic Linen Shirt", price: 1299, category: "Men", image: "/uploads/products/classic-linen-shirt-1778505023912.png", rating: 4.1 },
+    { id: 207, name: "Casual Cotton T-Shirt", price: 799, category: "Men", image: "/uploads/products/casual-cotton-t-shirt-1778505058330.png", rating: 4.3 },
+    { id: 208, name: "Sporty Cotton T-Shirt", price: 899, category: "Men", image: "/uploads/products/sporty-cotton-t-shirt-1778505113352.png", rating: 4.1 },
+    { id: 209, name: "Casual Denim Jeans", price: 1299, category: "Men", image: "/uploads/products/casual-denim-jeans-1778505085778.png", isTrending: true, rating: 4.4 },
+    { id: 210, name: "Classic Denim Jeans", price: 1399, category: "Men", image: "/uploads/products/classic-denim-jeans-1778505113230.png", rating: 4.2 },
 
     // 10 Women
-    { id: 301, name: "Floral Summer Dress", price: 1499, category: "Women", image: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=500&q=80", isSale: true, isTrending: true, rating: 4.8 },
-    { id: 302, name: "Elegant Evening Gown", price: 5999, category: "Women", image: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=500&q=80", isNew: true, rating: 4.8 },
-    { id: 303, name: "Denim Shorts", price: 899, category: "Women", image: "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=500&q=80", isSale: true, rating: 4.5 },
-    { id: 304, name: "Yoga Leggings", price: 699, category: "Women", image: "https://images.unsplash.com/photo-1506619216599-9d16d0903dfd?w=500&q=80", rating: 4.5 },
-    { id: 305, name: "Chiffon Blouse", price: 1299, category: "Women", image: "https://images.unsplash.com/photo-1520975914050-63b4c4f4b5ef?w=500&q=80", rating: 4.3 },
-    { id: 306, name: "Pleated Skirt", price: 1199, category: "Women", image: "https://images.unsplash.com/photo-1583496661160-c2561910d68f?w=500&q=80", rating: 4.4 },
-    { id: 307, name: "Women's Ankle Boots", price: 2999, category: "Women", image: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=500&q=80", isNew: true, rating: 4.7 },
-    { id: 308, name: "Boho Maxi Dress", price: 1999, category: "Women", image: "https://images.unsplash.com/photo-1495121605193-b116b5b09f54?w=500&q=80", rating: 4.6 },
-    { id: 309, name: "Silk Scarf", price: 599, category: "Women", image: "https://images.unsplash.com/photo-1584030373081-f37b7bb4faae?w=500&q=80", rating: 4.2 },
-    { id: 310, name: "Casual Wrap Top", price: 899, category: "Women", image: "https://images.unsplash.com/photo-1530845641896-7b8bfb8a2e94?w=500&q=80", rating: 4.1 }
+    { id: 301, name: "Casual Cotton Dress", price: 1499, salePrice: 1299, category: "Women", image: "/uploads/products/casual-cotton-dress-1778505151664.png", isTrending: true, rating: 4.8 },
+    { id: 302, name: "Casual Linen Dress", price: 1399, category: "Women", image: "/uploads/products/casual-linen-dress-1778505145682.png", rating: 4.6 },
+    { id: 303, name: "Casual Leather Top", price: 899, category: "Women", image: "/uploads/products/casual-leather-top-1778505164948.png", rating: 4.1 },
+    { id: 304, name: "Cozy Leather Top", price: 999, category: "Women", image: "/uploads/products/cozy-leather-top-1778505090497.png", rating: 4.2 },
+    { id: 305, name: "Casual Denim Sweater", price: 1299, category: "Women", image: "/uploads/products/casual-denim-sweater-1778505158414.png", rating: 4.3 },
+    { id: 306, name: "Casual Linen Sweater", price: 1199, category: "Women", image: "/uploads/products/casual-linen-sweater-1778505148693.png", rating: 4.4 },
+    { id: 307, name: "Casual Wool Skirt", price: 1199, category: "Women", image: "/uploads/products/casual-wool-skirt-1778505178057.png", rating: 4.4 },
+    { id: 308, name: "Classic Denim Skirt", price: 1299, category: "Women", image: "/uploads/products/classic-denim-skirt-1778505198272.png", rating: 4.5 },
+    { id: 309, name: "Casual Cotton Jeans", price: 1099, category: "Women", image: "/uploads/products/casual-cotton-jeans-1778505009618.png", rating: 4.3 },
+    { id: 310, name: "Cozy Cotton Jeans", price: 1199, category: "Women", image: "/uploads/products/cozy-cotton-jeans-1778505111247.png", rating: 4.4 }
 ];

@@ -23,7 +23,7 @@ const Products = () => {
     const [filters, setFilters] = useState({
         genders: [],
         categories: [],
-        priceRange: { min: 0, max: 10000 }, // Default max bumped to 10000 for realistic prices
+        priceRange: { min: 500, max: 1500 }, // Default range updated to 500-1500 as requested
         sortBy: 'newest',
         search: ''
     });
@@ -277,7 +277,7 @@ const Products = () => {
                         <div className="no-results">
                             <h3>No products found matching your filters.</h3>
                             <button
-                                onClick={() => setFilters({ genders: [], categories: [], priceRange: { min: 0, max: 10000 }, sortBy: 'newest', search: '' })}
+                                onClick={() => setFilters({ genders: [], categories: [], priceRange: { min: 500, max: 1500 }, sortBy: 'newest', search: '' })}
                                 style={{
                                     marginTop: '20px',
                                     padding: '12px 24px',
