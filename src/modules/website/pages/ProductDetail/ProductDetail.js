@@ -32,6 +32,7 @@ const ProductDetail = () => {
     } = useShop();
     const { formatPrice } = useCurrency();
     const { user, token } = useAuth(); // Get user and token from AuthContext
+    const isBusiness = user && user.accountType === 'business';
     const [product, setProduct] = useState(null);
     const [selectedImage, setSelectedImage] = useState('');
     const [selectedSize, setSelectedSize] = useState('M');
@@ -40,6 +41,130 @@ const ProductDetail = () => {
     const [availableCoupons, setAvailableCoupons] = useState([]);
     const [couponCode, setCouponCode] = useState('');
     const [isCouponOpen, setIsCouponOpen] = useState(false);
+
+    // B2B States
+    const [b2bQty, setB2bQty] = useState(10);
+    const [isQuoteOpen, setIsQuoteOpen] = useState(false);
+    const [quoteQty, setQuoteQty] = useState(100);
+    const [targetPrice, setTargetPrice] = useState('');
+    const [quoteNotes, setQuoteNotes] = useState('');
+    const [quoteSubmitting, setQuoteSubmitting] = useState(false);
+    const [b2bStockError, setB2bStockError] = useState('');
+
+    // Get current cart item quantity
+    const cartItem = product ? cart.find(item =>
+        item.id === product.id &&
+        item.selectedColor === selectedColor &&
+        item.selectedSize === selectedSize
+    ) : null;
+    const quantityInCart = cartItem ? cartItem.quantity : 0;
+
+    // Sync B2B Qty with Cart Item Quantity
+    useEffect(() => {
+        if (isBusiness) {
+            setB2bQty(quantityInCart > 0 ? quantityInCart : 10);
+        }
+    }, [quantityInCart, isBusiness]);
+
+    useEffect(() => {
+        if (product && b2bQty <= product.countInStock) {
+            setB2bStockError('');
+        }
+    }, [b2bQty, product]);
+
+    const handleB2bQtyChange = (e) => {
+        const val = parseInt(e.target.value);
+        const qty = isNaN(val) ? 1 : Math.max(1, val);
+        setB2bQty(qty);
+        if (product && qty <= product.countInStock) {
+            setB2bStockError('');
+        }
+    };
+
+    const handleB2bAddToCart = () => {
+        if (!product) return;
+        if (b2bQty > product.countInStock) {
+            setB2bStockError('The requested quantity exceeds current available stock.');
+            showToast('The requested quantity exceeds current available stock.', 'error');
+            return;
+        }
+        setB2bStockError('');
+        if (quantityInCart > 0) {
+            const delta = b2bQty - quantityInCart;
+            updateQuantity(product.id, selectedColor, selectedSize, delta);
+        } else {
+            addToCart({ ...product, selectedColor, selectedSize });
+            if (b2bQty > 1) {
+                setTimeout(() => {
+                    updateQuantity(product.id, selectedColor, selectedSize, b2bQty - 1);
+                }, 50);
+            }
+        }
+        showToast(`Updated cart quantity to ${b2bQty}!`, "success");
+    };
+
+    const handleB2bBuyNow = () => {
+        if (!product) return;
+        if (b2bQty > product.countInStock) {
+            setB2bStockError('The requested quantity exceeds current available stock.');
+            showToast('The requested quantity exceeds current available stock.', 'error');
+            return;
+        }
+        setB2bStockError('');
+        if (quantityInCart > 0) {
+            const delta = b2bQty - quantityInCart;
+            updateQuantity(product.id, selectedColor, selectedSize, delta);
+        } else {
+            addToCart({ ...product, selectedColor, selectedSize });
+            if (b2bQty > 1) {
+                updateQuantity(product.id, selectedColor, selectedSize, b2bQty - 1);
+            }
+        }
+        navigate('/checkout/address');
+    };
+
+    const handleQuoteSubmit = async (e) => {
+        e.preventDefault();
+        setQuoteSubmitting(true);
+
+        try {
+            const headers = { 'Content-Type': 'application/json' };
+            const authToken = token || localStorage.getItem('authToken');
+            if (authToken) {
+                headers['Authorization'] = `Bearer ${authToken}`;
+            }
+
+            const payload = {
+                name: user?.name || "B2B Partner",
+                email: user?.email || user?.emailOrMobile || "business@kayaroop.com",
+                phone: user?.phone || user?.emailOrMobile || "0000000000",
+                message: `Target Price requested: ${targetPrice ? ('₹' + targetPrice) : 'N/A'}. Additional comments: ${quoteNotes}`,
+                itemsDescription: `Product: "${product.name}" (ID: ${product.id}), Quantity: ${quoteQty}, Color: ${selectedColor}, Size: ${selectedSize}`
+            };
+
+            const response = await fetch(`${API_BASE_URL}/quotes`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+            if (response.ok && result.success) {
+                showToast("Wholesale quote request submitted successfully!", "success");
+                setIsQuoteOpen(false);
+                setTargetPrice('');
+                setQuoteNotes('');
+                setQuoteQty(100);
+            } else {
+                alert(result.message || "Failed to submit quote request.");
+            }
+        } catch (err) {
+            console.error("Quote Request Error:", err);
+            alert("Error submitting quote request. Please try again.");
+        } finally {
+            setQuoteSubmitting(false);
+        }
+    };
 
     const checkAndApplyCoupon = async (code) => {
         if (!code) return;
@@ -148,7 +273,31 @@ const ProductDetail = () => {
                         <div className="pdp-info-header">
                             <h1 className="pdp-title">{product.name}</h1>
                             <div className="pdp-price">
-                                {appliedCoupon ? (
+                                {isBusiness ? (
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '6px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <span style={{ color: '#166534', fontWeight: '800', fontSize: '1.8rem' }}>
+                                                {formatPrice(product.price)}
+                                            </span>
+                                            <span style={{
+                                                background: '#dcfce7', color: '#166534', fontSize: '0.75rem',
+                                                padding: '2px 8px', borderRadius: '12px', fontWeight: '700', border: '1px solid #166534'
+                                            }}>
+                                                BUSINESS PRICE
+                                            </span>
+                                        </div>
+                                        {product.retailPrice && (
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                <span style={{ textDecoration: 'line-through', color: '#94a3b8', fontSize: '1.1rem' }}>
+                                                    {formatPrice(product.retailSalePrice || product.retailPrice)}
+                                                </span>
+                                                <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: '500' }}>
+                                                    Regular Retail Price (Save {formatPrice((product.retailSalePrice || product.retailPrice) - product.price)})
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : appliedCoupon ? (
                                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                             <span style={{ fontSize: '1.8rem', fontWeight: '700', color: '#166534' }}>
@@ -353,91 +502,291 @@ const ProductDetail = () => {
                             </div>
                         )}
 
-                        <div className="pdp-actions">
-                            {(() => {
-                                const cartItem = cart.find(item =>
-                                    item.id === product.id &&
-                                    item.selectedColor === selectedColor &&
-                                    item.selectedSize === selectedSize
-                                );
-
-                                const quantityInCart = cartItem ? cartItem.quantity : 0;
-
-                                return quantityInCart > 0 ? (
-                                    <div className="pdp-quantity-stepper" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                        <button
-                                            onClick={() => updateQuantity(product.id, selectedColor, selectedSize, -1)}
+                        {isBusiness ? (
+                            <div className="b2b-bulk-controls" style={{
+                                background: '#f8fafc',
+                                border: '1px solid #e2e8f0',
+                                borderRadius: '12px',
+                                padding: '20px',
+                                marginTop: '15px',
+                                marginBottom: '20px',
+                                width: '100%'
+                            }}>
+                                <div style={{ fontSize: '0.95rem', fontWeight: '700', color: '#1e293b', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    💼 B2B Wholesale Order Panel
+                                </div>
+                                
+                                <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', gap: '20px', marginBottom: '15px' }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                        <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: '600' }}>Direct Quantity:</span>
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            value={b2bQty}
+                                            onChange={handleB2bQtyChange}
                                             style={{
-                                                width: '40px', height: '40px', borderRadius: '50%', border: '1px solid #ddd',
-                                                background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                                width: '120px',
+                                                padding: '10px',
+                                                border: '1px solid #cbd5e1',
+                                                borderRadius: '8px',
+                                                fontSize: '1rem',
+                                                fontWeight: '700',
+                                                textAlign: 'center',
+                                                outline: 'none',
+                                                background: '#fff'
                                             }}
-                                        >
-                                            <FaMinus size={12} />
-                                        </button>
-                                        <span style={{ fontSize: '16px', fontWeight: '600', minWidth: '20px', textAlign: 'center' }}>
-                                            {quantityInCart}
+                                        />
+                                    </div>
+
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                        <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: '600' }}>Quick Increase:</span>
+                                        <div style={{ display: 'flex', gap: '8px' }}>
+                                            {[10, 50, 100].map(amount => (
+                                                <button
+                                                    key={amount}
+                                                    type="button"
+                                                    onClick={() => setB2bQty(prev => prev + amount)}
+                                                    style={{
+                                                        padding: '10px 14px',
+                                                        background: '#fff',
+                                                        border: '1px solid #cbd5e1',
+                                                        borderRadius: '8px',
+                                                        fontSize: '0.85rem',
+                                                        fontWeight: '700',
+                                                        cursor: 'pointer',
+                                                        transition: 'all 0.2s',
+                                                        color: '#1e293b'
+                                                    }}
+                                                    onMouseOver={(e) => { e.target.style.background = '#f1f5f9'; e.target.style.borderColor = '#94a3b8'; }}
+                                                    onMouseOut={(e) => { e.target.style.background = '#fff'; e.target.style.borderColor = '#cbd5e1'; }}
+                                                >
+                                                    +{amount}
+                                                </button>
+                                            ))}
+                                            <button
+                                                type="button"
+                                                onClick={() => setB2bQty(quantityInCart > 0 ? quantityInCart : 10)}
+                                                style={{
+                                                    padding: '10px 14px',
+                                                    background: '#fee2e2',
+                                                    border: '1px solid #fecaca',
+                                                    color: '#ef4444',
+                                                    borderRadius: '8px',
+                                                    fontSize: '0.85rem',
+                                                    fontWeight: '700',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                Reset
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {b2bStockError && (
+                                    <div style={{
+                                        background: '#fef2f2',
+                                        border: '1px solid #fecaca',
+                                        borderRadius: '8px',
+                                        padding: '12px 16px',
+                                        marginBottom: '15px',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '8px',
+                                        alignItems: 'flex-start',
+                                        width: '100%'
+                                    }}>
+                                        <span style={{ color: '#ef4444', fontSize: '0.9rem', fontWeight: '600', textAlign: 'left' }}>
+                                            ⚠️ {b2bStockError}
                                         </span>
                                         <button
-                                            onClick={() => updateQuantity(product.id, selectedColor, selectedSize, 1)}
-                                            disabled={quantityInCart >= product.countInStock}
+                                            type="button"
+                                            onClick={() => navigate(`/wholesale-quote?productId=${product.id}&qty=${b2bQty}&color=${selectedColor}&size=${selectedSize}`)}
                                             style={{
-                                                width: '40px', height: '40px', borderRadius: '50%', border: '1px solid #ddd',
-                                                background: '#fff', cursor: quantityInCart >= product.countInStock ? 'not-allowed' : 'pointer',
-                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                opacity: quantityInCart >= product.countInStock ? 0.5 : 1
+                                                background: '#ef4444',
+                                                color: '#fff',
+                                                border: 'none',
+                                                borderRadius: '6px',
+                                                padding: '8px 16px',
+                                                fontSize: '0.85rem',
+                                                fontWeight: '700',
+                                                cursor: 'pointer',
+                                                transition: 'background 0.2s'
                                             }}
+                                            onMouseOver={(e) => e.target.style.background = '#dc2626'}
+                                            onMouseOut={(e) => e.target.style.background = '#ef4444'}
                                         >
-                                            <FaPlus size={12} />
+                                            Wholesale Quote Request
                                         </button>
                                     </div>
-                                ) : (
+                                )}
+
+                                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                                     <button
-                                        className="add-cart-btn"
-                                        onClick={() => addToCart({ ...product, selectedColor, selectedSize })}
-                                        disabled={product.countInStock === 0}
+                                        type="button"
+                                        onClick={handleB2bAddToCart}
                                         style={{
-                                            opacity: product.countInStock === 0 ? 0.5 : 1,
-                                            cursor: product.countInStock === 0 ? 'not-allowed' : 'pointer'
+                                            flex: 2,
+                                            padding: '14px 20px',
+                                            background: '#0f172a',
+                                            color: '#fff',
+                                            border: 'none',
+                                            borderRadius: '8px',
+                                            fontWeight: '700',
+                                            cursor: 'pointer',
+                                            fontSize: '1rem',
+                                            transition: 'background 0.2s'
+                                        }}
+                                        onMouseOver={(e) => e.target.style.background = '#1e293b'}
+                                        onMouseOut={(e) => e.target.style.background = '#0f172a'}
+                                    >
+                                        {quantityInCart > 0 ? 'Update Cart Quantity' : 'Add Bulk to Cart'}
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={handleB2bBuyNow}
+                                        style={{
+                                            flex: 2,
+                                            padding: '14px 20px',
+                                            background: '#000000',
+                                            color: '#ffffff',
+                                            border: 'none',
+                                            borderRadius: '8px',
+                                            fontWeight: '700',
+                                            cursor: 'pointer',
+                                            fontSize: '1rem',
+                                            transition: 'background 0.2s'
+                                        }}
+                                        onMouseOver={(e) => e.target.style.background = '#1e293b'}
+                                        onMouseOut={(e) => e.target.style.background = '#000000'}
+                                    >
+                                        Buy Now
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsQuoteOpen(true)}
+                                        style={{
+                                            flex: 1,
+                                            padding: '14px 20px',
+                                            background: '#fff',
+                                            border: '2px solid #0f172a',
+                                            color: '#0f172a',
+                                            borderRadius: '8px',
+                                            fontWeight: '700',
+                                            cursor: 'pointer',
+                                            fontSize: '1rem',
+                                            transition: 'all 0.2s'
+                                        }}
+                                        onMouseOver={(e) => { e.target.style.background = '#0f172a'; e.target.style.color = '#fff'; }}
+                                        onMouseOut={(e) => { e.target.style.background = '#fff'; e.target.style.color = '#0f172a'; }}
+                                    >
+                                        Request Quote
+                                    </button>
+
+                                    <button
+                                        className="pdp-wishlist-btn"
+                                        style={{ color: wishlist.includes(product.id) ? 'red' : 'inherit', height: '48px', width: '48px', minWidth: '48px', margin: 0 }}
+                                        onClick={async () => {
+                                            toggleWishlist(product.id);
+                                            const res = await authService.addToWishlist(product);
+                                            if (!res.success) {
+                                                alert("Failed to save to wishlist: " + (res.message || "Unknown error"));
+                                            }
                                         }}
                                     >
-                                        {product.countInStock === 0 ? 'Out of Stock' : 'Add to Cart'}
+                                        <FaHeart />
                                     </button>
-                                );
-                            })()}
-
-                            <button
-                                className="buy-now-btn"
-                                onClick={() => {
-                                    // If not in cart, add it first
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="pdp-actions">
+                                {(() => {
                                     const cartItem = cart.find(item =>
                                         item.id === product.id &&
                                         item.selectedColor === selectedColor &&
                                         item.selectedSize === selectedSize
                                     );
-                                    if (!cartItem) {
-                                        addToCart({ ...product, selectedColor, selectedSize });
-                                    }
-                                    navigate('/checkout/address');
-                                }}
-                                disabled={product.countInStock === 0}
-                            >
-                                Buy Now
-                            </button>
-                            <button
-                                className="pdp-wishlist-btn"
-                                style={{ color: wishlist.includes(product.id) ? 'red' : 'inherit' }}
-                                onClick={async () => {
-                                    toggleWishlist(product.id);
-                                    // Also sync with backend
-                                    const res = await authService.addToWishlist(product);
-                                    if (!res.success) {
-                                        alert("Failed to save to wishlist: " + (res.message || "Unknown error"));
-                                    }
-                                }}
-                            >
-                                <FaHeart />
-                            </button>
-                        </div>
+
+                                    const quantityInCart = cartItem ? cartItem.quantity : 0;
+
+                                    return quantityInCart > 0 ? (
+                                        <div className="pdp-quantity-stepper" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <button
+                                                onClick={() => updateQuantity(product.id, selectedColor, selectedSize, -1)}
+                                                style={{
+                                                    width: '40px', height: '40px', borderRadius: '50%', border: '1px solid #ddd',
+                                                    background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                                }}
+                                            >
+                                                <FaMinus size={12} />
+                                            </button>
+                                            <span style={{ fontSize: '16px', fontWeight: '600', minWidth: '20px', textAlign: 'center' }}>
+                                                {quantityInCart}
+                                            </span>
+                                            <button
+                                                onClick={() => updateQuantity(product.id, selectedColor, selectedSize, 1)}
+                                                disabled={!isBusiness && quantityInCart >= product.countInStock}
+                                                style={{
+                                                    width: '40px', height: '40px', borderRadius: '50%', border: '1px solid #ddd',
+                                                    background: '#fff', cursor: (!isBusiness && quantityInCart >= product.countInStock) ? 'not-allowed' : 'pointer',
+                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                    opacity: (!isBusiness && quantityInCart >= product.countInStock) ? 0.5 : 1
+                                                }}
+                                            >
+                                                <FaPlus size={12} />
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <button
+                                            className="add-cart-btn"
+                                            onClick={() => addToCart({ ...product, selectedColor, selectedSize })}
+                                            disabled={!isBusiness && product.countInStock === 0}
+                                            style={{
+                                                opacity: (!isBusiness && product.countInStock === 0) ? 0.5 : 1,
+                                                cursor: (!isBusiness && product.countInStock === 0) ? 'not-allowed' : 'pointer'
+                                            }}
+                                        >
+                                            {(!isBusiness && product.countInStock === 0) ? 'Out of Stock' : 'Add to Cart'}
+                                        </button>
+                                    );
+                                })()}
+
+                                <button
+                                    className="buy-now-btn"
+                                    onClick={() => {
+                                        // If not in cart, add it first
+                                        const cartItem = cart.find(item =>
+                                            item.id === product.id &&
+                                            item.selectedColor === selectedColor &&
+                                            item.selectedSize === selectedSize
+                                        );
+                                        if (!cartItem) {
+                                            addToCart({ ...product, selectedColor, selectedSize });
+                                        }
+                                        navigate('/checkout/address');
+                                    }}
+                                    disabled={!isBusiness && product.countInStock === 0}
+                                >
+                                    Buy Now
+                                </button>
+                                <button
+                                    className="pdp-wishlist-btn"
+                                    style={{ color: wishlist.includes(product.id) ? 'red' : 'inherit' }}
+                                    onClick={async () => {
+                                        toggleWishlist(product.id);
+                                        // Also sync with backend
+                                        const res = await authService.addToWishlist(product);
+                                        if (!res.success) {
+                                            alert("Failed to save to wishlist: " + (res.message || "Unknown error"));
+                                        }
+                                    }}
+                                >
+                                    <FaHeart />
+                                </button>
+                            </div>
+                        )}
 
                         <div className="pdp-trust">
                             <div className="trust-item"><FaTruck /> Free Shipping</div>
@@ -499,6 +848,112 @@ const ProductDetail = () => {
                 </div>
             </div>
 
+            {isQuoteOpen && (
+                <div className="quote-modal-backdrop" style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    background: 'rgba(0, 0, 0, 0.6)',
+                    backdropFilter: 'blur(4px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1000,
+                    padding: '20px'
+                }}>
+                    <div className="quote-modal-content" style={{
+                        background: '#fff',
+                        borderRadius: '16px',
+                        padding: '30px',
+                        maxWidth: '500px',
+                        width: '100%',
+                        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                        position: 'relative'
+                    }}>
+                        <h3 style={{ fontSize: '1.4rem', fontWeight: '700', color: '#0f172a', marginBottom: '15px' }}>
+                            📋 Request Wholesale Quote
+                        </h3>
+                        <p style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '20px' }}>
+                            Submit a bulk quote request for <strong>{product?.name}</strong>. Our team will review and respond with a custom pricing offer.
+                        </p>
+
+                        <form onSubmit={handleQuoteSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                                <label style={{ fontSize: '0.8rem', fontWeight: '600', color: '#475569' }}>Quantity Required *</label>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    required
+                                    value={quoteQty}
+                                    onChange={(e) => setQuoteQty(Math.max(1, parseInt(e.target.value) || 1))}
+                                    style={{ padding: '10px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '100%' }}
+                                />
+                            </div>
+
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                                <label style={{ fontSize: '0.8rem', fontWeight: '600', color: '#475569' }}>Target Price per Unit (₹, Optional)</label>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    placeholder="Enter your target price"
+                                    value={targetPrice}
+                                    onChange={(e) => setTargetPrice(e.target.value)}
+                                    style={{ padding: '10px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '100%' }}
+                                />
+                            </div>
+
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                                <label style={{ fontSize: '0.8rem', fontWeight: '600', color: '#475569' }}>Special Notes / Custom Requirements</label>
+                                <textarea
+                                    rows="4"
+                                    placeholder="Tell us about color/size distributions, branding, custom packaging, or shipping preferences..."
+                                    value={quoteNotes}
+                                    onChange={(e) => setQuoteNotes(e.target.value)}
+                                    style={{ padding: '10px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '95%', fontFamily: 'inherit', resize: 'vertical' }}
+                                />
+                            </div>
+
+                            <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                                <button
+                                    type="button"
+                                    onClick={() => setIsQuoteOpen(false)}
+                                    style={{
+                                        flex: 1,
+                                        padding: '12px',
+                                        background: '#f1f5f9',
+                                        color: '#334155',
+                                        border: 'none',
+                                        borderRadius: '8px',
+                                        fontWeight: '600',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={quoteSubmitting}
+                                    style={{
+                                        flex: 1,
+                                        padding: '12px',
+                                        background: '#0f172a',
+                                        color: '#fff',
+                                        border: 'none',
+                                        borderRadius: '8px',
+                                        fontWeight: '700',
+                                        cursor: quoteSubmitting ? 'not-allowed' : 'pointer',
+                                        opacity: quoteSubmitting ? 0.7 : 1
+                                    }}
+                                >
+                                    {quoteSubmitting ? 'Submitting...' : 'Submit Request'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
             <Newsletter />
             <Footer />
         </div>

@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '../../../../context/AdminAuthContext';
-import { useAuth } from '../../../../context/AuthContext';
 import './AdminAuth.css';
 
 const AdminLogin = () => {
@@ -13,7 +12,6 @@ const AdminLogin = () => {
 
     const navigate = useNavigate();
     const { login } = useAdminAuth();
-    const { logout: userLogout } = useAuth(); // Get user logout function
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -21,9 +19,6 @@ const AdminLogin = () => {
         setLoading(true);
 
         try {
-            // Ensure no user session exists when logging in as admin
-            await userLogout();
-
             // Re-using the main login for now, but in a real app this would be a specific admin endpoint
             // allowing us to check roles before even issuing a token
             const result = await login(email, password);

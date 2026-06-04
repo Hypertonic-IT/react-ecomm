@@ -70,11 +70,11 @@ function Home() {
 
   const isMen = (p) => {
     const toks = extractCategoryTokens(p);
-    return toks.some(t => ['men', 'man', 'male'].includes(t) || t.includes('men') || t.includes('male'));
+    return toks.some(t => ['men', 'man', 'male', 'mens'].includes(t) || (t.includes('men') && !t.includes('women')) || (t.includes('male') && !t.includes('female')));
   };
   const isWomen = (p) => {
     const toks = extractCategoryTokens(p);
-    return toks.some(t => ['women', 'woman', 'female'].includes(t) || t.includes('women') || t.includes('female'));
+    return toks.some(t => ['women', 'woman', 'female', 'womens'].includes(t) || t.includes('women') || t.includes('female'));
   };
 
   // Build men first, then women excluding already-picked products to avoid duplicates

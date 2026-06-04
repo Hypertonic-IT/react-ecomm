@@ -76,9 +76,28 @@ const Header = () => {
                 </div>
 
                 {/* LOGO */}
-                <Link to="/" className="logo" onClick={() => setMobileMenuOpen(false)}>
-                    KAYAROOP
-                </Link>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                    <Link to="/" className="logo" onClick={() => setMobileMenuOpen(false)} style={{ marginBottom: 0 }}>
+                        KAYAROOP
+                    </Link>
+                    {isAuthenticated && user?.accountType === 'business' && (
+                        <span className="logo-business-badge" style={{
+                            fontSize: '9px',
+                            fontWeight: 'bold',
+                            color: '#ffffff',
+                            background: '#000000',
+                            border: '1px solid #000000',
+                            padding: '1px 6px',
+                            borderRadius: '3px',
+                            textTransform: 'uppercase',
+                            marginTop: '-4px',
+                            letterSpacing: '1px',
+                            lineHeight: '1.2'
+                        }}>
+                            Business
+                        </span>
+                    )}
+                </div>
 
                 {/* DESKTOP MENU */}
                 <nav className="desktop-menu">
@@ -95,6 +114,9 @@ const Header = () => {
                     ))}
                     <Link to="/about" className="menu-item">About</Link>
                     <Link to="/contact" className="menu-item">Contact</Link>
+                    {(!isAuthenticated || user?.accountType !== 'business') && (
+                        <Link to="/business/apply" className="menu-item" style={{ color: '#000000', fontWeight: 'bold', textDecoration: 'underline' }}>For Business</Link>
+                    )}
                 </nav>
 
                 {/* ICONS */}
@@ -133,8 +155,8 @@ const Header = () => {
                         <Link to="/cart" className="header-icon"><FiShoppingBag /></Link>
                         {cartCount > 0 && <span className="badge">{cartCount}</span>}
                     </div>
-                    <div className="icon-wrap user-menu-wrapper">
-                        <div onClick={handleProfileClick} className="header-icon user-icon" style={{ cursor: 'pointer', color: 'black' }}>
+                    <div className="icon-wrap user-menu-wrapper" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <div onClick={handleProfileClick} className="header-icon user-icon" style={{ cursor: 'pointer', color: 'black', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             <FiUser />
                         </div>
 
@@ -142,8 +164,33 @@ const Header = () => {
                         {isAuthenticated && userMenuOpen && (
                             <div className="user-dropdown">
                                 <div className="user-dropdown-header">
-                                    <div className="user-dropdown-name">{user?.name}</div>
-                                    <div className="user-dropdown-email">{user?.email}</div>
+                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <div className="user-dropdown-name">{user?.name}</div>
+                                            {user?.accountType === 'business' && (
+                                                <span className="business-badge" style={{
+                                                    background: '#000000',
+                                                    color: '#ffffff',
+                                                    fontSize: '9px',
+                                                    fontWeight: 'bold',
+                                                    padding: '2px 8px',
+                                                    borderRadius: '10px',
+                                                    border: '1px solid #000000',
+                                                    marginLeft: '8px',
+                                                    display: 'inline-block',
+                                                    letterSpacing: '0.5px'
+                                                }}>
+                                                    Business
+                                                </span>
+                                            )}
+                                        </div>
+                                        {user?.accountType === 'business' && (
+                                            <div style={{ fontSize: '11px', color: '#64748b', fontWeight: '600', marginTop: '2px' }}>
+                                                Business
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="user-dropdown-email" style={{ marginTop: '4px' }}>{user?.email}</div>
                                 </div>
                                 <div className="user-dropdown-divider"></div>
                                 <Link to="/profile" className="user-dropdown-item" onClick={() => setUserMenuOpen(false)}>
@@ -191,12 +238,41 @@ const Header = () => {
                         <Link to="/contact" className="mobile-link" onClick={toggleMobileMenu}>
                             Contact Us
                         </Link>
+                        {(!isAuthenticated || user?.accountType !== 'business') && (
+                            <Link to="/business/apply" className="mobile-link" onClick={toggleMobileMenu} style={{ color: '#000000', fontWeight: '600', textDecoration: 'underline' }}>
+                                For Business
+                            </Link>
+                        )}
                         <div style={{ marginTop: '40px', borderTop: '1px solid #eee', paddingTop: '20px' }}>
                             {isAuthenticated ? (
                                 <>
                                     <div style={{ padding: '0 20px', marginBottom: '16px' }}>
-                                        <div style={{ fontSize: '16px', fontWeight: '600', color: 'var(--primary)' }}>{user?.name}</div>
-                                        <div style={{ fontSize: '13px', color: 'var(--text-light)', marginTop: '4px' }}>{user?.email}</div>
+                                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                <div style={{ fontSize: '16px', fontWeight: '600', color: 'var(--primary)' }}>{user?.name}</div>
+                                                {user?.accountType === 'business' && (
+                                                    <span className="business-badge" style={{
+                                                        background: '#000000',
+                                                        color: '#ffffff',
+                                                        fontSize: '9px',
+                                                        fontWeight: 'bold',
+                                                        padding: '2px 8px',
+                                                        borderRadius: '10px',
+                                                        border: '1px solid #000000',
+                                                        marginLeft: '8px',
+                                                        display: 'inline-block',
+                                                        letterSpacing: '0.5px'
+                                                    }}>
+                                                        Business
+                                                    </span>
+                                                )}
+                                            </div>
+                                            {user?.accountType === 'business' && (
+                                                <div style={{ fontSize: '12px', color: '#64748b', fontWeight: '600', marginTop: '2px' }}>
+                                                    Business
+                                                </div>
+                                            )}
+                                        </div><div style={{ fontSize: '13px', color: 'var(--text-light)', marginTop: '4px' }}>{user?.email}</div>
                                     </div>
                                     <Link to="/profile" className="mobile-link" onClick={toggleMobileMenu} style={{ fontSize: '16px' }}>
                                         My Account

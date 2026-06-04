@@ -44,7 +44,7 @@ const ProductReports = () => {
 
             <ReportFilter showProductFilters={true} />
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px', marginBottom: '32px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', marginBottom: '32px' }}>
 
                 {/* Best Selling Products */}
                 <div className="chart-container" style={{ margin: 0 }}>

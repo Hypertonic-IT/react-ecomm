@@ -231,45 +231,16 @@ const OrderList = () => {
 
                                                 <div style={{ width: '160px' }}>
                                                     <AdminSelect
-                                                        options={(() => {
-                                                            const s = order.status || 'Pending';
-                                                            if (s === 'Pending') return [
-                                                                { value: 'Processing', label: 'Accept Order' },
-                                                                { value: 'On Hold', label: 'Put On Hold' },
-                                                                { value: 'Cancelled', label: 'Cancel Order' }
-                                                            ];
-                                                            if (s === 'Processing') return [
-                                                                { value: 'Packed', label: 'Mark as Packed' },
-                                                                { value: 'On Hold', label: 'Put On Hold' },
-                                                                { value: 'Cancelled', label: 'Cancel Order' }
-                                                            ];
-                                                            if (s === 'Packed') return [
-                                                                { value: 'Shipped', label: 'Ship Order' },
-                                                                { value: 'On Hold', label: 'Put On Hold' }
-                                                            ];
-                                                            if (s === 'Shipped') return [
-                                                                { value: 'Out for Delivery', label: 'Mark Out for Delivery' },
-                                                                { value: 'Delivered', label: 'Mark Delivered' }
-                                                            ];
-                                                            if (s === 'Out for Delivery') return [
-                                                                { value: 'Delivered', label: 'Mark Delivered' },
-                                                                { value: 'On Hold', label: 'Delivery Attempt Failed' }
-                                                            ];
-                                                            if (s === 'Delivered') return [
-                                                                { value: 'Return Requested', label: 'Initiate Return' },
-                                                                { value: 'Refunded', label: 'Process Refund' }
-                                                            ];
-                                                            if (s === 'On Hold') return [
-                                                                { value: 'Processing', label: 'Resume Processing' },
-                                                                { value: 'Cancelled', label: 'Cancel Order' }
-                                                            ];
-                                                            if (s === 'Return Requested') return [
-                                                                { value: 'Refunded', label: 'Approve & Refund' },
-                                                                { value: 'Delivered', label: 'Reject Return' }
-                                                            ];
-                                                            return [];
-                                                        })()}
-                                                        value=""
+                                                        options={[
+                                                            { value: 'Pending', label: 'Pending' },
+                                                            { value: 'Processing', label: 'Processing' },
+                                                            { value: 'Packed', label: 'Packed' },
+                                                            { value: 'Shipped', label: 'Shipped' },
+                                                            { value: 'Out for Delivery', label: 'Out for Delivery' },
+                                                            { value: 'Delivered', label: 'Delivered' },
+                                                            { value: 'Cancelled', label: 'Cancelled' }
+                                                        ]}
+                                                        value={order.status || 'Pending'}
                                                         onChange={(val) => handleStatusChange(order._id, val)}
                                                         placeholder="Status..."
                                                         styles={{

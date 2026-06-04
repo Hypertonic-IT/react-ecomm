@@ -170,7 +170,7 @@ const FilterSidebar = ({ filters, setFilters, categories }) => {
             </div>
 
             <button 
-                onClick={() => setFilters({ genders: [], categories: [], priceRange: { min: 500, max: 1500 }, sortBy: 'newest', search: '' })}
+                onClick={() => setFilters({ genders: [], categories: [], priceRange: { min: 0, max: 10000 }, sortBy: 'newest', search: '' })}
                 style={{
                     width: '100%',
                     padding: '10px',

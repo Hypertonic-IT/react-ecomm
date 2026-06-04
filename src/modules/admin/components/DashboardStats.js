@@ -45,7 +45,7 @@ const DashboardStats = ({ stats }) => {
     };
 
     return (
-        <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px', marginBottom: '30px' }}>
+        <div className="admin-grid-4" style={{ marginBottom: '30px' }}>
             <StatCard
                 title="Total Revenue"
                 value={`₹${data.totalRevenue?.toFixed(2) || '0.00'}`}

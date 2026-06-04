@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../../context/AuthContext';
 import AuthLayout from '../../components/Auth/AuthLayout';
 import AuthInput from '../../components/Auth/AuthInput';
@@ -11,6 +11,7 @@ import './Auth.css';
 
 const Signup = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { signup, sendOTP, verifyOTP, loginWithGoogle, loginWithApple, isAuthenticated } = useAuth();
 
     const [step, setStep] = useState(1); // 1: Account Info, 2: Verification, 3: Done
@@ -32,9 +33,10 @@ const Signup = () => {
     // Redirect if already logged in
     useEffect(() => {
         if (isAuthenticated) {
-            navigate('/');
+            const redirectTo = new URLSearchParams(location.search).get('redirect') || '/';
+            navigate(redirectTo);
         }
-    }, [isAuthenticated, navigate]);
+    }, [isAuthenticated, navigate, location]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -107,7 +109,8 @@ const Signup = () => {
 
             // Redirect after success
             setTimeout(() => {
-                navigate('/');
+                const redirectTo = new URLSearchParams(location.search).get('redirect') || '/';
+                navigate(redirectTo);
             }, 1500);
         } catch (error) {
             setErrors({ submit: error.message });
@@ -137,7 +140,8 @@ const Signup = () => {
 
             setSuccess(true);
             setTimeout(() => {
-                navigate('/');
+                const redirectTo = new URLSearchParams(location.search).get('redirect') || '/';
+                navigate(redirectTo);
             }, 1000);
         } catch (error) {
             setErrors({ submit: error.message });
@@ -235,7 +239,7 @@ const Signup = () => {
 
                     <div className="auth-switch">
                         <span>Already have an account?</span>
-                        <Link to="/login" className="auth-switch-link">
+                        <Link to={new URLSearchParams(location.search).get('redirect') ? `/login?redirect=${encodeURIComponent(new URLSearchParams(location.search).get('redirect'))}` : '/login'} className="auth-switch-link">
                             Login
                         </Link>
                     </div>

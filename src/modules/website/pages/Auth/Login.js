@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../../context/AuthContext';
-import { useAdminAuth } from '../../../../context/AdminAuthContext';
 import AuthLayout from '../../components/Auth/AuthLayout';
 import AuthInput from '../../components/Auth/AuthInput';
 import AuthButton from '../../components/Auth/AuthButton';
@@ -13,7 +12,6 @@ const Login = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { login, loginWithGoogle, loginWithApple, isAuthenticated } = useAuth();
-    const { logout: adminLogout } = useAdminAuth(); // Get admin logout function
 
     const [formData, setFormData] = useState({
         emailOrMobile: '',
@@ -83,9 +81,6 @@ const Login = () => {
         setLoading(true);
 
         try {
-            // Ensure no admin session exists when logging in as user
-            await adminLogout();
-
             await login(formData.emailOrMobile, formData.password, formData.rememberMe);
             setSuccess(true);
 
@@ -104,9 +99,6 @@ const Login = () => {
         setSocialLoading(provider);
 
         try {
-            // Ensure no admin session exists when logging in as user
-            await adminLogout();
-
             if (provider === 'google') {
                 // 'data' is the tokenResponse from Google
                 await loginWithGoogle(data);
@@ -194,8 +186,14 @@ const Login = () => {
 
                 <div className="auth-switch">
                     <span>New here?</span>
-                    <Link to="/signup" className="auth-switch-link">
+                    <Link to={new URLSearchParams(location.search).get('redirect') ? `/signup?redirect=${encodeURIComponent(new URLSearchParams(location.search).get('redirect'))}` : '/signup'} className="auth-switch-link">
                         Create an account
+                    </Link>
+                </div>
+
+                <div className="auth-switch" style={{ marginTop: '15px', borderTop: '1px solid #f1f5f9', paddingTop: '15px' }}>
+                    <Link to="/business/register" className="auth-switch-link business-register-link" style={{ color: '#d97706', fontWeight: 'bold', display: 'block', textAlign: 'center' }}>
+                        Register as a Business Account
                     </Link>
                 </div>
             </form>

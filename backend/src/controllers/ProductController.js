@@ -19,6 +19,23 @@ const getProducts = async (req, res) => {
         }
 
         const products = await Product.find({ ...keyword });
+
+        // Dynamic price mapping for B2B users
+        if (req.user && req.user.accountType === 'business') {
+            const mappedProducts = products.map(product => {
+                const p = product.toObject();
+                p.retailPrice = p.price;
+                p.retailSalePrice = p.salePrice || p.price;
+                if (p.businessPrice && p.businessPrice > 0) {
+                    p.price = p.businessPrice;
+                    p.salePrice = p.businessPrice;
+                    p.discount = 0;
+                }
+                return p;
+            });
+            return res.json(mappedProducts);
+        }
+
         res.json(products);
     } catch (error) {
         console.error("Error fetching products:", error);
@@ -33,6 +50,17 @@ const getProductById = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
         if (product) {
+            if (req.user && req.user.accountType === 'business') {
+                const p = product.toObject();
+                p.retailPrice = p.price;
+                p.retailSalePrice = p.salePrice || p.price;
+                if (p.businessPrice && p.businessPrice > 0) {
+                    p.price = p.businessPrice;
+                    p.salePrice = p.businessPrice;
+                    p.discount = 0;
+                }
+                return res.json(p);
+            }
             res.json(product);
         } else {
             res.status(404).json({ message: 'Product not found' });
@@ -70,9 +98,10 @@ const createProduct = async (req, res) => {
             sizes, colors, isNewArrival, isTrending, isSale, isBestSeller, isExclusive, isActive,
             images, shortDescription, specifications, shippingInfo,
             categories, // New field
-            discount, salePrice // Discount fields
+            discount, salePrice, // Discount fields
+            businessPrice // Business price field
         } = req.body;
-
+ 
         const product = new Product({
             name,
             price,
@@ -98,7 +127,8 @@ const createProduct = async (req, res) => {
             specifications: specifications || [],
             shippingInfo: shippingInfo || '',
             discount: discount || 0,
-            salePrice: salePrice || 0
+            salePrice: salePrice || 0,
+            businessPrice: businessPrice || 0
         });
 
         const createdProduct = await product.save();
@@ -118,7 +148,8 @@ const updateProduct = async (req, res) => {
         sizes, colors, isNewArrival, isTrending, isSale, isBestSeller, isExclusive, isActive,
         images, shortDescription, specifications, shippingInfo,
         categories, // New field
-        discount, salePrice // Discount fields
+        discount, salePrice, // Discount fields
+        businessPrice // Business price field
     } = req.body;
 
     try {
@@ -163,6 +194,7 @@ const updateProduct = async (req, res) => {
             // Update discount fields
             if (discount !== undefined) product.discount = discount;
             if (salePrice !== undefined) product.salePrice = salePrice;
+            if (businessPrice !== undefined) product.businessPrice = businessPrice;
 
             const updatedProduct = await product.save();
             res.json(updatedProduct);

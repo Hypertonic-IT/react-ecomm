@@ -23,7 +23,7 @@ const Products = () => {
     const [filters, setFilters] = useState({
         genders: [],
         categories: [],
-        priceRange: { min: 500, max: 1500 }, // Default range updated to 500-1500 as requested
+        priceRange: { min: 0, max: 10000 }, // Expanded range to show all products by default
         sortBy: 'newest',
         search: ''
     });
@@ -63,8 +63,8 @@ const Products = () => {
         setCurrentPage(1);
     }, [filters]);
 
-    // Use publicProducts (20 limited) for public listing; fall back to full products when publicProducts is empty
-    const sourceProducts = (publicProducts && publicProducts.length > 0) ? publicProducts : products;
+    // Use full active products list from the database
+    const sourceProducts = products;
 
     // Filtering Logic
     const filteredProducts = sourceProducts.filter(product => {
@@ -277,7 +277,7 @@ const Products = () => {
                         <div className="no-results">
                             <h3>No products found matching your filters.</h3>
                             <button
-                                onClick={() => setFilters({ genders: [], categories: [], priceRange: { min: 500, max: 1500 }, sortBy: 'newest', search: '' })}
+                                onClick={() => setFilters({ genders: [], categories: [], priceRange: { min: 0, max: 10000 }, sortBy: 'newest', search: '' })}
                                 style={{
                                     marginTop: '20px',
                                     padding: '12px 24px',

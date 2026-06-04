@@ -5,6 +5,9 @@ import Products from "./modules/website/pages/Products/Products";
 import ProductDetail from "./modules/website/pages/ProductDetail/ProductDetail";
 import Cart from "./modules/website/pages/Cart/Cart";
 import Wishlist from "./modules/website/pages/Wishlist/Wishlist";
+import BusinessApply from "./modules/website/pages/Business/BusinessApply";
+import BusinessRegister from "./modules/website/pages/Business/BusinessRegister";
+import WholesaleQuote from "./modules/website/pages/WholesaleQuote/WholesaleQuote";
 import Login from "./modules/website/pages/Auth/Login";
 import Signup from "./modules/website/pages/Auth/Signup";
 import ForgotPassword from "./modules/website/pages/Auth/ForgotPassword";
@@ -13,6 +16,7 @@ import AddressPage from "./modules/website/pages/Checkout/AddressPage";
 import PaymentPage from "./modules/website/pages/Checkout/PaymentPage";
 import OrderSuccessPage from "./modules/website/pages/Checkout/OrderSuccessPage";
 import OrdersPage from "./modules/website/pages/Orders/OrdersPage";
+import OrderDetailPage from "./modules/website/pages/Orders/OrderDetailPage";
 import ProfilePage from "./modules/website/pages/Profile/ProfilePage";
 import AboutUs from "./modules/website/pages/About/AboutUs";
 import ContactUs from "./modules/website/pages/Contact/ContactUs";
@@ -42,12 +46,15 @@ import AdminPlaceholder from "./modules/admin/components/AdminPlaceholder";
 import CategoryList from "./modules/admin/pages/Categories/CategoryList";
 import CategoryAddEdit from "./modules/admin/pages/Categories/CategoryAddEdit";
 import OrderList from "./modules/admin/pages/Orders/OrderList";
+import B2BOrderList from "./modules/admin/pages/Orders/B2BOrderList";
 import OrderDetails from "./modules/admin/pages/Orders/OrderDetails";
 import UserList from "./modules/admin/pages/Users/UserList";
 import InventoryManagement from "./modules/admin/pages/Inventory/InventoryManagement";
 import CouponList from "./modules/admin/pages/Coupons/CouponList";
 import CouponAddEdit from "./modules/admin/pages/Coupons/CouponAddEdit";
 import ReviewList from "./modules/admin/pages/Reviews/ReviewList";
+import BusinessApplicationsList from "./modules/admin/pages/BusinessApplications/BusinessApplicationsList";
+import WholesaleQuotesList from "./modules/admin/pages/WholesaleQuotes/WholesaleQuotesList";
 import ReportsDashboard from "./modules/admin/pages/Reports/ReportsDashboard";
 import SalesReports from "./modules/admin/pages/Reports/SalesReports";
 import OrderReports from "./modules/admin/pages/Reports/OrderReports";
@@ -57,6 +64,8 @@ import StaffList from "./modules/admin/pages/Users/StaffList";
 import Settings from "./modules/admin/pages/Settings/Settings";
 import AdminBlogList from "./modules/admin/pages/Blogs/BlogList";
 import AdminBlogAddEdit from "./modules/admin/pages/Blogs/BlogAddEdit";
+import ContactSubmissions from "./modules/admin/pages/ContactSubmissions/ContactSubmissions";
+import TrackQuote from "./modules/website/pages/WholesaleQuote/TrackQuote";
 
 
 function App() {
@@ -106,6 +115,10 @@ function App() {
                 <Route path="/products" element={<Products />} />
                 <Route path="/product/:id" element={<ProductDetail />} />
                 <Route path="/cart" element={<Cart />} />
+                <Route path="/business/apply" element={<BusinessApply />} />
+                <Route path="/business/register" element={<BusinessRegister />} />
+                <Route path="/wholesale-quote" element={<WholesaleQuote />} />
+                <Route path="/track-quote" element={<TrackQuote />} />
                 <Route path="/wishlist" element={
                   <ProtectedRoute>
                     <Wishlist />
@@ -130,6 +143,11 @@ function App() {
                 <Route path="/orders" element={
                   <ProtectedRoute>
                     <OrdersPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/order/:id" element={
+                  <ProtectedRoute>
+                    <OrderDetailPage />
                   </ProtectedRoute>
                 } />
                 <Route path="/profile" element={
@@ -157,6 +175,7 @@ function App() {
                   <Route path="products/edit/:id" element={<ProductAddEdit />} />
 
                   <Route path="orders" element={<OrderList />} />
+                  <Route path="b2b-orders" element={<B2BOrderList />} />
                   <Route path="orders/:id" element={<OrderDetails />} />
                   <Route path="categories" element={<CategoryList />} />
                   <Route path="categories/new" element={<CategoryAddEdit />} />
@@ -172,6 +191,8 @@ function App() {
                   <Route path="coupons/new" element={<CouponAddEdit />} />
                   <Route path="coupons/edit/:id" element={<CouponAddEdit />} />
                   <Route path="reviews" element={<ReviewList />} />
+                  <Route path="business-applications" element={<BusinessApplicationsList />} />
+                  <Route path="wholesale-quotes" element={<WholesaleQuotesList />} />
                   <Route path="reports" element={<ReportsDashboard />} />
                   <Route path="reports/sales" element={<SalesReports />} />
                   <Route path="reports/orders" element={<OrderReports />} />
@@ -186,6 +207,7 @@ function App() {
                   <Route path="blogs/new" element={<AdminBlogAddEdit />} />
                   <Route path="blogs/edit/:id" element={<AdminBlogAddEdit />} />
 
+                  <Route path="contact-submissions" element={<ContactSubmissions />} />
                   <Route path="settings" element={<Settings />} />
                 </Route>
               </Routes>

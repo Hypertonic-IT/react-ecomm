@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaTimes, FaSearch, FaBoxOpen, FaTruck, FaCheckCircle, FaMapMarkerAlt } from 'react-icons/fa';
 import { useShop } from '../../../../context/ShopContext';
+import apiUrl from '../../../../config/api';
 import './TrackOrderDrawer.css';
 
 const TrackOrderDrawer = () => {
@@ -30,7 +31,6 @@ const TrackOrderDrawer = () => {
                         <>
                             <p className="track-desc">Enter your Order ID and Email to see the current status of your shipment.</p>
                             <form onSubmit={(e) => {
-                                // ... reuse logic
                                 e.preventDefault();
                                 setError('');
                                 setTrackingResult(null);
@@ -42,25 +42,27 @@ const TrackOrderDrawer = () => {
 
                                 setIsLoading(true);
 
-                                setTimeout(() => {
+                                fetch(apiUrl('/api/orders/track'), {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({ orderId, email })
+                                })
+                                .then(async (res) => {
+                                    const data = await res.json();
                                     setIsLoading(false);
-                                    if (orderId.toUpperCase() === 'ERR') {
-                                        setError('Order not found. Please check your details.');
+                                    if (res.ok && data.success) {
+                                        setTrackingResult(data.order);
                                     } else {
-                                        setTrackingResult({
-                                            status: 'Shipped',
-                                            estimatedDelivery: 'Oct 25, 2024',
-                                            currentLocation: 'Distribution Center, NY',
-                                            timeline: [
-                                                { status: 'Order Placed', date: 'Oct 20, 2024', active: true },
-                                                { status: 'Processing', date: 'Oct 21, 2024', active: true },
-                                                { status: 'Shipped', date: 'Oct 22, 2024', active: true },
-                                                { status: 'Out for Delivery', date: 'Pending', active: false },
-                                                { status: 'Delivered', date: 'Pending', active: false },
-                                            ]
-                                        });
+                                        setError(data.message || 'Failed to track order.');
                                     }
-                                }, 1500);
+                                })
+                                .catch((err) => {
+                                    console.error("Tracking Error:", err);
+                                    setIsLoading(false);
+                                    setError('Network error. Please try again.');
+                                });
                             }} className="track-form">
                                 <div className="form-group">
                                     <label>Order ID</label>

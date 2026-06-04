@@ -191,7 +191,7 @@ const Settings = () => {
                         <h3 style={{ fontSize: '1.2rem', color: 'var(--admin-text)', margin: 0 }}>Commerce Settings</h3>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
+                    <div className="admin-grid-3" style={{ gap: '20px' }}>
                         <div className="form-group">
                             <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Currency Symbol</label>
                             <input
@@ -235,7 +235,7 @@ const Settings = () => {
                         <h3 style={{ fontSize: '1.2rem', color: 'var(--admin-text)', margin: 0 }}>Social Media</h3>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                    <div className="admin-grid-2" style={{ gap: '20px' }}>
                         <div className="form-group">
                             <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Facebook URL</label>
                             <input
@@ -316,7 +316,7 @@ const Settings = () => {
                         />
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                    <div className="admin-grid-2" style={{ gap: '20px' }}>
                         <div className="form-group">
                             <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>New Password</label>
                             <input

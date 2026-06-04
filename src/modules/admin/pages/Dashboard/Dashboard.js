@@ -60,7 +60,7 @@ const Dashboard = () => {
             <DashboardStats stats={stats} />
 
             {/* 3. Main Content Grid (Chart + Side Panel) */}
-            <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px', marginBottom: '30px' }}>
+            <div className="admin-grid-2-1" style={{ marginBottom: '30px' }}>
 
                 {/* Left: Sales Chart / Primary Content */}
                 <div className="stat-card-premium" style={{ minHeight: '420px', display: 'flex', flexDirection: 'column' }}>
@@ -125,7 +125,7 @@ const Dashboard = () => {
             </div>
 
             {/* 5. Quick Actions - Cleaner Row */}
-            <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px' }}>
+            <div className="admin-grid-4">
                 <QuickActionCard icon={FaBox} label="Manage Orders" link="/admin/orders" color="#8b5cf6" />
                 <QuickActionCard icon={FaUserPlus} label="Add Customer" link="/admin/users" color="#10b981" />
                 <QuickActionCard icon={FaFileAlt} label="Reports" link="/admin/reports" color="#f59e0b" />

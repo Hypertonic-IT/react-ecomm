@@ -70,6 +70,22 @@ const ProfileSidebar = ({ activeTab, onTabChange }) => {
                     />
                 </div>
                 <h3 style={{ margin: '0 0 5px', fontSize: isMobile ? '16px' : '18px', fontWeight: 'bold' }}>{userName}</h3>
+                {user?.accountType === 'business' && (
+                    <div style={{
+                        display: 'inline-block',
+                        background: '#000000',
+                        color: '#ffffff',
+                        fontSize: '10px',
+                        fontWeight: 'bold',
+                        padding: '2px 8px',
+                        borderRadius: '4px',
+                        marginBottom: '8px',
+                        textTransform: 'uppercase',
+                        border: '1px solid #000000'
+                    }}>
+                        Business
+                    </div>
+                )}
                 <p style={{ margin: 0, color: '#666', fontSize: '12px' }}>{userEmail}</p>
             </div>
 

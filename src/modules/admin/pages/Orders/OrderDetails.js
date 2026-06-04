@@ -14,9 +14,11 @@ const OrderDetails = () => {
     useEffect(() => {
         const fetchOrder = async () => {
             try {
+                const token = localStorage.getItem('adminAuthToken');
                 const response = await fetch(`${API_BASE_URL}/orders/${id}`, {
                     headers: {
-                        'user-id': user?.email
+                        'Authorization': `Bearer ${token || ''}`,
+                        'user-id': user?.email || ''
                     }
                 });
                 if (response.ok) {
@@ -50,7 +52,7 @@ const OrderDetails = () => {
                 </button>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
+            <div className="admin-grid-2-1">
 
                 {/* Left Column */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -99,6 +101,12 @@ const OrderDetails = () => {
                                     <td colSpan="3" style={{ textAlign: 'right', color: 'var(--admin-text-secondary)' }}>Shipping:</td>
                                     <td style={{ textAlign: 'right', fontWeight: '600' }}>₹{order.shippingPrice?.toFixed(2)}</td>
                                 </tr>
+                                {order.discountPrice > 0 && (
+                                    <tr>
+                                        <td colSpan="3" style={{ textAlign: 'right', color: '#10b981' }}>Discount {order.couponCode ? `(${order.couponCode})` : ''}:</td>
+                                        <td style={{ textAlign: 'right', fontWeight: '600', color: '#10b981' }}>-₹{order.discountPrice?.toFixed(2)}</td>
+                                    </tr>
+                                )}
                                 <tr>
                                     <td colSpan="3" style={{ textAlign: 'right', color: 'var(--admin-text-secondary)' }}>Tax:</td>
                                     <td style={{ textAlign: 'right', fontWeight: '600' }}>₹{order.taxPrice?.toFixed(2)}</td>

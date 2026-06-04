@@ -1096,3 +1096,144 @@ body {
     opacity: 1;
     transition: 0s;
 }
+
+/* --- Overlay for Mobile Sidebar --- */
+.admin-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 95;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.admin-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* --- Responsive Table Container & Auto Scrolling --- */
+.table-container {
+    max-width: 100%;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+.admin-table {
+    width: 100%;
+    min-width: 900px; /* Prevent column squishing on mobile views */
+}
+
+/* --- Responsive Utility Grid System --- */
+.admin-grid-2-1 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+}
+
+.admin-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+
+.admin-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.admin-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+/* --- Media Queries for Layouts & Components --- */
+@media (max-width: 1024px) {
+    .admin-grid-2-1,
+    .admin-grid-4,
+    .admin-grid-3,
+    .admin-grid-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .table-toolbar {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        padding: 16px !important;
+        gap: 16px !important;
+    }
+    
+    .table-toolbar > .entries-wrapper {
+        justify-content: center;
+        width: 100%;
+        margin-bottom: 4px;
+    }
+
+    .table-toolbar > div:nth-child(2) {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        width: 100% !important;
+        gap: 12px !important;
+    }
+
+    .table-toolbar .search-container {
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    .table-toolbar .search-input-modern {
+        width: 100% !important;
+    }
+
+    .table-toolbar .admin-btn-outline,
+    .table-toolbar a,
+    .table-toolbar button {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+
+    .table-toolbar > div:nth-child(2) > div {
+        width: 100% !important;
+        max-width: none !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .admin-grid-2-1,
+    .admin-grid-4,
+    .admin-grid-3,
+    .admin-grid-2 {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .admin-pagination-container {
+        flex-direction: column !important;
+        gap: 16px !important;
+        align-items: center !important;
+        padding: 16px !important;
+        text-align: center;
+    }
+    
+    .pagination-controls {
+        flex-direction: column !important;
+        gap: 12px !important;
+        width: 100%;
+        align-items: center !important;
+    }
+    
+    .pagination-numbers {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}

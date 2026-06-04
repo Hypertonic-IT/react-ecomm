@@ -1,11 +1,17 @@
 const { sendOTPEmail } = require('../services/EmailService');
 const Otp = require('../models/Otp');
 const User = require('../models/User');
+const BusinessApplication = require('../models/BusinessApplication');
 const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'kayaroop_secret_key_123';
 const generateToken = (id) => {
     return jwt.sign({ id }, JWT_SECRET, { expiresIn: '30d' });
+};
+
+const getBusinessStatus = async (userId) => {
+    const app = await BusinessApplication.findOne({ user_id: userId });
+    return app ? app.status : null;
 };
 
 const sendOTP = async (req, res) => {
@@ -84,8 +90,18 @@ const verifyOTP = async (req, res) => {
                 user = await User.create({ emailOrMobile: email });
             }
 
+            // Check user status (Pending Approval or Rejected)
+            if (user.status === 'Pending Approval') {
+                return res.status(400).json({ success: false, message: 'Your business account is currently under review.' });
+            }
+            if (user.status === 'Rejected') {
+                return res.status(400).json({ success: false, message: 'Your business account application was not approved. Please contact support for further assistance.' });
+            }
+
             // DO NOT DELETE OTP HERE. It is needed for the resetPassword step.
             // await Otp.deleteOne({ _id: storedOtp._id });
+
+            const businessStatus = await getBusinessStatus(user._id);
 
             // Return user info (and token in real app)
             res.status(200).json({
@@ -96,7 +112,9 @@ const verifyOTP = async (req, res) => {
                     email: user.emailOrMobile,
                     name: user.name,
                     isAdmin: user.isAdmin,
-                    role: user.role
+                    role: user.role,
+                    accountType: user.accountType || 'personal',
+                    businessStatus
                 },
                 token: generateToken(user._id)
             });
@@ -132,12 +150,71 @@ const signup = async (req, res) => {
                 id: newUser._id,
                 name: newUser.name,
                 email: newUser.emailOrMobile,
-                mobile: newUser.mobile
+                mobile: newUser.mobile,
+                accountType: newUser.accountType || 'personal',
+                businessStatus: null
             },
             token: generateToken(newUser._id)
         });
     } catch (error) {
         console.error(error);
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+};
+
+const businessRegister = async (req, res) => {
+    const {
+        business_name,
+        contact_person,
+        email,
+        phone,
+        gst_number,
+        business_address,
+        business_type,
+        city,
+        state,
+        password
+    } = req.body;
+
+    if (!email || !password || !contact_person) {
+        return res.status(400).json({ success: false, message: 'Email, password, and contact person name are required.' });
+    }
+
+    try {
+        const existingUser = await User.findOne({ emailOrMobile: email.toLowerCase() });
+        if (existingUser) {
+            return res.status(400).json({ success: false, message: 'User already exists' });
+        }
+
+        const user = await User.create({
+            name: contact_person,
+            emailOrMobile: email.toLowerCase(),
+            mobile: phone,
+            password,
+            accountType: 'business',
+            status: 'Pending Approval'
+        });
+
+        await BusinessApplication.create({
+            user_id: user._id,
+            business_name,
+            contact_person,
+            email: email.toLowerCase(),
+            phone,
+            gst_number,
+            business_address,
+            business_type,
+            city,
+            state,
+            status: 'pending'
+        });
+
+        res.status(201).json({
+            success: true,
+            message: 'Your business account application has been submitted successfully and is awaiting admin approval.'
+        });
+    } catch (error) {
+        console.error('Error in business register:', error);
         res.status(500).json({ success: false, message: 'Server Error' });
     }
 };
@@ -157,6 +234,16 @@ const login = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Invalid credentials' });
         }
 
+        // Check user status (Pending Approval or Rejected)
+        if (user.status === 'Pending Approval') {
+            return res.status(400).json({ success: false, message: 'Your business account is currently under review.' });
+        }
+        if (user.status === 'Rejected') {
+            return res.status(400).json({ success: false, message: 'Your business account application was not approved. Please contact support for further assistance.' });
+        }
+
+        const businessStatus = await getBusinessStatus(user._id);
+
         res.status(200).json({
             success: true,
             user: {
@@ -165,7 +252,9 @@ const login = async (req, res) => {
                 email: user.emailOrMobile,
                 mobile: user.mobile,
                 isAdmin: user.isAdmin,
-                role: user.role
+                role: user.role,
+                accountType: user.accountType || 'personal',
+                businessStatus
             },
             token: generateToken(user._id)
         });
@@ -417,6 +506,16 @@ const googleLogin = async (req, res) => {
             });
         }
 
+        // Check user status (Pending Approval or Rejected)
+        if (user.status === 'Pending Approval') {
+            return res.status(400).json({ success: false, message: 'Your business account is currently under review.' });
+        }
+        if (user.status === 'Rejected') {
+            return res.status(400).json({ success: false, message: 'Your business account application was not approved. Please contact support for further assistance.' });
+        }
+
+        const businessStatus = await getBusinessStatus(user._id);
+
         res.status(200).json({
             success: true,
             user: {
@@ -425,7 +524,9 @@ const googleLogin = async (req, res) => {
                 email: user.emailOrMobile,
                 mobile: user.mobile,
                 isAdmin: user.isAdmin,
-                role: user.role
+                role: user.role,
+                accountType: user.accountType || 'personal',
+                businessStatus
             },
             token: generateToken(user._id)
         });
@@ -441,6 +542,7 @@ module.exports = {
     verifyOTP,
     signup,
     login,
+    businessRegister,
     googleLogin,
     updateProfile,
     changePassword,

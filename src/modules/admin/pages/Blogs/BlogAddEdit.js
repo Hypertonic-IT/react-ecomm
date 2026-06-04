@@ -152,7 +152,7 @@ const BlogAddEdit = () => {
                 </h1>
             </div>
 
-            <form onSubmit={handleSubmit} className="admin-form-grid" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
+            <form onSubmit={handleSubmit} className="admin-grid-2-1">
 
                 {/* Left Column: Main Content */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>

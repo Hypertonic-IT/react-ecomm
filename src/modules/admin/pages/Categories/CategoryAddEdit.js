@@ -143,7 +143,7 @@ const CategoryAddEdit = () => {
                 </h1>
             </div>
 
-            <form onSubmit={handleSubmit} className="admin-form-grid" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
+            <form onSubmit={handleSubmit} className="admin-grid-2-1">
 
                 {/* Left Column: Main Info */}
                 <div className="admin-card" style={{ background: 'var(--admin-card-bg)', padding: '24px', borderRadius: '16px', border: '1px solid var(--admin-border)' }}>

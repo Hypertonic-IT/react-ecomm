@@ -46,6 +46,9 @@ app.use('/api/reports', require('./routes/reportRoutes'));
 app.use('/api/upload', require('./routes/uploadRoutes'));
 app.use('/api/settings', require('./routes/siteConfigRoutes'));
 app.use('/api/blogs', require('./routes/blogRoutes'));
+app.use('/api/business', require('./routes/businessRoutes'));
+app.use('/api/quotes', require('./routes/quoteRoutes'));
+app.use('/api/contact', require('./routes/contactRoutes'));
 
 // Static Uploads (Serving images)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));

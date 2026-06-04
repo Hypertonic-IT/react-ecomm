@@ -1,0 +1,283 @@
+import React, { useState, useEffect } from 'react';
+import { FaEye, FaSearch } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
+import { useAdminAuth } from '../../../../context/AdminAuthContext';
+import AdminSelect from '../../components/AdminSelect';
+import AdminPagination from '../../components/AdminPagination';
+import '../../admin.css';
+import { API_BASE_URL } from 'config';
+
+const B2BOrderList = () => {
+    const { user } = useAdminAuth();
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filterStatus, setFilterStatus] = useState('All');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [entriesPerPage, setEntriesPerPage] = useState(10);
+
+    const fetchOrders = async () => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/orders/b2b`, {
+                headers: {
+                    'Authorization': `Bearer ${user ? localStorage.getItem('adminAuthToken') : ''}`,
+                    'user-id': user?.email || (localStorage.getItem('adminAuthUser') ? JSON.parse(localStorage.getItem('adminAuthUser')).email : '')
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setOrders(data);
+            } else {
+                console.error("Failed to fetch B2B orders");
+            }
+        } catch (error) {
+            console.error("Error fetching B2B orders:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchOrders();
+    }, [user]);
+
+    const handleStatusChange = async (id, newStatus) => {
+        if (!window.confirm(`Are you sure you want to mark this B2B order as ${newStatus}?`)) return;
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/orders/${id}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('adminAuthToken') || ''}`,
+                    'user-id': user?.email || ''
+                },
+                body: JSON.stringify({ status: newStatus })
+            });
+
+            if (res.ok) {
+                setOrders(prev =>
+                    prev.map(o =>
+                        o._id === id
+                            ? {
+                                ...o,
+                                status: newStatus,
+                                isDelivered: newStatus === 'Delivered' ? true : o.isDelivered
+                            }
+                            : o
+                    )
+                );
+            } else {
+                alert('Failed to update status');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Error updating status');
+        }
+    };
+
+    // Filter orders
+    const filteredOrders = orders.filter(order => {
+        // Search Term Match
+        const matchesSearch =
+            order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (order.shippingAddress?.fullName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (order.user?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (order.user?.emailOrMobile || '').toLowerCase().includes(searchTerm.toLowerCase());
+
+        // Status Match
+        const matchesFilter = filterStatus === 'All' ||
+            (order.status === filterStatus) ||
+            (filterStatus === 'Pending' && !order.status) || // Handle legacy/empty status as Pending
+            (filterStatus === 'Delivered' && order.isDelivered && !order.status); // Handle legacy delivered
+
+        return matchesSearch && matchesFilter;
+    });
+
+    // Pagination calculations
+    const indexOfLastEntry = currentPage * entriesPerPage;
+    const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+    const currentOrders = filteredOrders.slice(indexOfFirstEntry, indexOfLastEntry);
+    const totalPages = Math.ceil(filteredOrders.length / entriesPerPage);
+
+    return (
+        <div className="admin-page-container fade-in">
+            {/* Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                <div>
+                    <h2 className="page-title" style={{ fontSize: '1.5rem', marginBottom: '4px' }}>Business (B2B) Orders</h2>
+                    <p style={{ color: 'var(--admin-text-secondary)', fontSize: '0.9rem' }}>Manage orders placed by registered Business accounts.</p>
+                </div>
+            </div>
+
+            {/* Filters Bar */}
+            <div className="admin-card" style={{ background: 'var(--admin-card-bg)', border: '1px solid var(--admin-border)', borderRadius: '16px', padding: '20px', marginBottom: '24px', boxShadow: 'var(--admin-shadow-sm)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+                    <div className="search-wrapper-modern" style={{ maxWidth: '320px', flex: '1' }}>
+                        <input
+                            type="text"
+                            placeholder="Search B2B orders..."
+                            className="search-input-modern"
+                            value={searchTerm}
+                            onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                        />
+                        <FaSearch className="search-icon-modern" size={14} />
+                    </div>
+
+                    <div style={{ width: '200px' }}>
+                        <AdminSelect
+                            options={[
+                                { value: 'All', label: 'All Statuses' },
+                                { value: 'Pending', label: 'Pending' },
+                                { value: 'Processing', label: 'Processing' },
+                                { value: 'Packed', label: 'Packed' },
+                                { value: 'Shipped', label: 'Shipped' },
+                                { value: 'Out for Delivery', label: 'Out For Delivery' },
+                                { value: 'Delivered', label: 'Completed (Delivered)' },
+                                { value: 'Cancelled', label: 'Cancelled' }
+                            ]}
+                            value={filterStatus}
+                            onChange={(val) => { setFilterStatus(val); setCurrentPage(1); }}
+                            placeholder="Filter Status"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* Table or Empty State */}
+            {loading ? (
+                <div style={{ textAlign: 'center', padding: '40px', color: 'var(--admin-text-secondary)' }}>Loading B2B orders...</div>
+            ) : filteredOrders.length === 0 ? (
+                <div className="admin-card" style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--admin-text-secondary)' }}>
+                    <div style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '8px', color: 'var(--admin-text)' }}>No B2B orders found</div>
+                    <p style={{ fontSize: '0.9rem' }}>Try broadening your search criteria or filter status.</p>
+                </div>
+            ) : (
+                <>
+                    <div className="admin-card" style={{ background: 'var(--admin-card-bg)', border: '1px solid var(--admin-border)', borderRadius: '16px', overflow: 'hidden', boxShadow: 'var(--admin-shadow-sm)', marginBottom: '20px' }}>
+                        <div style={{ overflowX: 'auto' }}>
+                            <table className="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Business Client</th>
+                                        <th>Date</th>
+                                        <th>Total</th>
+                                        <th>Payment</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {currentOrders.map(order => (
+                                        <tr key={order._id}>
+                                            <td style={{ fontWeight: '600', color: 'var(--admin-primary)' }}>
+                                                <Link to={`/admin/orders/${order._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                                    #{order._id.substring(0, 8)}
+                                                </Link>
+                                            </td>
+                                            <td>
+                                                <div style={{ fontWeight: '600', color: 'var(--admin-text)' }}>{order.shippingAddress?.fullName || order.user?.name || 'Business Account'}</div>
+                                                <div style={{ fontSize: '0.8rem', color: 'var(--admin-text-secondary)' }}>{order.user?.emailOrMobile}</div>
+                                            </td>
+                                            <td style={{ color: 'var(--admin-text-secondary)' }}>
+                                                {new Date(order.createdAt).toLocaleDateString()}
+                                            </td>
+                                            <td style={{ fontWeight: '700', color: 'var(--admin-text)' }}>
+                                                ₹{order.totalPrice?.toFixed(2)}
+                                            </td>
+                                            <td>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                    <span className={`stock-indicator stock-${order.isPaid ? 'in' : 'out'}`}></span>
+                                                    <span className={`status-badge ${order.isPaid ? 'status-success' : 'status-danger'}`}>
+                                                        {order.isPaid ? 'Paid' : 'Unpaid'}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                    <span className={`stock-indicator stock-${order.status === 'Delivered' ? 'in' :
+                                                        order.status === 'Cancelled' ? 'out' : 'low'
+                                                        }`}></span>
+                                                    <span className={`status-badge ${order.status === 'Delivered' ? 'status-success' :
+                                                        order.status === 'Shipped' || order.status === 'Out for Delivery' ? 'status-primary' :
+                                                            order.status === 'Cancelled' ? 'status-danger' :
+                                                                'status-warning'
+                                                        }`}>
+                                                        {order.status || (order.isDelivered ? 'Delivered' : 'Pending')}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: '8px' }}>
+                                                    <Link
+                                                        to={`/admin/orders/${order._id}`}
+                                                        className="admin-btn-icon"
+                                                        title="View Details"
+                                                        style={{
+                                                            border: '1px solid var(--admin-primary)',
+                                                            background: 'rgba(59, 130, 246, 0.05)',
+                                                            color: 'var(--admin-primary)',
+                                                            padding: '0 12px',
+                                                            textDecoration: 'none',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '6px',
+                                                            borderRadius: '6px',
+                                                            fontWeight: '600',
+                                                            height: '32px',
+                                                            width: 'auto'
+                                                        }}
+                                                    >
+                                                        <FaEye size={14} /> <span>View</span>
+                                                    </Link>
+
+                                                    <div style={{ width: '160px' }}>
+                                                        <AdminSelect
+                                                            options={[
+                                                                { value: 'Pending', label: 'Pending' },
+                                                                { value: 'Processing', label: 'Processing' },
+                                                                { value: 'Packed', label: 'Packed' },
+                                                                { value: 'Shipped', label: 'Shipped' },
+                                                                { value: 'Out for Delivery', label: 'Out for Delivery' },
+                                                                { value: 'Delivered', label: 'Delivered' },
+                                                                { value: 'Cancelled', label: 'Cancelled' }
+                                                            ]}
+                                                            value={order.status || 'Pending'}
+                                                            onChange={(val) => handleStatusChange(order._id, val)}
+                                                            placeholder="Status..."
+                                                            styles={{
+                                                                control: (base) => ({ ...base, fontSize: '11px', minHeight: '30px', padding: '0 4px' })
+                                                            }}
+                                                            isSearchable={false}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--admin-text-secondary)' }}>
+                                Showing {indexOfFirstEntry + 1} to {Math.min(indexOfLastEntry, filteredOrders.length)} of {filteredOrders.length} entries
+                            </div>
+                            <AdminPagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={setCurrentPage}
+                            />
+                        </div>
+                    )}
+                </>
+            )}
+        </div>
+    );
+};
+
+export default B2BOrderList;

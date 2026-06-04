@@ -3,12 +3,15 @@ import React from 'react';
 import { FaTrash, FaHeart, FaMinus, FaPlus } from 'react-icons/fa';
 import { useShop } from '../../../../context/ShopContext';
 import { useCurrency } from '../../../../context/CurrencyContext';
+import { useAuth } from '../../../../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { getImageUrl } from 'config';
 
 const CartItem = ({ item }) => {
     const { updateQuantity, removeFromCart, toggleWishlist, wishlist } = useShop();
     const { formatPrice } = useCurrency();
+    const { user } = useAuth();
+    const isBusiness = user && user.accountType === 'business';
 
     const handleRemove = () => {
         removeFromCart(item.id, item.selectedColor, item.selectedSize);
@@ -54,7 +57,32 @@ const CartItem = ({ item }) => {
                         >
                             <FaMinus size={10} />
                         </button>
-                        <span className="qty-val">{item.quantity}</span>
+                        {isBusiness ? (
+                            <input
+                                type="number"
+                                min="1"
+                                value={item.quantity}
+                                onChange={(e) => {
+                                    const val = parseInt(e.target.value) || 1;
+                                    const delta = val - item.quantity;
+                                    updateQuantity(item.id, item.selectedColor, item.selectedSize, delta);
+                                }}
+                                style={{
+                                    width: '60px',
+                                    textAlign: 'center',
+                                    border: '1px solid #cbd5e1',
+                                    borderRadius: '6px',
+                                    padding: '4px',
+                                    fontSize: '0.9rem',
+                                    fontWeight: '700',
+                                    outline: 'none',
+                                    background: '#fff',
+                                    margin: '0 4px'
+                                }}
+                            />
+                        ) : (
+                            <span className="qty-val">{item.quantity}</span>
+                        )}
                         <button
                             className="qty-btn"
                             onClick={() => updateQuantity(item.id, item.selectedColor, item.selectedSize, 1)}

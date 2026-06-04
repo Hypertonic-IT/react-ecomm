@@ -1,0 +1,504 @@
+/* B2B Partnership Page – Premium Black & White Redesign */
+
+/* ── Page Shell ──────────────────────────────────────────────── */
+.business-apply-page {
+    background: #f9f9f9;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+}
+
+/* ── Hero ────────────────────────────────────────────────────── */
+.business-hero {
+    background: #000000;
+    color: #ffffff;
+    padding: 80px 20px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.business-hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: #ffffff;
+}
+
+/* subtle grid texture */
+.business-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+}
+
+.business-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.business-hero-content h1 {
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: -1.5px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+}
+
+.business-hero-content p {
+    font-size: 1.1rem;
+    color: #9ca3af;
+    line-height: 1.7;
+    max-width: 560px;
+    margin: 0 auto;
+}
+
+/* ── Page Body ───────────────────────────────────────────────── */
+.business-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 50px 20px 80px;
+}
+
+/* ── Tabs ────────────────────────────────────────────────────── */
+.tabs-header {
+    display: flex;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 6px;
+    margin-bottom: 40px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 15px 20px;
+    background: none;
+    border: none;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #6b7280;
+    cursor: pointer;
+    border-radius: 7px;
+    transition: all 0.25s ease;
+    letter-spacing: 0.2px;
+}
+
+.tab-btn:hover { color: #111827; background: #f3f4f6; }
+
+.tab-btn.active {
+    background: #000000;
+    color: #ffffff;
+}
+
+/* ── B2B Landing Wrapper ─────────────────────────────────────── */
+.b2b-landing-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* ── Two-column hero intro + CTA side-by-side ─────────────────── */
+.b2b-top-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 32px;
+    background: #ffffff;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+}
+
+.b2b-intro-pane {
+    padding: 52px 48px;
+    border-right: 1px solid #e5e7eb;
+}
+
+.b2b-intro-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #374151;
+    margin-bottom: 20px;
+}
+
+.b2b-intro-eyebrow span {
+    display: inline-block;
+    width: 28px;
+    height: 2px;
+    background: #000;
+}
+
+.b2b-intro-pane h2 {
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 900;
+    color: #000000;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    letter-spacing: -0.75px;
+}
+
+.b2b-hero-desc {
+    font-size: 1rem;
+    color: #4b5563;
+    line-height: 1.75;
+}
+
+/* ── CTA Pane (right) ────────────────────────────────────────── */
+.b2b-cta-pane {
+    background: #000000;
+    padding: 52px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+.b2b-cta-pane h3 {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1.3;
+    letter-spacing: -0.5px;
+}
+
+.b2b-cta-pane p {
+    font-size: 0.95rem;
+    color: #9ca3af;
+    line-height: 1.7;
+}
+
+.register-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 36px;
+    font-size: 1rem;
+    font-weight: 800;
+    color: #000000;
+    background: #ffffff;
+    border: 2px solid #ffffff;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.register-cta-btn:hover {
+    background: transparent;
+    color: #ffffff;
+}
+
+.register-cta-btn svg {
+    font-size: 0.85rem;
+    transition: transform 0.25s ease;
+}
+
+.register-cta-btn:hover svg {
+    transform: translateX(4px);
+}
+
+/* ── Benefits Grid ───────────────────────────────────────────── */
+.b2b-benefits-section {
+    margin-bottom: 0;
+}
+
+.b2b-benefits-section h3 {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #6b7280;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.b2b-benefits-section h3::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e5e7eb;
+}
+
+.b2b-benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+@media (max-width: 900px) {
+    .b2b-benefits-grid { grid-template-columns: 1fr 1fr; }
+    .b2b-top-panel { grid-template-columns: 1fr; }
+    .b2b-intro-pane { border-right: none; border-bottom: 1px solid #e5e7eb; }
+}
+
+@media (max-width: 600px) {
+    .b2b-benefits-grid { grid-template-columns: 1fr; }
+    .b2b-intro-pane,
+    .b2b-cta-pane { padding: 36px 28px; }
+}
+
+.benefit-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 28px 24px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.benefit-card:hover {
+    border-color: #000000;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.07);
+}
+
+.benefit-icon {
+    font-size: 1.5rem;
+    color: #000000;
+    width: 48px;
+    height: 48px;
+    background: #f3f4f6;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.benefit-info h4 {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #000000;
+    margin: 0 0 6px 0;
+}
+
+.benefit-info p {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* ── Loading State ───────────────────────────────────────────── */
+.business-loading {
+    text-align: center;
+    padding: 80px 20px;
+    color: #6b7280;
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+
+/* ── Status Boxes ────────────────────────────────────────────── */
+.status-box {
+    padding: 56px 40px;
+    border-radius: 16px;
+    border: 1px solid #e5e7eb;
+    text-align: center;
+    background: #ffffff;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+}
+
+.status-icon { animation: pulse 2s infinite; }
+
+.status-box h3 {
+    font-size: 1.75rem;
+    font-weight: 900;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+}
+
+.status-box p {
+    color: #4b5563;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    max-width: 520px;
+    margin: 0 auto 16px;
+}
+
+.status-box.pending { border-left: 5px solid #374151; }
+.status-box.pending h3 { color: #111827; }
+
+.status-box.approved { border-left: 5px solid #000000; }
+.status-box.approved h3 { color: #000000; }
+
+.status-box.rejected { border-left: 5px solid #6b7280; }
+.status-box.rejected h3 { color: #374151; }
+
+.status-footer {
+    font-size: 0.9rem !important;
+    color: #9ca3af !important;
+    margin-top: 28px !important;
+    border-top: 1px solid #f3f4f6;
+    padding-top: 20px;
+}
+
+/* ── Primary / Secondary Buttons ─────────────────────────────── */
+.btn-primary {
+    display: inline-block;
+    padding: 14px 36px;
+    background: #000000;
+    color: #ffffff;
+    border: 2px solid #000000;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+.btn-primary:hover {
+    background: #ffffff;
+    color: #000000;
+}
+
+.btn-secondary {
+    display: inline-block;
+    padding: 14px 36px;
+    background: transparent;
+    color: #000000;
+    border: 2px solid #000000;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+.btn-secondary:hover {
+    background: #000000;
+    color: #ffffff;
+}
+
+/* ── Quote Form ──────────────────────────────────────────────── */
+.quote-section { }
+
+.business-form {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 48px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+}
+
+.business-form h2 {
+    font-size: 1.9rem;
+    font-weight: 900;
+    color: #000000;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+.form-desc {
+    color: #6b7280;
+    font-size: 1rem;
+    margin-bottom: 36px;
+    line-height: 1.6;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+@media (max-width: 640px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .business-form { padding: 28px 20px; }
+}
+
+.form-group { display: flex; flex-direction: column; gap: 7px; }
+
+.form-group.full-width { grid-column: span 2; }
+
+@media (max-width: 640px) {
+    .form-group.full-width { grid-column: span 1; }
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #374151;
+    letter-spacing: 0.25px;
+    text-transform: uppercase;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 13px 14px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.98rem;
+    color: #111827;
+    background: #fafafa;
+    transition: all 0.25s ease;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #000000;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(0,0,0,0.06);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: #000000;
+    color: #ffffff;
+    border: 2px solid #000000;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.submit-btn:hover {
+    background: #ffffff;
+    color: #000000;
+}
+
+.submit-btn:disabled {
+    background: #d1d5db;
+    border-color: #d1d5db;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+/* ── Animations ──────────────────────────────────────────────── */
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.06); opacity: 0.85; }
+}

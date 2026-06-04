@@ -51,7 +51,7 @@ const SalesReports = () => {
             <ReportFilter onFilterChange={handleFilterChange} />
 
             {/* Charts Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))', gap: '24px', marginBottom: '32px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', marginBottom: '32px' }}>
 
                 {/* Revenue Chart */}
                 <div className="chart-container">

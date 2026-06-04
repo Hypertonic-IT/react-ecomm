@@ -4,8 +4,9 @@ import { NavLink } from 'react-router-dom';
 import {
     FaHome, FaBoxOpen, FaShoppingBag, FaUsers, FaCog, FaSignOutAlt,
     FaList, FaClipboardList, FaTags, FaStar, FaChartLine, FaLayerGroup,
-    FaTimes, FaUserShield, FaNewspaper
+    FaTimes, FaUserShield, FaNewspaper, FaBriefcase, FaFileInvoiceDollar, FaEnvelope
 } from 'react-icons/fa';
+
 
 import { useAdminAuth } from '../../../context/AdminAuthContext';
 
@@ -34,6 +35,10 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                     <FaShoppingBag className="admin-nav-icon" />
                     <span>Orders</span>
                 </NavLink>
+                <NavLink to="/admin/b2b-orders" onClick={onClose} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
+                    <FaClipboardList className="admin-nav-icon" />
+                    <span>B2B Orders</span>
+                </NavLink>
                 <NavLink to="/admin/products" onClick={onClose} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
                     <FaBoxOpen className="admin-nav-icon" />
                     <span>Products</span>
@@ -45,6 +50,14 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                 <NavLink to="/admin/users" onClick={onClose} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
                     <FaUsers className="admin-nav-icon" />
                     <span>Customers</span>
+                </NavLink>
+                <NavLink to="/admin/business-applications" onClick={onClose} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
+                    <FaBriefcase className="admin-nav-icon" />
+                    <span>B2B Applications</span>
+                </NavLink>
+                <NavLink to="/admin/wholesale-quotes" onClick={onClose} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
+                    <FaFileInvoiceDollar className="admin-nav-icon" />
+                    <span>Wholesale Quotes</span>
                 </NavLink>
 
 
@@ -65,6 +78,10 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                 <NavLink to="/admin/blogs" onClick={onClose} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
                     <FaNewspaper className="admin-nav-icon" />
                     <span>Blog Posts</span>
+                </NavLink>
+                <NavLink to="/admin/contact-submissions" onClick={onClose} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
+                    <FaEnvelope className="admin-nav-icon" />
+                    <span>Contact Messages</span>
                 </NavLink>
 
                 <div className="nav-section-label">System</div>

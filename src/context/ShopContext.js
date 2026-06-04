@@ -2,12 +2,14 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import { products as productsData } from '../data/fashionData';
 import Toast from '../modules/website/components/Toast/Toast';
 import apiUrl from '../config/api';
+import { useAuth } from './AuthContext';
 
 const ShopContext = createContext();
 
 export const useShop = () => useContext(ShopContext);
 
 export const ShopProvider = ({ children }) => {
+    const { token, user: authUser } = useAuth();
     // Start with empty array, fetch from API. Fallback to static if needed or empty.
     const [products, setProducts] = useState([]);
     const [cart, setCart] = useState([]);
@@ -40,7 +42,11 @@ export const ShopProvider = ({ children }) => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch(apiUrl('/api/products'));
+                const headers = {};
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+                const response = await fetch(apiUrl('/api/products'), { headers });
                 if (response.ok) {
                     const data = await response.json();
                     // If backend is empty, maybe use static data as seed? 
@@ -90,8 +96,8 @@ export const ShopProvider = ({ children }) => {
                             return tokens.flatMap(t => t.split(/[,/\s]+/).map(x => x.replace(/[^a-z0-9]/g, '').trim()).filter(Boolean));
                         };
 
-                        const isMen = (p) => extract(p).some(t => ['men', 'man', 'male'].includes(t) || t.includes('men') || t.includes('male'));
-                        const isWomen = (p) => extract(p).some(t => ['women', 'woman', 'female'].includes(t) || t.includes('women') || t.includes('female'));
+                        const isMen = (p) => extract(p).some(t => ['men', 'man', 'male', 'mens'].includes(t) || (t.includes('men') && !t.includes('women')) || (t.includes('male') && !t.includes('female')));
+                        const isWomen = (p) => extract(p).some(t => ['women', 'woman', 'female', 'womens'].includes(t) || t.includes('women') || t.includes('female'));
 
                         const menProducts = activeProducts.filter(isMen).slice(0, 10);
                         const menIds = new Set(menProducts.map(p => (p.id || p._id).toString()));
@@ -112,7 +118,32 @@ export const ShopProvider = ({ children }) => {
             }
         };
         fetchProducts();
-    }, []);
+    }, [token]);
+
+    // Sync cart item prices when products list changes (e.g. B2B state triggers or token changes)
+    useEffect(() => {
+        if (products.length > 0 && cart.length > 0) {
+            let updated = false;
+            const updatedCart = cart.map(item => {
+                const currentProduct = products.find(p => p.id === item.id);
+                if (currentProduct) {
+                    if (item.price !== currentProduct.price || item.salePrice !== currentProduct.salePrice || item.countInStock !== currentProduct.countInStock) {
+                        updated = true;
+                        return {
+                            ...item,
+                            price: currentProduct.price,
+                            salePrice: currentProduct.salePrice,
+                            countInStock: currentProduct.countInStock
+                        };
+                    }
+                }
+                return item;
+            });
+            if (updated) {
+                setCart(updatedCart);
+            }
+        }
+    }, [products]);
 
     // Load cart and coupon from local storage on init
     useEffect(() => {

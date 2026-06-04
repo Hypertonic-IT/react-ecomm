@@ -34,7 +34,8 @@ const ProductAddEdit = () => {
         specifications: '', // "Key: Value" per line
         categories: [], // Array of selected categories
         discount: 0,
-        salePrice: 0
+        salePrice: 0,
+        businessPrice: ''
     });
 
     const [loading, setLoading] = useState(false);
@@ -238,7 +239,8 @@ const ProductAddEdit = () => {
                             ? data.specifications.map(s => `${s.name}: ${s.value}`).join('\n')
                             : '',
                         discount: data.discount || 0,
-                        salePrice: data.salePrice || data.price
+                        salePrice: data.salePrice || data.price,
+                        businessPrice: data.businessPrice || ''
                     });
                     setPreviewImage(data.image);
                 } catch (error) {
@@ -305,7 +307,8 @@ const ProductAddEdit = () => {
                 return null;
             }).filter(Boolean),
             discount: Number(formData.discount),
-            salePrice: Number(formData.salePrice)
+            salePrice: Number(formData.salePrice),
+            businessPrice: formData.businessPrice ? Number(formData.businessPrice) : 0
         };
 
         try {
@@ -355,7 +358,7 @@ const ProductAddEdit = () => {
                 </h1>
             </div>
 
-            <form onSubmit={handleSubmit} className="admin-form-grid" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
+            <form onSubmit={handleSubmit} className="admin-grid-2-1">
 
                 {/* Left Column: Main Info */}
                 {/* Left Column Wrapper */}
@@ -390,7 +393,7 @@ const ProductAddEdit = () => {
                             ></textarea>
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+                        <div className="admin-grid-4" style={{ gap: '15px', marginBottom: '20px' }}>
                             <div className="form-group">
                                 <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Price (₹)</label>
                                 <input
@@ -430,6 +433,20 @@ const ProductAddEdit = () => {
                                     className="admin-input"
                                     style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
                                     placeholder="Calculated..."
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label style={{ display: 'block', color: 'var(--admin-text-secondary)', marginBottom: '8px' }}>Business Price (₹)</label>
+                                <input
+                                    type="number"
+                                    name="businessPrice"
+                                    value={formData.businessPrice}
+                                    onChange={handleChange}
+                                    className="admin-input"
+                                    style={{ width: '100%', padding: '12px', background: 'var(--admin-bg)', border: '1px solid var(--admin-border)', color: 'var(--admin-text)', borderRadius: '8px' }}
+                                    placeholder="0.00"
+                                    min="0"
+                                    step="0.01"
                                 />
                             </div>
                         </div>

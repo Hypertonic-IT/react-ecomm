@@ -3,6 +3,7 @@ import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 import TopBar from '../../components/TopBar/TopBar';
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaClock } from 'react-icons/fa';
+import { API_BASE_URL } from 'config';
 
 const ContactUs = () => {
     const [formData, setFormData] = useState({
@@ -17,15 +18,28 @@ const ContactUs = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Mock submission
         setStatus('sending');
-        setTimeout(() => {
-            setStatus('success');
-            setFormData({ name: '', email: '', subject: '', message: '' });
-            alert("Thank you for contacting us! We'll get back to you shortly.");
-        }, 1500);
+        try {
+            const response = await fetch(`${API_BASE_URL}/contact`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            const data = await response.json();
+            if (response.ok && data.success) {
+                setStatus('success');
+                setFormData({ name: '', email: '', subject: '', message: '' });
+                alert("Thank you for contacting us! We'll get back to you shortly.");
+            } else {
+                setStatus('error');
+                alert(data.message || "Failed to send message. Please try again.");
+            }
+        } catch (error) {
+            setStatus('error');
+            alert("Network error. Please try again.");
+        }
     };
 
     return (
