@@ -1,8 +1,7 @@
 ---
-description: Master Implementation roadmap for the Hypertonic Enterprise Admin Panel (CMS).
+description: 
 ---
 
-# 👑 Hypertonic Enterprise Admin Panel (ERP/CMS)
 
 This is the master plan for the comprehensive Admin Panel based on the User's detailed requirements.
 

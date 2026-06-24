@@ -152,10 +152,33 @@ const toggleApplicationActive = async (req, res) => {
     }
 };
 
+// @desc    Delete a business application (Admin only)
+// @route   DELETE /api/business/applications/:id
+// @access  Private/Admin
+const deleteApplication = async (req, res) => {
+    try {
+        const application = await BusinessApplication.findById(req.params.id);
+        if (!application) {
+            return res.status(404).json({ success: false, message: 'Application not found' });
+        }
+
+        // Reset user account to personal
+        await User.findByIdAndUpdate(application.user_id, { accountType: 'personal', status: 'Active' });
+
+        await BusinessApplication.findByIdAndDelete(req.params.id);
+
+        res.json({ success: true, message: 'Application deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting application:', error);
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+};
+
 module.exports = {
     submitApplication,
     getApplicationStatus,
     getApplications,
     updateApplicationStatus,
-    toggleApplicationActive
+    toggleApplicationActive,
+    deleteApplication
 };

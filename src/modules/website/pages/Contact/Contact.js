@@ -11,8 +11,11 @@ function Contact() {
   return (
     <>
       <Helmet>
-        <title>Contact Us - Kayaroop IT Solutions</title>
-        <meta name="description" content="Get in touch with Kayaroop IT Solutions for expert IT services, including website development, app development, and custom software solutions." />
+        <title>Contact Us - Kayaroop</title>
+        <meta
+          name="description"
+          content="Get in touch with Kayaroop for inquiries about our latest fashion collections, clothing products, orders, and customer support. We're here to help you with all your fashion needs."
+        />
       </Helmet>
       <Nav />
       <Section21 />

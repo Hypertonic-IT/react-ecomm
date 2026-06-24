@@ -1,7 +1,6 @@
 # Inventory Management System - Complete Documentation
 
 ## 🎯 Overview
-A comprehensive, real-time inventory management system for the Kayaroop IT Solutions admin panel with advanced features for stock tracking, variant management, and bulk operations.
 
 ---
 

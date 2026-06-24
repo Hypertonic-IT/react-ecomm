@@ -7,7 +7,7 @@ import '../../admin.css';
 import { API_BASE_URL } from 'config';
 
 // Dropdown action menu component
-const ActionMenu = ({ app, onUpdateStatus, onToggleActive }) => {
+const ActionMenu = ({ app, onUpdateStatus, onToggleActive, onDelete }) => {
     const [open, setOpen] = useState(false);
     const ref = useRef(null);
 
@@ -31,6 +31,11 @@ const ActionMenu = ({ app, onUpdateStatus, onToggleActive }) => {
         label: app.isActive === false ? '▶ Activate Account' : '⏸ Deactivate Account',
         action: () => { onToggleActive(app._id, app.isActive !== false); setOpen(false); },
         color: app.isActive === false ? '#16a34a' : '#6b7280'
+    });
+    actions.push({
+        label: '🗑️ Delete Application',
+        action: () => { onDelete(app._id); setOpen(false); },
+        color: '#dc2626'
     });
 
     return (
@@ -178,6 +183,27 @@ const BusinessApplicationsList = () => {
         }
     };
 
+    const deleteApplication = async (id) => {
+        if (!window.confirm('Are you sure you want to completely delete this business application? This action cannot be undone.')) return;
+        try {
+            const response = await fetch(`${API_BASE_URL}/business/applications/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`,
+                    'user-id': user?.email || ''
+                }
+            });
+            if (response.ok) {
+                fetchApplications();
+            } else {
+                const err = await response.json();
+                alert(err.message || 'Failed to delete application');
+            }
+        } catch (error) {
+            alert('Network error deleting application');
+        }
+    };
+
     const filteredApps = applications.filter(app => {
         const matchesSearch =
             (app.business_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -317,6 +343,7 @@ const BusinessApplicationsList = () => {
                                                         app={app}
                                                         onUpdateStatus={updateStatus}
                                                         onToggleActive={toggleActive}
+                                                        onDelete={deleteApplication}
                                                     />
                                                 </td>
                                             </tr>
@@ -356,7 +383,7 @@ const BusinessApplicationsList = () => {
                                         <div><strong>Monthly Req.:</strong> {app.monthly_requirement || '—'}</div>
                                     </div>
                                     <div className="b2b-card-footer">
-                                        <ActionMenu app={app} onUpdateStatus={updateStatus} onToggleActive={toggleActive} />
+                                        <ActionMenu app={app} onUpdateStatus={updateStatus} onToggleActive={toggleActive} onDelete={deleteApplication} />
                                     </div>
                                 </div>
                             )) : (
